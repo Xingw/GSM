@@ -107,7 +107,7 @@ public class PrjItem extends Model implements Serializable{
 //        }
         SQLiteDatabase db = SQLiteDatabase.openDatabase(dbLocation,null,SQLiteDatabase
                 .OPEN_READWRITE);
-        db.execSQL("update Projectinfo set prjName = "+newName+" WHERE prjName = " + prjName);
+        db.execSQL("update Projectinfo set prjName = '"+newName+"' WHERE prjName = '" + prjName+"'");
         this.setPrjName(newName);
         this.save();
     }

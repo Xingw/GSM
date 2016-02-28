@@ -560,7 +560,6 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                     digitalMapHolder = new  DigitalMapHolder(this, path);
                     //保存数字地图数据
                 }
-
                 break;
             //加载xml文件
             case REQUEST_CODE_LOAD_XML_FILE:

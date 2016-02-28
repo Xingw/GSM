@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
@@ -52,6 +53,8 @@ public class PrjSelectActivity extends AppCompatActivity {
     private boolean isInSelectMode = false;
     private PrjLvAdapter adapter;
     private FloatingActionButton btnAdd;
+    private long mExitTime;
+
     public static void start(Activity activity, boolean isCalledByPrjEditAty) {
         Intent intent = new Intent(activity, PrjSelectActivity.class);
         intent.putExtra(EXTRA_KEY_IS_CALLED, isCalledByPrjEditAty);
@@ -216,7 +219,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialogBuilder.dismiss();
                 //开启编辑PrjItem的Activity
-                FileHelper.sendDbFile(PrjSelectActivity.this,prjItem.getDbLocation());
+                FileHelper.sendDbFile(PrjSelectActivity.this, prjItem.getDbLocation());
             }
         });
         ll.findViewById(R.id.id_menu_rename).setOnClickListener(new View.OnClickListener() {
@@ -235,7 +238,7 @@ public class PrjSelectActivity extends AppCompatActivity {
                 .withDialogColor(context.getResources().getColor(R.color.dialog_color))
                 .withEffect(Effectstype.Slidetop)       //def Effectstype.Slidetop
                 .setCustomView(ll, context)
-                .isCancelableOnTouchOutside(false)       //不可以点击外面取消
+                .isCancelableOnTouchOutside(true)       //不可以点击外面取消
                 .show();
     }
 
@@ -320,14 +323,17 @@ public class PrjSelectActivity extends AppCompatActivity {
                         ToastHelper.showSnack(context, v, "该工程已存在");
                     } else {
                         //将新的prjItem保存进数据库
-                        new PrjItem(prjName).save();
-                        //TODO 创建一个数据库保存
-                        //重新加载工程视图
-                        adapter.notifyDataSetChanged();
-                        //消除Dialog
-                        dialogBuilder.dismiss();
-                        //Toast 提醒成功
-                        ToastHelper.showSnack(context, v, "工程创建成功!");
+                        if (!DBHelper.createDbData(Constant.DbTempPath+prjName+".db",prjName)){
+                            ToastHelper.showSnack(context,v,"该工程已存在，请重新命名或选择导入工程");
+                        }else {
+                            new PrjItem(prjName, Constant.DbTempPath + prjName + ".db").save();
+                            //重新加载工程视图
+                            adapter.notifyDataSetChanged();
+                            //消除Dialog
+                            dialogBuilder.dismiss();
+                            //Toast 提醒成功
+                            ToastHelper.showSnack(context, v, "工程创建成功!");
+                        }
                     }
                 }
             }
@@ -396,12 +402,36 @@ public class PrjSelectActivity extends AppCompatActivity {
                 }
                 String prjName = cursor.getString(cursor.getColumnIndex(DBConstant
                         .prjInfo_coloum_prjName));
-                PrjItem prjItem = new PrjItem(prjName, path);
-                prjItem.save();
-                //重新加载工程视图
-                adapter.notifyDataSetChanged();
-                break;
+                if (DBHelper.isPrjExist(prjName)) {
+                    ToastHelper.show(PrjSelectActivity.this, "该工程已存在");
+                } else {
+                    PrjItem prjItem = new PrjItem(prjName, path);
+                    prjItem.save();
+                    //重新加载工程视图
+                    adapter.notifyDataSetChanged();
+                    break;
+                }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    /**
+     * 实现两次返回退出程序
+     */
+    @Override
+    public void onBackPressed() {
+        if(isInSelectMode){
+            btnAdd.setImageResource(R.drawable.fab_add);
+            adapter.CheckBox_Moveout();
+            isInSelectMode = false;
+            adapter.cleanSelectList();
+        }else if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();
+        } else {
+            super.onBackPressed();
+            //杀掉当前app的进程---释放地图的内存
+            System.exit(0);
+        }
     }
 }

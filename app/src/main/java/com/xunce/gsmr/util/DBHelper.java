@@ -359,6 +359,47 @@ public class DBHelper {
 
     /*******************************************************插入部分***************************/
     /**
+     * 创建一个数据库文件
+     * @param dbPath
+     * @param prjName
+     * @return 是否创建成功
+     */
+    public static boolean createDbData(String dbPath, String prjName){
+        File file = new File(dbPath);
+        file.getParentFile().mkdirs();
+        if (file.exists())return false;
+        SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(dbPath, null);
+        db.execSQL("create table "+Constant.TABLE_PROJECT_INFO+"("+DBConstant.prjInfo_coloum_mapInfo +
+                " INTEGER, "+DBConstant.prjInfo_coloum_prjName+" TEXT, "+DBConstant.prjInfo_coloum_creationTime+" TEXT)");
+        db.execSQL("create table "+Constant.TABLE_MARKER_ITEM+"("+DBConstant.basestation_column_MarkerId+
+                " TEXT, "+ DBConstant.basestation_column_distance_to_rail+" REAL, "
+                +DBConstant.basestation_column_antenna_direction_1+" TEXT,"
+                +DBConstant.basestation_column_antenna_direction_2+" TEXT,"
+                +DBConstant.basestation_column_antenna_direction_3+" TEXT,"
+                +DBConstant.basestation_column_antenna_direction_4+" TEXT,"
+                +DBConstant.basestation_column_tower_height+" TEXT,"
+                +DBConstant.basestation_column_side_direction+" TEXT,"
+                +DBConstant.basestation_column_longitude+" REAL,"
+                +DBConstant.basestation_column_latitude+" REAL,"
+                +DBConstant.basestation_column_device_type+" TEXT,"
+                +DBConstant.basestation_column_tower_type+" TEXT,"
+                +DBConstant.basestation_column_kilometer_mark+" TEXT,"
+                +DBConstant.id+" TEXT,"
+                +DBConstant.basestation_column_comment+" TEXT)");
+        db.execSQL("CREATE TABLE Line(layer TEXT, longitude_start REAL, latitude_start REAL, longitude_end REAL, latitude_end REAL)");
+        db.execSQL("CREATE TABLE Circle(layer TEXT, longitude REAL, latitude REAL, radious REAL)");
+        db.execSQL("CREATE TABLE Poly(layer TEXT, id INTEGER, orderId INTEGER, longitude REAL, latitude REAL, name TEXT)");
+        db.execSQL("CREATE TABLE P2DPoly(layer TEXT, id INTEGER, orderId INTEGER, longitude REAL, latitude REAL)");
+        db.execSQL("CREATE TABLE Text(layer TEXT, longitude REAL, latitude REAL, content TEXT)");
+        db.execSQL("CREATE TABLE KMLText(longitude REAL, latitude REAL, content TEXT)");
+        db.execSQL("CREATE TABLE KMLPoly(id INTEGER, orderId, longitude REAL, latitude REAL, content TEXT)");
+        db.execSQL("CREATE TABLE Photo (markerId  INTEGER, photoData  BLOB, photoName  TEXT)");
+        Object[] args = new Object[]{0, prjName, System.currentTimeMillis()};
+        db.execSQL("insert into ProjectInfo (mapInfo,prjName,creationTime) values (?,?,?)",args);
+        db.close();
+        return true;
+    }
+    /**
      * 将照片数据存入数据库中
      *
      * @param makerId   Maker的Id

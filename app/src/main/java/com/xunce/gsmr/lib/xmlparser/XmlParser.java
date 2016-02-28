@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
+import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
@@ -258,6 +259,11 @@ public class XmlParser extends DefaultHandler {
             p2dpolyList.add(vector);
             //读取完成后把所有读到的数据存到指定的数据库中
             SQLiteDatabase db = DBHelper.openDatabase(dbPath);
+            db.beginTransaction();
+            db.execSQL("DELETE * FROM "+ Constant.TABLE_TEXT);
+            db.execSQL("DELETE * FROM "+ Constant.TABLE_LINE);
+            db.execSQL("DELETE * FROM "+ Constant.TABLE_POLY);
+            db.execSQL("DELETE * FROM "+ Constant.TABLE_P2DPOLY);
             for (Text text1 : textList) {
                 DBHelper.insertText(db,text1.getLatLng().longitude,text1.getLatLng().latitude,
                         text1.getContent());
@@ -284,6 +290,8 @@ public class XmlParser extends DefaultHandler {
                 orderId = 0;
                 id++;
             }
+            db.setTransactionSuccessful();
+            db.endTransaction();
         }
     }
 

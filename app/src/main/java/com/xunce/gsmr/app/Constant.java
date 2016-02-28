@@ -11,7 +11,7 @@ public class Constant {
 
     //数据库文件的路径
     public static final String DbPath = "/data/data/com.xunce.gsmr/databases/Location.db";
-
+    public static final String DbTempPath = "/storage/sdcard0/GSM/Temp/";
     //外部SD卡数据存储路径
     public static final String PICTURE_PATH = "/storage/sdcard0/GSM/Picture/";
     public static final String TEMP_FILE_PATH = "/storage/sdcard0/GSM/Temp/";

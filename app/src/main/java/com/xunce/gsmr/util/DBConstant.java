@@ -26,6 +26,8 @@ public class DBConstant {
     public static final String basestation_column_Id = "id";
     public static final String basestation_column_comment = "comment";
     public static final String prjInfo_coloum_prjName = "prjName";
+    public static final String prjInfo_coloum_mapInfo = "mapInfo";
+    public static final String prjInfo_coloum_creationTime = "creationTime";
     public static final String id = "id";
     public static final String layer = "layer";
     public static final String orderId = "orderId";

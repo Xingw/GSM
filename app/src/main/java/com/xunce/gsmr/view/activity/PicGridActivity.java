@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -28,6 +31,8 @@ import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.PictureHelper;
 import com.xunce.gsmr.util.VibrateHelper;
+import com.xunce.gsmr.util.view.ToastHelper;
+import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.adapter.PicGridAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
@@ -57,9 +62,9 @@ public class PicGridActivity extends AppCompatActivity {
     private PicGridAdapter adapter;
 
     private boolean isInSelectMode = false;
-    private Uri uri;
+    private static Uri uri;
 
-    public static void start(Activity activity, MarkerItem markerItem,String dbPath, int
+    public static void start(Activity activity, MarkerItem markerItem, String dbPath, int
             requestCode) {
         //从Marker中获取信息--找到Picture的目录---展示所有的图片
         Intent intent = new Intent(activity, PicGridActivity.class);
@@ -95,6 +100,9 @@ public class PicGridActivity extends AppCompatActivity {
     }
 
     private void initView() {
+        ViewHelper.initActionBar(this, getSupportActionBar(), "照片");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //添加照片
         btnAdd = (ImageButton) findViewById(R.id.id_btn_add);
         btnAdd.setOnClickListener(new View.OnClickListener() {
@@ -118,7 +126,7 @@ public class PicGridActivity extends AppCompatActivity {
         btnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FileHelper.sendPicture(PicGridActivity.this,dbPath, selectedList);
+                FileHelper.sendPicture(PicGridActivity.this, dbPath, selectedList);
             }
         });
 
@@ -221,7 +229,7 @@ public class PicGridActivity extends AppCompatActivity {
             public void onClick(View v) {
                 for (BitmapItem item : selectedList) {
                     PictureHelper.deletePicture(item.getPath());
-                    DBHelper.deletePicture(dbPath,PictureHelper.getNameFromPath(item.getPath()));
+                    DBHelper.deletePicture(dbPath, PictureHelper.getNameFromPath(item.getPath()));
                 }
                 adapter.notifyDataSetChanged();
                 selectedList.clear();
@@ -262,7 +270,7 @@ public class PicGridActivity extends AppCompatActivity {
                 PicGridActivity.this.findViewById(R.id.id_pb_empty).setVisibility(View.VISIBLE);
                 for (BitmapItem item : selectedList) {
                     PictureHelper.deletePicture(item.getPath());
-                    DBHelper.deletePicture(dbPath,PictureHelper.getNameFromPath(item.getPath()));
+                    DBHelper.deletePicture(dbPath, PictureHelper.getNameFromPath(item.getPath()));
                 }
                 adapter.notifyDataSetChanged();
                 selectedList.clear();
@@ -293,6 +301,25 @@ public class PicGridActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_pic_grid, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.id_action_add_from_storage:
+                PictureHelper.getPictureFromAlbum(this);
+                break;
+            case android.R.id.home:
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult() called with: " + "requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
         //判断是图库---还是照相机
@@ -306,9 +333,20 @@ public class PicGridActivity extends AppCompatActivity {
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String srcPath = cursor.getString(columnIndex);
             cursor.close();
-            //将照片保存到指定文件夹
-            PictureHelper.saveImage(srcPath, markerItem.getFilePath() +
-                    Calendar.getInstance().getTimeInMillis() + ".jpeg");
+
+            Bitmap bitmap = BitmapFactory.decodeFile(srcPath);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 60, os);
+            String picName = PictureHelper.getNameFromPath(srcPath);
+            DBHelper.insertPicture(dbPath, markerItem.getMarkerId(), picName,
+                    os.toByteArray());
+            //将缩略图保存到临时文件夹
+            bitmap = PictureHelper.getSmallBitmap(srcPath, 120, 120);
+            //将其缓存
+            PictureHelper.saveImage(bitmap, Constant.TEMP_FILE_PATH + picName);
+//            //将照片保存到指定文件夹
+//            PictureHelper.saveImage(srcPath, markerItem.getFilePath() +
+//                    Calendar.getInstance().getTimeInMillis() + ".jpeg");
             //更新界面
             adapter.notifyDataSetChanged();
             return;
@@ -317,7 +355,7 @@ public class PicGridActivity extends AppCompatActivity {
             if (uri != null) {
                 Bitmap bitmap = null;
                 String picName = PictureHelper.getNameFromPath(uri.toString());
-                Logger.d("Picture名称是:%s",picName);
+                Logger.d("Picture名称是:%s", picName);
                 try {
                     //从uri获取bitmap
                     bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
@@ -329,7 +367,7 @@ public class PicGridActivity extends AppCompatActivity {
                     //将照片保存到数据库
                     ByteArrayOutputStream os = new ByteArrayOutputStream();
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 60, os);
-                    DBHelper.insertPicture(dbPath, markerItem.getMarkerId(),picName,
+                    DBHelper.insertPicture(dbPath, markerItem.getMarkerId(), picName,
                             os.toByteArray());
                     //将缩略图保存到临时文件夹
                     bitmap = PictureHelper.getSmallBitmap(uri.getPath(), 120, 120);
@@ -338,10 +376,12 @@ public class PicGridActivity extends AppCompatActivity {
                     //PictureHelper.deletePicture(uri.getPath());//将照片存入数据库后删除
                 }
                 uri = null;
+            } else {
+                ToastHelper.showlong(this, "数据存储失败，请重新拍摄");
             }
             PicGridActivity.this.findViewById(R.id.id_pb_empty).setVisibility(View.VISIBLE);
             //更新界面
-            if(adapter ==null){
+            if (adapter == null) {
                 adapter = new PicGridAdapter(this, dbPath, markerItem);
                 gv.setAdapter(adapter);
             }
