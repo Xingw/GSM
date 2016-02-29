@@ -90,6 +90,10 @@ public class XmlParser extends DefaultHandler {
      * 开始解析xml文件
      */
     private void parse() {
+        lineList.clear();
+        textList.clear();
+        polyList.clear();
+        p2dpolyList.clear();
         //开启线程执行前显示进度条
         EventBus.getDefault().post(new ProgressbarEvent(true));
         //开一个新线程完成解析任务
@@ -207,16 +211,16 @@ public class XmlParser extends DefaultHandler {
         super.startElement(uri, localName, qName, attributes);
         if (Element.LINE.equals(localName)) {
             //获取的是高德地图的latlng
-            LatLng latLngStart = PositionUtil.gps84_To_Gcj02(Double.parseDouble(attributes.getValue(LineElement.latStart)),
+            LatLng latLngStart = new LatLng(Double.parseDouble(attributes.getValue(LineElement.latStart)),
                     Double.parseDouble(attributes.getValue(LineElement.longStart)));
-            LatLng latLngEnd = PositionUtil.gps84_To_Gcj02(Double.parseDouble(attributes.getValue(LineElement.latEnd)),
+            LatLng latLngEnd = new LatLng(Double.parseDouble(attributes.getValue(LineElement.latEnd)),
                     Double.parseDouble(attributes.getValue(LineElement.longEnd)));
             line = new Line(latLngStart, latLngEnd);
             lineList.add(line);
         } else if (Element.TEXT.equals(localName)) {
             double latitude = Double.parseDouble(attributes.getValue(TextElement.latitude));
             double longitude = Double.parseDouble(attributes.getValue(TextElement.longitude));
-            LatLng latLng = PositionUtil.gps84_To_Gcj02(latitude, longitude);
+            LatLng latLng = new LatLng(latitude, longitude);
             String content = attributes.getValue(TextElement.value);
             text = new Text(latLng, content);
             textList.add(text);
@@ -230,11 +234,10 @@ public class XmlParser extends DefaultHandler {
                 if (vector != null && vector.getPointList().size() != 0) {
                     p2dpolyList.add(vector);
                 }
-                vector = new com.xunce.gsmr.model.gaodemap.graph.Vector("");
-            } else {
+                vector = new com.xunce.gsmr.model.gaodemap.graph.Vector(attributes.getValue(Vector.name));
+            }
                 vector.getPointList().add(new Point(Double.parseDouble(attributes.getValue(Vector.longitude)),
                         Double.parseDouble(attributes.getValue(Vector.latitude))));
-            }
         } else if (Element.POLY.equals(localName)) {
             //判断order是0的话---要把前面的数据放进去
             int order = Integer.parseInt(attributes.getValue(Vector.order));
@@ -242,11 +245,10 @@ public class XmlParser extends DefaultHandler {
                 if (vector != null && vector.getPointList().size() != 0) {
                     polyList.add(vector);
                 }
-                vector = new com.xunce.gsmr.model.gaodemap.graph.Vector("");
-            } else {
+                vector = new com.xunce.gsmr.model.gaodemap.graph.Vector(attributes.getValue(Vector.name));
+            }
                 vector.getPointList().add(new Point(Double.parseDouble(attributes.getValue(Vector.longitude)),
                         Double.parseDouble(attributes.getValue(Vector.latitude))));
-            }
         }
     }
 
@@ -257,41 +259,6 @@ public class XmlParser extends DefaultHandler {
             Timber.e("我添加了最后一个Vector");
             //Cad的数据中最后一条是P2dpoly
             p2dpolyList.add(vector);
-            //读取完成后把所有读到的数据存到指定的数据库中
-            SQLiteDatabase db = DBHelper.openDatabase(dbPath);
-            db.beginTransaction();
-            db.execSQL("DELETE * FROM "+ Constant.TABLE_TEXT);
-            db.execSQL("DELETE * FROM "+ Constant.TABLE_LINE);
-            db.execSQL("DELETE * FROM "+ Constant.TABLE_POLY);
-            db.execSQL("DELETE * FROM "+ Constant.TABLE_P2DPOLY);
-            for (Text text1 : textList) {
-                DBHelper.insertText(db,text1.getLatLng().longitude,text1.getLatLng().latitude,
-                        text1.getContent());
-            }
-            for (Line line1 : lineList) {
-                DBHelper.insertLine(db,line1.getLatLngBegin().longitude, line1.getLatLngBegin()
-                        .latitude,line1.getLatLngEnd().longitude,line1.getLatLngEnd().latitude);
-            }
-            int id =0;int orderId = 0;
-            for (com.xunce.gsmr.model.gaodemap.graph.Vector vector1 : polyList) {
-                for (Point point : vector1.getPointList()) {
-                    DBHelper.insertPoly(db,id,orderId,point.getLongitude(),point.getLatitude());
-                    orderId++;
-                }
-                orderId = 0;
-                id++;
-            }
-            orderId = 0;id = 0;
-            for (com.xunce.gsmr.model.gaodemap.graph.Vector vector1 : p2dpolyList) {
-                for (Point point : vector1.getPointList()) {
-                    DBHelper.insertPoly(db,id,orderId,point.getLongitude(),point.getLatitude());
-                    orderId++;
-                }
-                orderId = 0;
-                id++;
-            }
-            db.setTransactionSuccessful();
-            db.endTransaction();
         }
     }
 
@@ -306,6 +273,41 @@ public class XmlParser extends DefaultHandler {
         super.endDocument();
         //解析完毕后---将获得的公里标List进行排序
         kilometerMarkHolder.sort();
+        //读取完成后把所有读到的数据存到指定的数据库中
+        SQLiteDatabase db = DBHelper.openDatabase(dbPath);
+        db.beginTransaction();
+        db.execSQL("DELETE FROM " + Constant.TABLE_TEXT + " WHERE 1=1");
+        db.execSQL("DELETE FROM " + Constant.TABLE_LINE + " WHERE 1=1");
+        db.execSQL("DELETE FROM " + Constant.TABLE_POLY + " WHERE 1=1");
+        db.execSQL("DELETE FROM "+ Constant.TABLE_P2DPOLY + " WHERE 1=1");
+        for (Text text1 : textList) {
+            DBHelper.insertText(db,text1.getLatLng().longitude,text1.getLatLng().latitude,
+                    text1.getContent());
+        }
+        for (Line line1 : lineList) {
+            DBHelper.insertLine(db,line1.getLatLngBegin().longitude, line1.getLatLngBegin()
+                    .latitude,line1.getLatLngEnd().longitude,line1.getLatLngEnd().latitude);
+        }
+        int id =0;int orderId = 0;
+        for (com.xunce.gsmr.model.gaodemap.graph.Vector vector1 : polyList) {
+            for (Point point : vector1.getPointList()) {
+                DBHelper.insertPoly(db,id,orderId,point.getLongitude(),point.getLatitude(),vector1.getName());
+                orderId++;
+            }
+            orderId = 0;
+            id++;
+        }
+        orderId = 0;id = 0;
+        for (com.xunce.gsmr.model.gaodemap.graph.Vector vector1 : p2dpolyList) {
+            for (Point point : vector1.getPointList()) {
+                DBHelper.insertP2DPoly(db,id,orderId,point.getLongitude(),point.getLatitude(),vector1.getName());
+                orderId++;
+            }
+            orderId = 0;
+            id++;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
         //打印查看公里标数据
         Timber.e("我解析完毕了...");
         Timber.e(kilometerMarkHolder.toString());
@@ -343,6 +345,7 @@ public class XmlParser extends DefaultHandler {
         static final String longitude = "longitude";
         static final String latitude = "latitude";
         static final String order = "order";
+        static final String name = "layer";
     }
 
     //getter----and-----setter----------------------------------

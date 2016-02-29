@@ -121,6 +121,7 @@ public class XmlMarkerParser extends DefaultHandler {
     @Override
     public void startDocument() throws SAXException {
         Timber.e("开始解析文档");
+        markerItemList.clear();
         super.startDocument();
     }
 

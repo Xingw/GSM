@@ -104,6 +104,38 @@ public class GaodeRailWayHolder {
         this.textList = textList;
         this.vectorList = vectorList;
 
+        for (Text text : textList) {
+            text.setLatLng(PositionUtil.gps84_To_Gcj02(text.getLatLng()));
+        }
+        for (Line line : lineList) {
+            line.setLatLngBegin(PositionUtil.gps84_To_Gcj02(line.getLatLngBegin()));
+            line.setLatLngEnd(PositionUtil.gps84_To_Gcj02(line.getLatLngEnd()));
+        }
+
+        kilometerMarkHolder = new KilometerMarkHolder();
+        for (Text text1 : textList) {
+            //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)
+            KilometerMark kilometerMark = KilometerMark.getKilometerMark(text1.getLatLng().longitude,
+                    text1.getLatLng().latitude, text1.getContent());
+            kilometerMarkHolder.addKilometerMark(kilometerMark);
+        }
+
+    }
+
+    /**
+     * 构造方法 传入数据 适用于数字地图
+     * @param textList
+     * @param vectorList
+     */
+    public GaodeRailWayHolder(List<Text> textList, List<Vector> vectorList) {
+        this.lineList = new ArrayList<>();
+        this.textList = textList;
+        this.vectorList = vectorList;
+
+        for (Text text : textList) {
+            text.setLatLng(PositionUtil.gps84_To_Gcj02(text.getLatLng()));
+        }
+
         kilometerMarkHolder = new KilometerMarkHolder();
         for (Text text1 : textList) {
             //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)

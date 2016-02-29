@@ -29,6 +29,7 @@ import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.lib.markerParser.XmlMarkerParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.baidumap.graph.Line;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.DrawMapDataEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
@@ -162,9 +163,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
 
         //初始化数据
         initdata();
-        //TODO---测试代码
-        double data[] = LonLatToUTMXY.latLonToUTM(29.75282575519019, 115.40374717759676);
-        Timber.e(data[0] + "\t" + data[1] + "\t" + data[2]);
+//        //TODO---测试代码
+//        double data[] = LonLatToUTMXY.latLonToUTM(29.75282575519019, 115.40374717759676);
+//        Timber.e(data[0] + "\t" + data[1] + "\t" + data[2]);
     }
 
     /**
@@ -191,7 +192,11 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                     ToastHelper.show(GaodePrjEditActivity.this, "请先加载Xml文件");
                     buttonView.setChecked(false);
                 } else if (isChecked && railWayHolder != null) {
+                    if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
+                        getaMap().moveCamera(CameraUpdateFactory.changeLatLng(railWayHolder.getTextList().get(0).getLatLng()));
+                    }
                     CameraPosition cameraPosition = getaMap().getCameraPosition();
+
                     if (cameraPosition.zoom > GaodeMapCons.zoomLevel) {
                         railWayHolder.draw(getaMap());
                     } else {
@@ -234,7 +239,6 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 GaodeMarkerActivity.start(GaodePrjEditActivity.this,
                         markerItem,prjItem.getDbLocation(), getaMap().getCameraPosition().target,
                         REQUEST_CODE_MARKER_ACTIVITY);
-                //TODO---发送消息---在选址activity画出地图数据
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         });
@@ -258,9 +262,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onClick(View v) {
                 toggleLlPosition();
-                //TODO`
                 loadMarker(prjItem);
-                //TODO
             }
         });
     }
@@ -270,7 +272,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     private void initdata(){
         railWayHolder = new GaodeRailWayHolder(this,prjItem.getDbLocation());
-        KMLParser kmlParser = new KMLParser(this,prjItem.getDbLocation());
+        KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
         kmlParser.draw(getaMap());
     }
     /**
@@ -557,8 +559,12 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         return;
                     }
                     //如果获取路径成功就----加载digitalMapHolder
-                    digitalMapHolder = new  DigitalMapHolder(this, path);
+                    digitalMapHolder = new  DigitalMapHolder(this, path,prjItem.getDbLocation());
                     //保存数字地图数据
+                    railWayHolder.hide();
+                    railWayHolder.clearData();
+                    railWayHolder = new GaodeRailWayHolder(digitalMapHolder
+                            .getTextList(),digitalMapHolder.getVectorList());
                 }
                 break;
             //加载xml文件

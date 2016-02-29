@@ -71,7 +71,8 @@ public class DBConstant {
             ", " + orderId +
             ", " + longitude +
             ", " + latitude +
-            ") values (?,?,?,?);";
+            ", " + layer +
+            ") values (?,?,?,?,?);";
 
     public static String Text_sql_insert ="insert into " + Constant.TABLE_TEXT +
             " (" + longitude +
@@ -84,5 +85,20 @@ public class DBConstant {
             ", " + orderId +
             ", " + longitude +
             ", " + latitude +
-            ") values (?,?,?,?);";
+            ", " + layer +
+            ") values (?,?,?,?,?);";
+
+    public static String Text_KML_sql_insert ="insert into " + Constant.TABLE_KML_TEXT +
+            " (" + longitude +
+            ", " + latitude +
+            ", " + content +
+            ") values (?,?,?);";
+
+    public static String Poly__KML_sql_insert ="insert into " + Constant.TABLE_KML_POLY +
+            " (" + id +
+            ", " + orderId +
+            ", " + longitude +
+            ", " + latitude +
+            ", " + content +
+            ") values (?,?,?,?,?);";
 }

@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;
@@ -14,6 +15,7 @@ import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.model.gaodemap.graph.Point;
 import com.xunce.gsmr.model.gaodemap.graph.Text;
 import com.xunce.gsmr.model.gaodemap.graph.Vector;
+import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.gps.PositionUtil;
 import com.xunce.gsmr.util.view.ToastHelper;
 
@@ -34,6 +36,8 @@ import timber.log.Timber;
 public class DigitalMapHolder {
     //数据库地址
     private String dbPath;
+
+    private String dbDataPath;
     //context
     private Context context;
 
@@ -53,10 +57,13 @@ public class DigitalMapHolder {
      *
      * @param dbPath 数据库文件路径
      */
-    public DigitalMapHolder(final Context context, final String dbPath) {
+    public DigitalMapHolder(final Context context, final String dbPath,final String dbDataPath) {
         this.dbPath = dbPath;
         this.context = context;
+        this.dbDataPath = dbDataPath;
 
+        textList.clear();
+        vectorList.clear();
         //启动线程前___显示progressbar
         EventBus.getDefault().post(new ProgressbarEvent(true));
         //启动异步线程解析数据
@@ -65,14 +72,13 @@ public class DigitalMapHolder {
             protected Void doInBackground(Void... params) {
                 //打开数据库
                 SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(new File(dbPath), null);
-
                 //读取数据库里面所有的-----Text
-                Cursor cursor = database.rawQuery("SELECT * FROM "+ Constant.TABLE_TEXT, null);
+                Cursor cursor = database.rawQuery("SELECT * FROM "+ Constant.TABLE_TEXT_DIGITAL, null);
                 while (cursor.moveToNext()) {
                     double latitude = cursor.getDouble(1);
                     double longitude = cursor.getDouble(0);
                     String content = cursor.getString(2);
-                    Text text = new Text(PositionUtil.gps84_To_Gcj02(latitude, longitude), content);
+                    Text text = new Text(new LatLng(latitude, longitude), content);
                     //提前初始化好数据
                     textList.add(text);
 
@@ -108,20 +114,50 @@ public class DigitalMapHolder {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                int vectorPointSum = 0;
-                for (Vector vector : vectorList) {
-                    vectorPointSum += vector.getPointList().size();
-                }
-                Timber.e( "我一共解释出来了这么多个VectorPoint的数据: " + vectorPointSum);
-                Timber.e("我一共解释出来了这么多个Text的数据: " + textList.size());
+//                int vectorPointSum = 0;
+//                for (Vector vector : vectorList) {
+//                    vectorPointSum += vector.getPointList().size();
+//                }
+                //将数据存入数据库中
+                saveintoDb();
+//                Timber.e( "我一共解释出来了这么多个VectorPoint的数据: " + vectorPointSum);
+//                Timber.e("我一共解释出来了这么多个Text的数据: " + textList.size());
                 //运行完将progressbar隐藏
                 EventBus.getDefault().post(new ProgressbarEvent(false));
-                ToastHelper.show(context, "数字地图加载成功!");
+                ToastHelper.show(context, "数字地图加载成功! ");
 
-                //TODO---打印获取的 公里标信息
+                //打印获取的 公里标信息
                 Timber.e(kilometerMarkHolder.toString());
             }
         }.execute();
+    }
+
+    /**
+     * 将数据存入DB数据库中
+     */
+    private void saveintoDb(){
+        //将数据存入数据库中
+        SQLiteDatabase db = DBHelper.openDatabase(dbDataPath);
+        db.beginTransaction();
+        db.execSQL("DELETE FROM " + Constant.TABLE_TEXT + " WHERE 1=1");
+        db.execSQL("DELETE FROM " + Constant.TABLE_LINE + " WHERE 1=1");
+        db.execSQL("DELETE FROM " + Constant.TABLE_POLY + " WHERE 1=1");
+        db.execSQL("DELETE FROM " + Constant.TABLE_P2DPOLY + " WHERE 1=1");
+        for (Text text : textList) {
+            DBHelper.insertText(db, text.getLatLng().longitude, text.getLatLng().latitude,
+                    text.getContent());
+        }
+        int id =0;int orderId = 0;
+        for (com.xunce.gsmr.model.gaodemap.graph.Vector vector1 : vectorList) {
+            for (Point point : vector1.getPointList()) {
+                DBHelper.insertPoly(db,id,orderId,point.getLongitude(),point.getLatitude(),vector1.getName());
+                orderId++;
+            }
+            orderId = 0;
+            id++;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 
     /**

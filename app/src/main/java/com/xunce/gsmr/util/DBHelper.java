@@ -460,8 +460,8 @@ public class DBHelper {
     }
 
     public static void insertPoly(SQLiteDatabase db, int id, int orderId, double longitude, double
-            latitude) {
-        Object[] args = new Object[]{id, orderId, longitude, latitude};
+            latitude,String layer) {
+        Object[] args = new Object[]{id, orderId, longitude, latitude,layer};
         try {
             db.execSQL(DBConstant.Poly_sql_insert, args);
         } catch (SQLException ex) {
@@ -470,8 +470,8 @@ public class DBHelper {
     }
 
     public static void insertP2DPoly(SQLiteDatabase db, int id, int orderId, double longitude, double
-            latitude) {
-        Object[] args = new Object[]{id, orderId, longitude, latitude};
+            latitude,String layer) {
+        Object[] args = new Object[]{id, orderId, longitude, latitude,layer};
         try {
             db.execSQL(DBConstant.P2DPoly_sql_insert, args);
         } catch (SQLException ex) {
@@ -479,6 +479,25 @@ public class DBHelper {
         }
     }
 
+    public static void insertKMLText(SQLiteDatabase db,double longitude, double latitude, String
+            content){
+        Object[] args = new Object[]{longitude, latitude, content};
+        try {
+            db.execSQL(DBConstant.Text_KML_sql_insert, args);
+        } catch (SQLException ex) {
+            Logger.w("Text插入失败 %s", ex.toString());
+        }
+    }
+
+    public static void insertKMLPoly(SQLiteDatabase db, int id, int orderId, double longitude, double
+            latitude,String content) {
+        Object[] args = new Object[]{id, orderId, longitude, latitude,content};
+        try {
+            db.execSQL(DBConstant.Poly__KML_sql_insert, args);
+        } catch (SQLException ex) {
+            Logger.w("Poly插入失败 %s", ex.toString());
+        }
+    }
     /**
      * 从数据库获取MarkerItem对应的图片并保存至临时目录
      *

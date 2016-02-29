@@ -39,6 +39,27 @@ public class PositionUtil {
           return new LatLng(mgLat,mgLon);
     }
 
+    /**
+     * 获取高德地图的坐标
+     * 84 to 火星坐标系 (GCJ-02) World Geodetic System ==> Mars Geodetic System
+     *
+     * @return
+     */
+    public static LatLng gps84_To_Gcj02(LatLng latLng) {
+        double lat = latLng.latitude;
+        double lon = latLng.longitude;
+        double dLat = transformLat(lon - 105.0, lat - 35.0);
+        double dLon = transformLon(lon - 105.0, lat - 35.0);
+        double radLat = lat / 180.0 * pi;
+        double magic = Math.sin(radLat);
+        magic = 1 - ee * magic * magic;
+        double sqrtMagic = Math.sqrt(magic);
+        dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * pi);
+        dLon = (dLon * 180.0) / (a / sqrtMagic * Math.cos(radLat) * pi);
+        double mgLat = lat + dLat;
+        double mgLon = lon + dLon;
+        return new LatLng(mgLat,mgLon);
+    }
 
     /**
      * 将百度LatLng转换为高德LatLng

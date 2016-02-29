@@ -1,9 +1,13 @@
 package com.xunce.gsmr.lib.kmlParser;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.amap.api.maps.AMap;
+import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.model.gaodemap.graph.Point;
+import com.xunce.gsmr.model.gaodemap.graph.Text;
 import com.xunce.gsmr.util.DBHelper;
 
 import org.xml.sax.Attributes;
@@ -28,14 +32,16 @@ public class KMLParser extends DefaultHandler {
     private List<KmlData> polyList = new ArrayList<>();
     private List<KmlData> textList = new ArrayList<>();
     private String qname = null;
+    private String dbPath;
 
     /**
      * 构造方法
      *
      * @param path
      */
-    public KMLParser(String path) {
+    public KMLParser(String path,String dbPath) {
         try {
+            this.dbPath = dbPath;
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setNamespaceAware(true);//设定该解析器工厂支持名称空间
             SAXParser saxParser = factory.newSAXParser();
@@ -45,7 +51,7 @@ public class KMLParser extends DefaultHandler {
         }
     }
 
-    public KMLParser(Context context ,String dbPath)
+    public KMLParser(String dbPath)
     {
         polyList = DBHelper.getKMLPolyInDB(dbPath);
         textList = DBHelper.getKMLTextInDB(dbPath);
@@ -127,7 +133,36 @@ public class KMLParser extends DefaultHandler {
 //        for (KmlData data : textList) {
 //            Timber.e("text:\t" + data.toString());
 //        }
+        //将数据存入数据库中
+        saveintoDb();
+
         super.endDocument();
+    }
+
+    /**
+     * 将数据存入DB数据库中
+     */
+    private void saveintoDb(){
+        //将数据存入数据库中
+        SQLiteDatabase db = DBHelper.openDatabase(dbPath);
+        db.beginTransaction();
+        db.execSQL("DELETE FROM " + Constant.TABLE_KML_TEXT + " WHERE 1=1");
+        db.execSQL("DELETE FROM " + Constant.TABLE_KML_POLY + " WHERE 1=1");
+        for (KmlData text : textList) {
+            DBHelper.insertKMLText(db, Double.valueOf(text.getLongitude()), Double.valueOf(text.getLatitude()),
+                    text.getName());
+        }
+        int id =0;int orderId = 0;
+        for (KmlData kmldata: polyList) {
+            for (GpsPoint point : kmldata.getPointList()) {
+                DBHelper.insertKMLPoly(db, id, orderId, point.getLongitude(), point.getLatitude(), kmldata.getName());
+                orderId++;
+            }
+            orderId = 0;
+            id++;
+        }
+        db.setTransactionSuccessful();
+        db.endTransaction();
     }
 }
 

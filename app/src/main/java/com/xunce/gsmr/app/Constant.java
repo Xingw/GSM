@@ -26,6 +26,7 @@ public class Constant {
     public static final String TABLE_POLY = "Poly";
     public static final String TABLE_P2DPOLY = "P2DPoly";
     public static final String TABLE_TEXT = "Text";
+    public static final String TABLE_TEXT_DIGITAL = "TextPoint";
     public static final String TABLE_LINE = "Line";
     public static final String TABLE_KML_POLY = "KMLPoly";
     public static final String TABLE_KML_TEXT = "KMLText";
