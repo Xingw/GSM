@@ -2,6 +2,7 @@ package com.xunce.gsmr.view.adapter;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,11 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.util.DBHelper;
@@ -22,9 +26,10 @@ import java.util.List;
  * 工程的adapter
  * Created by ssthouse on 2015/7/18.
  */
-public class PrjLvAdapter extends BaseAdapter {
-
+public class PrjLvAdapter extends BaseAdapter implements Filterable {
+    private PrjNameFilter prjNameFilter;
     private List<PrjItem> prjItemList;
+    private List<PrjItem> prjItemListdata;
     private List<PrjItem> selectList;
     private LayoutInflater inflater;
     private int anim = 0;
@@ -33,18 +38,20 @@ public class PrjLvAdapter extends BaseAdapter {
     private Animation MoveOutTv;
 
 
-    public PrjLvAdapter(Context context, List<PrjItem> prjItemList){
+    public PrjLvAdapter(Context context, List<PrjItem> prjItemList) {
         this.prjItemList = prjItemList;
+        this.prjItemListdata = prjItemList;
         inflater = LayoutInflater.from(context);
-        MoveIn = AnimationUtils.loadAnimation(context,R.anim.translate_right);
-        MoveOut = AnimationUtils.loadAnimation(context,R.anim.translate_left);
-        MoveOutTv = AnimationUtils.loadAnimation(context,R.anim.translate_textview_left);
+        MoveIn = AnimationUtils.loadAnimation(context, R.anim.translate_right);
+        MoveOut = AnimationUtils.loadAnimation(context, R.anim.translate_left);
+        MoveOutTv = AnimationUtils.loadAnimation(context, R.anim.translate_textview_left);
         selectList = new ArrayList<>();
         MoveIn.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
 
             }
+
             @Override
             public void onAnimationEnd(Animation animation) {
                 anim = 0;
@@ -92,7 +99,7 @@ public class PrjLvAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ViewHolder viewHolder;
-        if(convertView == null){
+        if (convertView == null) {
             //初始话ConvertView
             convertView = inflater.inflate(R.layout.view_lv_item_prj_select, null);
             //初始化ViewHoler
@@ -104,16 +111,15 @@ public class PrjLvAdapter extends BaseAdapter {
             //set  data
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
-        }else{
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
-            if(anim == 1)
-            {
+            if (anim == 1) {
                 viewHolder.cb.setVisibility(View.VISIBLE);
                 viewHolder.cb.startAnimation(MoveIn);
                 viewHolder.tv.startAnimation(MoveIn);
-            }else if(anim == 2 ){
+            } else if (anim == 2) {
                 viewHolder.cb.startAnimation(MoveOut);
                 viewHolder.cb.setVisibility(View.GONE);
                 viewHolder.tv.startAnimation(MoveOutTv);
@@ -122,25 +128,26 @@ public class PrjLvAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void CheckBox_Movein(){
+    public void CheckBox_Movein() {
         anim = 1;
         notifyDataSetChanged();
     }
 
-    public void CheckBox_Moveout(){
+    public void CheckBox_Moveout() {
         anim = 2;
         notifyDataSetChanged();
     }
-    private boolean isinselectList(PrjItem prjItem)
-    {
-        if(selectList == null || selectList.size() == 0){
+
+    private boolean isinselectList(PrjItem prjItem) {
+        if (selectList == null || selectList.size() == 0) {
             return false;
         }
-        if (selectList.contains(prjItem)){
+        if (selectList.contains(prjItem)) {
             return true;
         }
         return false;
     }
+
     class ViewHolder {
         CheckBox cb;
         TextView tv;
@@ -150,10 +157,49 @@ public class PrjLvAdapter extends BaseAdapter {
     public void notifyDataSetChanged() {
         //刷新数据
         prjItemList = DBHelper.getPrjItemList();
+        prjItemListdata = prjItemList;
         //刷新数据库
         super.notifyDataSetChanged();
     }
 
+    @Override
+    public Filter getFilter() {
+        if (prjNameFilter == null)
+            prjNameFilter = new PrjNameFilter();
+        return prjNameFilter;
+    }
+
+
+    private class PrjNameFilter extends Filter {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            FilterResults filterResults = new FilterResults();
+            List<PrjItem> mFilteredArrayList = new ArrayList<>();
+            if (TextUtils.isEmpty(constraint)) {
+                filterResults.values = prjItemListdata;
+                return filterResults;
+            }
+            for (PrjItem prjItem : prjItemListdata) {
+                if (prjItem.getPrjName().contains(constraint))
+                    mFilteredArrayList.add(prjItem);
+            }
+            filterResults.values = mFilteredArrayList;
+            return filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            prjItemList = (List<PrjItem>) results.values;
+            if (results.count > 0) {
+                notifyDataSetChanged();
+            } else {
+                notifyDataSetInvalidated();
+            }
+        }
+
+
+    }
     //getter----------and-----------setter
 
     public List<PrjItem> getPrjItemList() {
@@ -168,11 +214,13 @@ public class PrjLvAdapter extends BaseAdapter {
         return selectList;
     }
 
-    public void cleanSelectList(){
+    public void cleanSelectList() {
         selectList.clear();
     }
 
     public void setSelectList(List<PrjItem> selectList) {
         this.selectList = selectList;
     }
+
+
 }

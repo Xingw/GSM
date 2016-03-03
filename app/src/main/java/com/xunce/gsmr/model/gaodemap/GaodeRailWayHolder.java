@@ -61,6 +61,9 @@ public class GaodeRailWayHolder {
      * @param dbPath
      */
     public GaodeRailWayHolder(final Context context, final String dbPath) {
+        lineList = new ArrayList<>();
+        textList = new ArrayList<>();
+        vectorList = new ArrayList<>();
         kilometerMarkHolder = new KilometerMarkHolder();
         //启动线程前___显示progressbar
         EventBus.getDefault().post(new ProgressbarEvent(true));
@@ -95,6 +98,7 @@ public class GaodeRailWayHolder {
 
     /**
      * 构造方法 传入数据
+     *
      * @param lineList
      * @param textList
      * @param vectorList
@@ -124,6 +128,7 @@ public class GaodeRailWayHolder {
 
     /**
      * 构造方法 传入数据 适用于数字地图
+     *
      * @param textList
      * @param vectorList
      */
@@ -145,6 +150,7 @@ public class GaodeRailWayHolder {
         }
 
     }
+
     /**
      * 画出自己
      */
@@ -185,7 +191,6 @@ public class GaodeRailWayHolder {
         }
         return;
     }
-
 
 
     /**
@@ -353,7 +358,7 @@ public class GaodeRailWayHolder {
     /**
      * 清除数据
      */
-    public void clearData(){
+    public void clearData() {
         for (Line line : lineList) {
             line.setPolyline(null);
         }
@@ -363,6 +368,15 @@ public class GaodeRailWayHolder {
         for (Vector vector : vectorList) {
             vector.setPolyline(null);
         }
+    }
+
+
+    public boolean isempty() {
+        if (textList != null && lineList == null && vectorList == null)
+            return true;
+        if (textList.size() == 0 && lineList.size() == 0 && vectorList.size() == 0)
+            return true;
+        return false;
     }
 
     public KilometerMarkHolder getKilometerMarkHolder() {

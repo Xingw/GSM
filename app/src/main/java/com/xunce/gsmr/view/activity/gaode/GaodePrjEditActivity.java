@@ -6,12 +6,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
+import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -188,8 +191,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //如果是想打开--并且没有加载文件
-                if (isChecked && railWayHolder == null) {
-                    ToastHelper.show(GaodePrjEditActivity.this, "请先加载Xml文件");
+                if ((isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
+                    ToastHelper.show(GaodePrjEditActivity.this, "请先加载数据文件");
                     buttonView.setChecked(false);
                 } else if (isChecked && railWayHolder != null) {
                     if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
@@ -393,7 +396,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_prj_edit, menu);
-        return true;
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override

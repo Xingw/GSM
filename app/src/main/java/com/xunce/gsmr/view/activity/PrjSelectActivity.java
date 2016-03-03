@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,11 +21,13 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.PrjItem;
@@ -125,6 +129,7 @@ public class PrjSelectActivity extends AppCompatActivity {
         lv = (ListView) findViewById(R.id.id_lv);
         adapter = new PrjLvAdapter(this, DBHelper.getPrjItemList());
         lv.setAdapter(adapter);
+        lv.setTextFilterEnabled(true);
         //开启工程编辑Activity
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -174,18 +179,18 @@ public class PrjSelectActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(isInSelectMode){
+                if (isInSelectMode) {
                     btnAdd.setImageResource(R.drawable.fab_add);
                     adapter.CheckBox_Moveout();
                     isInSelectMode = false;
                     List<PrjItem> list = adapter.getSelectList();
-                    if(list !=null){
+                    if (list != null) {
                         for (PrjItem prjItem : list) {
-                            FileHelper.sendDbFile(PrjSelectActivity.this,prjItem.getDbLocation());
+                            FileHelper.sendDbFile(PrjSelectActivity.this, prjItem.getDbLocation());
                         }
                         adapter.cleanSelectList();
                     }
-                }else{
+                } else {
                     //会自动回调----刷新界面
                     showPrjNameDialog(PrjSelectActivity.this, adapter);
                 }
@@ -323,9 +328,9 @@ public class PrjSelectActivity extends AppCompatActivity {
                         ToastHelper.showSnack(context, v, "该工程已存在");
                     } else {
                         //将新的prjItem保存进数据库
-                        if (!DBHelper.createDbData(Constant.DbTempPath+prjName+".db",prjName)){
-                            ToastHelper.showSnack(context,v,"该工程已存在，请重新命名或选择导入工程");
-                        }else {
+                        if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
+                            ToastHelper.showSnack(context, v, "该工程已存在，请重新命名或选择导入工程");
+                        } else {
                             new PrjItem(prjName, Constant.DbTempPath + prjName + ".db").save();
                             //重新加载工程视图
                             adapter.notifyDataSetChanged();
@@ -357,6 +362,21 @@ public class PrjSelectActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_activity_prj_select, menu);
+        SearchView searchView = (SearchView) menu.findItem(R.id.id_action_search).getActionView();
+        searchView.setQueryHint("工程名");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                Logger.d("输入的内容是：%s", newText);
+                adapter.getFilter().filter(newText);
+                return true;
+            }
+        });
         return true;
     }
 
@@ -420,12 +440,12 @@ public class PrjSelectActivity extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        if(isInSelectMode){
+        if (isInSelectMode) {
             btnAdd.setImageResource(R.drawable.fab_add);
             adapter.CheckBox_Moveout();
             isInSelectMode = false;
             adapter.cleanSelectList();
-        }else if ((System.currentTimeMillis() - mExitTime) > 2000) {
+        } else if ((System.currentTimeMillis() - mExitTime) > 2000) {
             Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
             mExitTime = System.currentTimeMillis();
         } else {
