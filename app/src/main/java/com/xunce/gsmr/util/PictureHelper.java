@@ -17,6 +17,7 @@ import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.BitmapItem;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PictureItem;
+import com.xunce.gsmr.model.event.PictureTakeEven;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 /**
@@ -306,7 +308,7 @@ public class PictureHelper {
      *
      * @param activity
      */
-    public static Uri
+    public static void
     getPictureFromCamera(Activity activity, MarkerItem markerItem) {
         String state = Environment.getExternalStorageState();
         if (state.equals(Environment.MEDIA_MOUNTED)) {
@@ -315,17 +317,16 @@ public class PictureHelper {
             //如果该路径前面的parent路径不存在就创建
             file.getParentFile().mkdirs();
             Uri uri = Uri.fromFile(file);
-            Logger.w("存储了照片 Uri=%s", uri.toString());
+            Logger.w("发送了照片Uri Uri=%s", uri.toString());
+            EventBus.getDefault().post(new PictureTakeEven(uri));
             Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
             intent.putExtra(MediaStore.Images.Media.ORIENTATION, 0);
             intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
             activity.startActivityForResult(intent, Constant.REQUEST_CODE_CAMERA);
             activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
-            return uri;
         } else {
             Toast.makeText(activity, "请确认已经插入SD卡", Toast.LENGTH_SHORT).show();
         }
-        return null;
     }
 
     /**

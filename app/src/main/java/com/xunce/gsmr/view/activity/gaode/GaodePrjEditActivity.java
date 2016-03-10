@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
+import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.xunce.gsmr.R;
@@ -105,7 +106,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     //cad的xml文件开关
     private Switch swMapData;
     private boolean isMapTextShowed = false;
-
+    //地图设置——指南针功能
+    private UiSettings mUiSettings;
     /**
      * 数据解析器
      */
@@ -311,6 +313,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * 初始化地图Mode控件
      */
     private void initMapMode() {
+        mUiSettings = getaMap().getUiSettings();
+        mUiSettings.setCompassEnabled(true);
         //map_mode可见性的切换
         findViewById(R.id.id_ib_open_map_mode).setOnClickListener(new View.OnClickListener() {
             @Override

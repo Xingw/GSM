@@ -27,6 +27,7 @@ import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.BitmapItem;
 import com.xunce.gsmr.model.MarkerItem;
+import com.xunce.gsmr.model.event.PictureTakeEven;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.PictureHelper;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 /**
@@ -81,6 +83,7 @@ public class PicGridActivity extends AppCompatActivity {
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
         dbPath = (String) getIntent().getSerializableExtra(Constant.EXTRA_KEY_DBPATH);
         //获取数据库对象
+        EventBus.getDefault().register(this);
         markerItem = (MarkerItem) getIntent().getSerializableExtra(Constant.EXTRA_KEY_MARKER_ITEM);
         if (markerItem == null) {
             Timber.e("卧槽...我竟然时空的");
@@ -108,7 +111,7 @@ public class PicGridActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uri = PictureHelper.getPictureFromCamera(PicGridActivity.this, markerItem);
+                PictureHelper.getPictureFromCamera(PicGridActivity.this, markerItem);
             }
         });
 
@@ -203,7 +206,8 @@ public class PicGridActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        PictureHelper.delete(markerItem.getFilePath());
+        EventBus.getDefault().unregister(this);
+//        PictureHelper.delete(markerItem.getFilePath());
         PictureHelper.delete(Constant.TEMP_SHARE_PATH);
         super.onDestroy();
     }
@@ -373,7 +377,7 @@ public class PicGridActivity extends AppCompatActivity {
                     bitmap = PictureHelper.getSmallBitmap(uri.getPath(), 120, 120);
                     //将其缓存
                     PictureHelper.saveImage(bitmap, Constant.TEMP_FILE_PATH + picName);
-                    //PictureHelper.deletePicture(uri.getPath());//将照片存入数据库后删除
+                    PictureHelper.deletePicture(uri.getPath());//将照片存入数据库后删除
                 }
                 uri = null;
             } else {
@@ -391,5 +395,10 @@ public class PicGridActivity extends AppCompatActivity {
 //        removeAllSelected();
 //        updateView();
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    public void onEventMainThread(PictureTakeEven pictureTakeEven) {
+        Logger.d("接收到照片拍摄事件");
+        uri = pictureTakeEven.getUri();
     }
 }
