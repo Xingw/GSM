@@ -243,7 +243,7 @@ public class PrjSelectActivity extends AppCompatActivity {
                 .withDialogColor(context.getResources().getColor(R.color.dialog_color))
                 .withEffect(Effectstype.Slidetop)       //def Effectstype.Slidetop
                 .setCustomView(ll, context)
-                .isCancelableOnTouchOutside(true)       //不可以点击外面取消
+                .isCancelableOnTouchOutside(false)       //不可以点击外面取消
                 .show();
     }
 
