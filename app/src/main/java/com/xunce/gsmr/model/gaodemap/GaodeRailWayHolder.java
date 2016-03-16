@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;

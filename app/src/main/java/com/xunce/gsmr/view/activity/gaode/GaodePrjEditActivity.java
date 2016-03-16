@@ -25,6 +25,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.lib.xmlparser.XmlParser;
@@ -34,6 +35,7 @@ import com.xunce.gsmr.lib.markerParser.XmlMarkerParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.graph.Line;
+import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.DrawMapDataEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
@@ -528,6 +530,19 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         }
     }
 
+    /**
+     * 提示xml文件加载情况
+     *
+     * @param cadReadFinishEvent
+     */
+    public void onEventMainThread(CADReadFinishEvent cadReadFinishEvent) {
+        //加载数据
+        railWayHolder.hide();
+        railWayHolder.clearData();
+        railWayHolder = new GaodeRailWayHolder(cadReadFinishEvent.getLineList(),
+                cadReadFinishEvent.getTextList(),cadReadFinishEvent.getVectorList());
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -586,16 +601,6 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         return;
                     }
                     xmlParser = new XmlParser(this, path,prjItem.getDbLocation());
-                    //合并两个表
-                    List<Vector> vectorList = new ArrayList<>();
-                    vectorList.addAll(xmlParser.getPolyList());
-                    vectorList.addAll(xmlParser.getP2dpolyList());
-
-                    //加载数据
-                    railWayHolder.hide();
-                    railWayHolder.clearData();
-                    railWayHolder = new GaodeRailWayHolder(xmlParser.getLineList(),xmlParser
-                            .getTextList(),vectorList);
                 }
                 break;
             //加载kml文件
