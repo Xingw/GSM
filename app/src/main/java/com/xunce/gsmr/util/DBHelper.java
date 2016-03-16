@@ -353,7 +353,7 @@ public class DBHelper {
      */
     public static SQLiteDatabase openDatabase(String Path) {
         SQLiteDatabase db = SQLiteDatabase.openDatabase(Path, null,
-                SQLiteDatabase.OPEN_READWRITE);
+                SQLiteDatabase.NO_LOCALIZED_COLLATORS);
         return db;
     }
 

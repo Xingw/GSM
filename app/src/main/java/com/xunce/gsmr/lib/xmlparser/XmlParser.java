@@ -275,11 +275,11 @@ public class XmlParser extends DefaultHandler {
         kilometerMarkHolder.sort();
         //读取完成后把所有读到的数据存到指定的数据库中
         SQLiteDatabase db = DBHelper.openDatabase(dbPath);
-        db.beginTransaction();
         db.execSQL("DELETE FROM " + Constant.TABLE_TEXT + " WHERE 1=1");
         db.execSQL("DELETE FROM " + Constant.TABLE_LINE + " WHERE 1=1");
         db.execSQL("DELETE FROM " + Constant.TABLE_POLY + " WHERE 1=1");
         db.execSQL("DELETE FROM "+ Constant.TABLE_P2DPOLY + " WHERE 1=1");
+        db.beginTransaction();
         for (Text text1 : textList) {
             DBHelper.insertText(db,text1.getLatLng().longitude,text1.getLatLng().latitude,
                     text1.getContent());

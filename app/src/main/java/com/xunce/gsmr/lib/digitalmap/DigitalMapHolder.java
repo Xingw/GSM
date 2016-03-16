@@ -16,7 +16,6 @@ import com.xunce.gsmr.model.gaodemap.graph.Point;
 import com.xunce.gsmr.model.gaodemap.graph.Text;
 import com.xunce.gsmr.model.gaodemap.graph.Vector;
 import com.xunce.gsmr.util.DBHelper;
-import com.xunce.gsmr.util.gps.PositionUtil;
 import com.xunce.gsmr.util.view.ToastHelper;
 
 import java.io.File;
@@ -37,7 +36,7 @@ public class DigitalMapHolder {
     //数据库地址
     private String dbPath;
 
-    private String dbDataPath;
+    private String dbPrjPath;
     //context
     private Context context;
 
@@ -57,10 +56,10 @@ public class DigitalMapHolder {
      *
      * @param dbPath 数据库文件路径
      */
-    public DigitalMapHolder(final Context context, final String dbPath,final String dbDataPath) {
+    public DigitalMapHolder(final Context context, final String dbPath,final String dbPrjPath) {
         this.dbPath = dbPath;
         this.context = context;
-        this.dbDataPath = dbDataPath;
+        this.dbPrjPath = dbPrjPath;
 
         textList.clear();
         vectorList.clear();
@@ -71,7 +70,7 @@ public class DigitalMapHolder {
             @Override
             protected Void doInBackground(Void... params) {
                 //打开数据库
-                SQLiteDatabase database = SQLiteDatabase.openOrCreateDatabase(new File(dbPath), null);
+                SQLiteDatabase database = DBHelper.openDatabase(dbPath);
                 //读取数据库里面所有的-----Text
                 Cursor cursor = database.rawQuery("SELECT * FROM "+ Constant.TABLE_TEXT_DIGITAL, null);
                 while (cursor.moveToNext()) {
@@ -108,6 +107,7 @@ public class DigitalMapHolder {
                     vector.getPointList().add(new Point(cursorVector.getDouble(1), cursorVector.getDouble(2)));
                 }
                 cursorVector.close();
+                database.close();
                 return null;
             }
 
@@ -137,12 +137,12 @@ public class DigitalMapHolder {
      */
     private void saveintoDb(){
         //将数据存入数据库中
-        SQLiteDatabase db = DBHelper.openDatabase(dbDataPath);
-        db.beginTransaction();
+        SQLiteDatabase db = DBHelper.openDatabase(dbPrjPath);
         db.execSQL("DELETE FROM " + Constant.TABLE_TEXT + " WHERE 1=1");
         db.execSQL("DELETE FROM " + Constant.TABLE_LINE + " WHERE 1=1");
         db.execSQL("DELETE FROM " + Constant.TABLE_POLY + " WHERE 1=1");
         db.execSQL("DELETE FROM " + Constant.TABLE_P2DPOLY + " WHERE 1=1");
+        db.beginTransaction();
         for (Text text : textList) {
             DBHelper.insertText(db, text.getLatLng().longitude, text.getLatLng().latitude,
                     text.getContent());
@@ -158,6 +158,7 @@ public class DigitalMapHolder {
         }
         db.setTransactionSuccessful();
         db.endTransaction();
+        db.close();
     }
 
     /**
