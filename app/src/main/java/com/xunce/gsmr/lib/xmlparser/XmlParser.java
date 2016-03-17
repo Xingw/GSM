@@ -274,11 +274,7 @@ public class XmlParser extends DefaultHandler {
         super.endDocument();
         //解析完毕后---将获得的公里标List进行排序
         kilometerMarkHolder.sort();
-        //合并两个表
-        List<com.xunce.gsmr.model.gaodemap.graph.Vector> vectorList = new ArrayList<>();
-        vectorList.addAll(getPolyList());
-        vectorList.addAll(getP2dpolyList());
-        EventBus.getDefault().post(new CADReadFinishEvent(textList,lineList,vectorList));
+        EventBus.getDefault().post(new CADReadFinishEvent());
         //读取完成后把所有读到的数据存到指定的数据库中
         SQLiteDatabase db = DBHelper.openDatabase(dbPath);
         db.execSQL("DELETE FROM " + Constant.TABLE_TEXT + " WHERE 1=1");
@@ -356,6 +352,13 @@ public class XmlParser extends DefaultHandler {
 
     //getter----and-----setter----------------------------------
 
+    public List<com.xunce.gsmr.model.gaodemap.graph.Vector> getvectorList(){
+        //合并两个表
+        List<com.xunce.gsmr.model.gaodemap.graph.Vector> vectorList = new ArrayList<>();
+        vectorList.addAll(getPolyList());
+        vectorList.addAll(getP2dpolyList());
+        return vectorList;
+    }
     public String getXmlFilePath() {
         return xmlFilePath;
     }

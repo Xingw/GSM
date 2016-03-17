@@ -116,6 +116,14 @@ public class GaodeRailWayHolder {
             line.setLatLngBegin(PositionUtil.gps84_To_Gcj02(line.getLatLngBegin()));
             line.setLatLngEnd(PositionUtil.gps84_To_Gcj02(line.getLatLngEnd()));
         }
+        for (Vector vector : vectorList) {
+            for (Point point : vector.getPointList()) {
+                LatLng latLng = PositionUtil.gps84_To_Gcj02(point.getLatitude(),point
+                        .getLongitude());
+                point.setLatitude(latLng.latitude);
+                point.setLongitude(latLng.longitude);
+            }
+        }
 
         kilometerMarkHolder = new KilometerMarkHolder();
         for (Text text1 : textList) {

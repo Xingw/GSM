@@ -84,5 +84,4 @@ dependencies {
     compile 'com.daimajia.swipelayout:library:1.1.8@aar'
     compile files('libs/AMap_Location_v2.1.0_20151202.jar')
     compile 'com.orhanobut:logger:1.11'
-    compile 'com.orhanobut:logger:1.11'
 }
