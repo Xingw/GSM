@@ -1,7 +1,5 @@
 package com.xunce.gsmr.model;
 
-import com.baidu.mapapi.model.LatLng;
-import com.baidu.mapapi.utils.CoordinateConverter;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.gps.PositionUtil;
@@ -186,20 +184,6 @@ public class MarkerItem implements Serializable {
         initFields();
     }
 
-    /**
-     * 百度LatLng的构造方法
-     *
-     * @param latLng 百度地图的LatLng
-     */
-    public MarkerItem( LatLng latLng) {
-        super();
-        this.latitude = latLng.latitude;
-        this.longitude = latLng.longitude;
-        //根据当前时间创建路径名称
-        this.MarkerId = System.currentTimeMillis() + "";
-        //初始化Fields
-        initFields();
-    }
 
     /**
      * 高德地图LatLng的构造方法
@@ -231,21 +215,6 @@ public class MarkerItem implements Serializable {
         initFields();
     }
 
-
-    /**
-     * 获取百度LatLng
-     * 将国测局坐标转换为百度坐标
-     *
-     * @return 百度地图LatLng
-     */
-    public LatLng getBaiduLatLng() {
-        // 将google地图、soso地图、aliyun地图、mapabc地图和amap地图// 所用坐标转换成百度坐标
-        CoordinateConverter converter = new CoordinateConverter();
-        converter.from(CoordinateConverter.CoordType.COMMON);
-        // sourceLatLng待转换坐标
-        converter.coord(new LatLng(latitude, longitude));
-        return converter.convert();
-    }
 
     /**
      * 获取高德LatLng

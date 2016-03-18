@@ -2,7 +2,6 @@ package com.xunce.gsmr.util;
 
 import android.util.Log;
 
-import com.baidu.location.BDLocation;
 import com.xunce.gsmr.model.MarkerItem;
 
 /**
@@ -13,10 +12,6 @@ public class L {
 
     public static void log(String tag, String msg) {
         Log.e(tag, msg);
-    }
-
-    public static void log(String tag, BDLocation bdLocation) {
-        Log.e(tag, bdLocation.getLongitude() + " : " + bdLocation.getLatitude());
     }
 
     public static void log(String tag, MarkerItem markerItem) {

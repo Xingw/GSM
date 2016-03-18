@@ -22,12 +22,15 @@ import com.xunce.gsmr.util.DBHelper;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.Realm;
+
 /**
  * 工程的adapter
  * Created by ssthouse on 2015/7/18.
  */
 public class PrjLvAdapter extends BaseAdapter implements Filterable {
     private PrjNameFilter prjNameFilter;
+    private Context context;
     private List<PrjItem> prjItemList;
     private List<PrjItem> prjItemListdata;
     private List<PrjItem> selectList;
@@ -37,10 +40,11 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
     private Animation MoveOut;
     private Animation MoveOutTv;
 
-
     public PrjLvAdapter(Context context, List<PrjItem> prjItemList) {
+        this.context = context;
         this.prjItemList = prjItemList;
         this.prjItemListdata = prjItemList;
+
         inflater = LayoutInflater.from(context);
         MoveIn = AnimationUtils.loadAnimation(context, R.anim.translate_right);
         MoveOut = AnimationUtils.loadAnimation(context, R.anim.translate_left);
@@ -156,7 +160,7 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
     @Override
     public void notifyDataSetChanged() {
         //刷新数据
-        prjItemList = DBHelper.getPrjItemList();
+        prjItemList = DBHelper.getPrjItemList(Realm.getInstance(context));
         prjItemListdata = prjItemList;
         //刷新数据库
         super.notifyDataSetChanged();

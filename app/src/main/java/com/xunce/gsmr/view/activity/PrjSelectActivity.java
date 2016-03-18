@@ -38,7 +38,6 @@ import com.xunce.gsmr.util.VibrateHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
-import com.xunce.gsmr.view.activity.baidu.BaiduPrjEditActivity;
 import com.xunce.gsmr.view.activity.gaode.GaodePrjEditActivity;
 import com.xunce.gsmr.view.adapter.PrjLvAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
@@ -46,6 +45,8 @@ import com.xunce.gsmr.view.style.TransparentStyle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * 主界面选择工程的Activity Created by ssthouse on 2015/7/17.
@@ -58,6 +59,7 @@ public class PrjSelectActivity extends AppCompatActivity {
     private PrjLvAdapter adapter;
     private FloatingActionButton btnAdd;
     private long mExitTime;
+    private Realm realm;
 
     public static void start(Activity activity, boolean isCalledByPrjEditAty) {
         Intent intent = new Intent(activity, PrjSelectActivity.class);
@@ -69,9 +71,9 @@ public class PrjSelectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        realm = Realm.getInstance(this);
         setContentView(R.layout.activity_prj_select);
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
-
         //监测是否为PrjEditActivity调用
         boolean isCalled = getIntent().getBooleanExtra(EXTRA_KEY_IS_CALLED, false);
         if (isCalled) {
@@ -83,17 +85,12 @@ public class PrjSelectActivity extends AppCompatActivity {
         //判断---如果有上次打开的Project---就直接跳转
         //判断是否有上次编辑的project
         if (PreferenceHelper.getInstance(this).hasLastEditPrjItem(this)) {
-            PrjItem prjItem = DBHelper.getPrjItemByName(PreferenceHelper.getInstance(this).getLastEditPrjName
-                    (this));
+            PrjItem prjItem = DBHelper.getPrjItemByName(realm,PreferenceHelper.getInstance(this)
+                    .getLastEditPrjName(this));
             if (prjItem != null) {
                 //判断MapType
                 //判断地图类型--启动Activity
-                if (PreferenceHelper.getInstance(PrjSelectActivity.this).getMapType()
-                        == PreferenceHelper.MapType.BAIDU_MAP) {
-                    BaiduPrjEditActivity.start(PrjSelectActivity.this, prjItem);
-                } else {
                     GaodePrjEditActivity.start(PrjSelectActivity.this, prjItem);
-                }
                 finish();
             }
         }
@@ -106,7 +103,7 @@ public class PrjSelectActivity extends AppCompatActivity {
      * 检查数据库是否存在 不存在的话就删除这个内容
      */
     private void checkDbLocation() {
-        List<PrjItem> prjItemList = DBHelper.getPrjItemList();
+        List<PrjItem> prjItemList = DBHelper.getPrjItemList(realm);
         if (prjItemList == null || prjItemList.size() == 0) return;
         for (PrjItem item : prjItemList) {
             File file = new File(item.getDbLocation());
@@ -115,7 +112,9 @@ public class PrjSelectActivity extends AppCompatActivity {
                         .getPrjName())) {
                     PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
                 }
-                item.delete();
+                realm.beginTransaction();
+                item.removeFromRealm();
+                realm.commitTransaction();
             }
         }
     }
@@ -127,7 +126,7 @@ public class PrjSelectActivity extends AppCompatActivity {
         ViewHelper.initActionBar(this, getSupportActionBar(), "基址勘察");
 
         lv = (ListView) findViewById(R.id.id_lv);
-        adapter = new PrjLvAdapter(this, DBHelper.getPrjItemList());
+        adapter = new PrjLvAdapter(this, DBHelper.getPrjItemList(realm));
         lv.setAdapter(adapter);
         lv.setTextFilterEnabled(true);
         //开启工程编辑Activity
@@ -151,14 +150,8 @@ public class PrjSelectActivity extends AppCompatActivity {
                                     adapter.getPrjItemList().get(position).getPrjName());
                     finish();
                     //判断地图类型--启动Activity
-                    if (PreferenceHelper.getInstance(PrjSelectActivity.this).getMapType()
-                            == PreferenceHelper.MapType.BAIDU_MAP) {
-                        BaiduPrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
-                                .get(position));
-                    } else {
                         GaodePrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
                                 .get(position));
-                    }
                 }
             }
         });
@@ -214,7 +207,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialogBuilder.dismiss();
-                prjItem.deletePrj(context);
+                deletePrj(prjItem);
                 //刷新视图
                 adapter.notifyDataSetChanged();
             }
@@ -274,10 +267,10 @@ public class PrjSelectActivity extends AppCompatActivity {
                 if (prjName.equals("")) {
                     ToastHelper.showSnack(context, v, "工程名不可为空");
                 } else {
-                    if (DBHelper.isPrjExist(prjName)) {
+                    if (DBHelper.isPrjExist(realm,prjName)) {
                         ToastHelper.showSnack(context, v, "该工程已存在");
                     } else {
-                        prjItem.changeName(context, prjName);
+                        changeName(prjItem, prjName);
                         dialogBuilder.dismiss();
                         ToastHelper.showSnack(context, v, "重命名成功!");
                     }
@@ -324,14 +317,17 @@ public class PrjSelectActivity extends AppCompatActivity {
                 if (prjName.equals("")) {
                     ToastHelper.showSnack(context, v, "工程名不可为空");
                 } else {
-                    if (DBHelper.isPrjExist(prjName)) {
+                    if (DBHelper.isPrjExist(realm,prjName)) {
                         ToastHelper.showSnack(context, v, "该工程已存在");
                     } else {
                         //将新的prjItem保存进数据库
                         if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
                             ToastHelper.showSnack(context, v, "该工程已存在，请重新命名或选择导入工程");
                         } else {
-                            new PrjItem(prjName, Constant.DbTempPath + prjName + ".db").save();
+                            PrjItem prjItem=new PrjItem(prjName, Constant.DbTempPath + prjName + ".db");
+                            realm.beginTransaction();
+                            PrjItem prjItem1 = realm.copyToRealm(prjItem);
+                            realm.commitTransaction();
                             //重新加载工程视图
                             adapter.notifyDataSetChanged();
                             //消除Dialog
@@ -422,11 +418,13 @@ public class PrjSelectActivity extends AppCompatActivity {
                 }
                 String prjName = cursor.getString(cursor.getColumnIndex(DBConstant
                         .prjInfo_coloum_prjName));
-                if (DBHelper.isPrjExist(prjName)) {
+                if (DBHelper.isPrjExist(realm,prjName)) {
                     ToastHelper.show(PrjSelectActivity.this, "该工程已存在");
                 } else {
                     PrjItem prjItem = new PrjItem(prjName, path);
-                    prjItem.save();
+                    realm.beginTransaction();
+                    PrjItem prjItem1 = realm.copyToRealm(prjItem);
+                    realm.commitTransaction();
                     //重新加载工程视图
                     adapter.notifyDataSetChanged();
                     break;
@@ -435,6 +433,39 @@ public class PrjSelectActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * 删除一个PrjItem的所有数据
+     */
+    public void deletePrj(PrjItem prjItem){
+        //首先要判断Preference中保存的是不是当前工程
+        //如果是要删除Preference
+        if(PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItem.getPrjName
+                ())){
+            PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
+        }
+        realm.beginTransaction();
+        prjItem.removeFromRealm();
+        realm.commitTransaction();
+    }
+
+    /**
+     * 改变工程名
+     * @param newName
+     */
+    public void changeName(PrjItem prjItem, String newName){
+        //首先要判断Preference中保存的是不是当前工程
+        //如果是要修改Preference
+        if(PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItem.getPrjName())){
+            PreferenceHelper.getInstance(this).setLastEditPrjName(this, newName);
+        }
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(prjItem.getDbLocation(),null,SQLiteDatabase
+                .OPEN_READWRITE);
+        db.execSQL("update Projectinfo set prjName = '"+newName+"' WHERE prjName = '" + prjItem
+                .getPrjName()+"'");
+        realm.beginTransaction();
+        prjItem.setPrjName(newName);
+        realm.commitTransaction();
+    }
     /**
      * 实现两次返回退出程序
      */

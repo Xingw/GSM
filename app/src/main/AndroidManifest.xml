@@ -56,17 +56,10 @@
         <!--高德地图的Key-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="c0d2c8ea88dedc1ebe05077b72544025"/>
-        <!--active_android数据库-->
-        <meta-data
-            android:name="AA_DB_NAME"
-            android:value="Location.db" />
-        <meta-data
-            android:name="AA_DB_VERSION"
-            android:value="1" />
+            android:value="dab79a7dbf7b51f12ae158cf85292f56"/>
         <!--BUG_HD反馈-->
         <meta-data
-            android:value=" c0656f9c04d47b4a7a40737816064b3a"
+            android:value="c0656f9c04d47b4a7a40737816064b3a"
             android:name="BUG_HD_SDK_GENERAL_KEY" />
         <!--百度地图定位service-->
         <!--<service-->
@@ -87,40 +80,13 @@
         <!--工程编辑Activity-->
         <activity
             android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.BaiduPrjEditActivity">
-        </activity>
-        <!--选址-->
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.BaiduMarkerActivity"/>
-        <!--测量Activity-->
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.BaiduMeasureActivity"/>
-
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.NaviActivity" />
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.RoutePlanActivity" />
-        <!--图片Grid查看-->
-        <activity
-            android:screenOrientation="portrait"
             android:name=".view.activity.PicGridActivity"
         />
-        <activity
-            android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.BaiduGetLatLngActivity"/>
         <!--设置-->
         <activity
             android:screenOrientation="portrait"
             android:name=".view.activity.SettingActivity"/>
-        <!--离线地图-->
-        <activity
-            android:theme="@style/CustomNoActionbarStyle"
-            android:screenOrientation="portrait"
-            android:name=".view.activity.baidu.BaiduOfflineActivity"/>
+
         <!--高德地图-->
         <activity android:name=".view.activity.gaode.GaodeBaseActivity"
             android:screenOrientation="portrait"/>
