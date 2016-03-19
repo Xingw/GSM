@@ -541,8 +541,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //加载数据
         railWayHolder.hide();
         railWayHolder.clearData();
-        railWayHolder = new GaodeRailWayHolder(xmlParser.getLineList(),
-                xmlParser.getTextList(),xmlParser.getvectorList());
+        railWayHolder = new GaodeRailWayHolder(this,prjItem.getDbLocation());
     }
 
     @Override
