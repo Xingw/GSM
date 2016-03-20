@@ -34,7 +34,6 @@ import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.lib.markerParser.XmlMarkerParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
-import com.xunce.gsmr.model.baidumap.graph.Line;
 import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.DrawMapDataEvent;
@@ -142,7 +141,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     public static void start(Activity activity, PrjItem prjItem) {
         Intent intent = new Intent(activity, GaodePrjEditActivity.class);
-        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM, prjItem);
+        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM_NAME, prjItem.getPrjName());
+        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH, prjItem.getDbLocation());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
     }
@@ -160,7 +160,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         PreferenceHelper.getInstance(this).initMarkerIconPreference();
 
         //接收数据
-        prjItem = (PrjItem) getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM);
+        String prjName =(String)getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM_NAME);
+        String DBpath =(String)getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH);
+        prjItem = new PrjItem(prjName,DBpath);
 
         //启动定位
         super.initLocate();
@@ -539,8 +541,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //加载数据
         railWayHolder.hide();
         railWayHolder.clearData();
-        railWayHolder = new GaodeRailWayHolder(cadReadFinishEvent.getLineList(),
-                cadReadFinishEvent.getTextList(),cadReadFinishEvent.getVectorList());
+        railWayHolder = new GaodeRailWayHolder(this,prjItem.getDbLocation());
     }
 
     @Override

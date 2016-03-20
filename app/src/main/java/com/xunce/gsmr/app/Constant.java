@@ -32,7 +32,8 @@ public class Constant {
     public static final String TABLE_KML_TEXT = "KMLText";
 
     //Extra的key
-    public static final String EXTRA_KEY_PRJ_ITEM = "prjItem";
+    public static final String EXTRA_KEY_PRJ_ITEM_NAME = "prjItem_name";
+    public static final String EXTRA_KEY_PRJ_ITEM_DBPATH = "prjItem_DBPath";
     public static final String EXTRA_KEY_MARKER_ITEM = "markerItem";
     public static final String EXTRA_KEY_REQUEST_CODE = "requestCode";
     public static final String EXTRA_KEY_LATITUDE = "latitude";

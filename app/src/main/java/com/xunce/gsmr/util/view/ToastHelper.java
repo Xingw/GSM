@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.BDLocation;
 import com.xunce.gsmr.R;
 
 /**
@@ -24,12 +23,6 @@ public class ToastHelper {
         tv.setTextColor(context.getResources().getColor(R.color.white));
         tv.setTextSize(16);
         snackbar.show();
-    }
-
-
-    public static void show(Context context, BDLocation bdLocation) {
-        Toast.makeText(context, bdLocation.getLongitude() + " : " + bdLocation.getLatitude(),
-                Toast.LENGTH_SHORT).show();
     }
 
     public static void show(Context context, String msg){

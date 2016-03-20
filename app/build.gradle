@@ -62,7 +62,6 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:design:22.2.0'
     //依赖注入
-    compile 'com.jakewharton:butterknife:7.0.1'
     //Material dialog
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.sd6352051.niftydialogeffects:niftydialogeffects:1.0.0@aar'
@@ -72,9 +71,7 @@ dependencies {
     compile 'com.github.rahatarmanahmed:circularprogressview:2.4.0'
     //event_bus
     compile 'de.greenrobot:eventbus:2.4.0'
-    compile files('libs/Android_Map_2.5.1.20150827.jar')
     compile files('libs/MapApiServices.jar')
-    compile files('libs/AMap_Location_v2.1.0_20151202.jar')
     //for BugHD
     compile 'im.fir:fir-sdk:latest.integration@aar'
     compile project(':aFileChooser')
@@ -82,7 +79,9 @@ dependencies {
     compile 'com.jakewharton.timber:timber:4.1.0'
     //侧滑删除的lib
     compile 'com.daimajia.swipelayout:library:1.1.8@aar'
-    compile files('libs/AMap_Location_v2.1.0_20151202.jar')
     compile 'com.orhanobut:logger:1.11'
-    compile 'com.orhanobut:logger:1.11'
+    compile 'io.realm:realm-android:0.84.1'
+    compile files('libs/AMap_Location_V2.4.0_20160308.jar')
+    compile files('libs/AMap_2DMap_V2.8.1_20160202.jar')
+    compile files('libs/AMap_3DMap_V3.2.1_20160225.jar')
 }

@@ -116,7 +116,6 @@ public class GaodeRailWayHolder {
             line.setLatLngBegin(PositionUtil.gps84_To_Gcj02(line.getLatLngBegin()));
             line.setLatLngEnd(PositionUtil.gps84_To_Gcj02(line.getLatLngEnd()));
         }
-
         kilometerMarkHolder = new KilometerMarkHolder();
         for (Text text1 : textList) {
             //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)

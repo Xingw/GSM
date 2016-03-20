@@ -8,8 +8,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 
-import com.activeandroid.query.Delete;
-import com.activeandroid.query.Select;
 import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.lib.kmlParser.GpsPoint;
@@ -21,6 +19,8 @@ import com.xunce.gsmr.model.PrjItem;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.realm.Realm;
 
 /**
  * 数据库处理的工具类(处理app存储的本地数据库) Created by ssthouse on 2015/7/17.
@@ -80,11 +80,10 @@ public class DBHelper {
      * @return
      */
 
-    public static boolean isPrjExist(String prjName) {
-        List<PrjItem> prjItems = new Select()
-                .from(PrjItem.class)
-                .where("prjName = " + "'" + prjName + "'")
-                .execute();
+    public static boolean isPrjExist(Realm realm,String prjName) {
+        List<PrjItem> prjItems = realm.where(PrjItem.class)
+                                      .equalTo("prjName",prjName)
+                                      .findAll();
         return !(prjItems == null || prjItems.size() == 0);
     }
 
@@ -181,11 +180,9 @@ public class DBHelper {
     /**
      * 按照创建的Id的顺序获取PrjItm的列表
      */
-    public static List<PrjItem> getPrjItemList() {
-        return new Select()
-                .from(PrjItem.class)
-                .orderBy("Id ASC")
-                .execute();
+    public static List<PrjItem> getPrjItemList(Realm realm) {
+        return realm.where(PrjItem.class)
+                .findAll();
     }
 
     /**
@@ -194,11 +191,10 @@ public class DBHelper {
      * @param prjName
      * @return
      */
-    public static PrjItem getPrjItemByName(String prjName) {
-        return new Select()
-                .from(PrjItem.class)
-                .where("prjName = " + "'" + prjName + "'")
-                .executeSingle();
+    public static PrjItem getPrjItemByName(Realm realm,String prjName) {
+        return  realm.where(PrjItem.class)
+                .equalTo("prjName",prjName)
+                .findFirst();
     }
 //    /**
 //     * 获取一个PrjItem所有的Marker点
@@ -569,16 +565,6 @@ public class DBHelper {
         Logger.w("删除了照片:%s", markerId);
     }
 
-    /**
-     * 删除PrjItem
-     * @param PrjName
-     */
-    public static void deletePrjItem(String PrjName){
-        new Delete()
-                .from(PrjItem.class)
-                .where("prjName = " + "'" + PrjName + "'")
-                .execute();
-    }
     /***************************************************
      * 更新部分
      **************************************/
