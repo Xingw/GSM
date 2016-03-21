@@ -1,6 +1,7 @@
 package com.xunce.gsmr.Net;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.view.View;
@@ -23,6 +24,9 @@ import im.fir.sdk.VersionCheckCallback;
  * Created by Xingw on 2016/3/20.
  */
 public class Update {
+    private final static String ACTION_UPDATE = "com.chris.download.service.UPDATE";
+
+
     public static void checkversion(final Context context) {
         FIR.checkForUpdateInFIR(Constant.firToken, new VersionCheckCallback() {
             @Override
@@ -37,17 +41,16 @@ public class Update {
                     PackageInfo info = manager.getPackageInfo(context.getPackageName(), 0);
                     String appVersion = info.versionName; // 版本名
                     int currentVersionCode = info.versionCode; // 版本号
-                    if (version == currentVersionCode) {
-                        if (appVersion.equals(versionShort)) {
-                            showUpateDialog(context);
-                        }
+                    if (version > currentVersionCode) {
+                        showUpateDialog(context,url);
+                    }else if(version == currentVersionCode && appVersion.equals(versionShort)){
+                        showUpateDialog(context,url);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
-
             }
 
             @Override
@@ -65,7 +68,7 @@ public class Update {
         });
     }
 
-    private static void showUpateDialog(Context context) {
+    private static void showUpateDialog(final Context context, final String url) {
         final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
         //创建监听事件
         View.OnClickListener cancelListener = new View.OnClickListener() {
@@ -77,12 +80,16 @@ public class Update {
         View.OnClickListener confirmListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Intent intent = new Intent(context,DownloadService.class);
+                intent.putExtra(DownloadService.Key_App_Name,"GSM");
+                intent.putExtra(DownloadService.Key_Down_Url,url);
+                context.startService(intent);
             }
         };
         dialogBuilder.withTitle("版本更新")
                 .withTitleColor("#FFFFFF")
                 .withDividerColor("#11000000")
-                .withMessage("有新的版本，是否要更新")//.withMessage(null)  no Msg
+                .withMessage("有新的版本，是否下载更新")//.withMessage(null)  no Msg
                 .withMessageColor("#FFFFFFFF")
                 .withDialogColor(context.getResources().getColor(R.color.dialog_color))
                 .withEffect(Effectstype.Slidetop)       //def Effectstype.Slidetop
