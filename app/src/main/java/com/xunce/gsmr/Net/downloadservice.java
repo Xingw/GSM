@@ -18,6 +18,7 @@ import android.support.annotation.Nullable;
 import android.widget.RemoteViews;
 
 import com.xunce.gsmr.R;
+import com.xunce.gsmr.app.Constant;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -69,14 +70,13 @@ public class DownloadService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         app_name = intent.getStringExtra("Key_App_Name");
         down_url = intent.getStringExtra("Key_Down_Url");
-        updateFile = new File(Environment.getDataDirectory()+"/"+app_name+".apk");
-        if(updateFile.exists()){
-            updateFile.delete();
-        }
-        try {
-            updateFile.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
+        updateFile = new File(Constant.TEMP_FILE_PATH + "/" + app_name + ".apk");
+        if (!updateFile.exists()) {
+            try {
+                updateFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         createNotification();
         createThread();
@@ -101,7 +101,7 @@ public class DownloadService extends Service {
                 case DOWN_ERROR:
                     notification.flags = Notification.FLAG_AUTO_CANCEL;
                     //notification.setLatestEventInfo(UpdateService.this,app_name, getString(R.string.down_fail), pendingIntent);
-                    notification.setLatestEventInfo(DownloadService.this, app_name,"下载失败", null);
+                    notification.setLatestEventInfo(DownloadService.this, app_name, "下载失败", null);
                     /***stop service*****/
                     //onDestroy();
                     stopSelf();

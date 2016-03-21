@@ -119,5 +119,6 @@
                 <data android:mimeType="*/*" />
             </intent-filter>
         </activity>
+        <service android:name=".Net.DownloadService"></service>
     </application>
 </manifest>

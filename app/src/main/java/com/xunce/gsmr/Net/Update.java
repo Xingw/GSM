@@ -84,6 +84,7 @@ public class Update {
                 intent.putExtra(DownloadService.Key_App_Name,"GSM");
                 intent.putExtra(DownloadService.Key_Down_Url,url);
                 context.startService(intent);
+                dialogBuilder.dismiss();
             }
         };
         dialogBuilder.withTitle("版本更新")
