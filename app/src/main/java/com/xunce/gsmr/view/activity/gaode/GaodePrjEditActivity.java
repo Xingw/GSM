@@ -26,6 +26,7 @@ import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.orhanobut.logger.Logger;
+import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.lib.xmlparser.XmlParser;
@@ -172,9 +173,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
 
         //初始化数据
         initdata();
-//        //TODO---测试代码
-//        double data[] = LonLatToUTMXY.latLonToUTM(29.75282575519019, 115.40374717759676);
-//        Timber.e(data[0] + "\t" + data[1] + "\t" + data[2]);
+
+        //检查版本更新
+        Update.checkversion(this);
     }
 
     /**

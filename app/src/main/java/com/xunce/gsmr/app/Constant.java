@@ -49,6 +49,6 @@ public class Constant {
     //.db文件的requestCode
     public static final int REQUEST_CODE_DB_FILE = 2004;
 
-
-
+    //FIR更新用的token
+    public static String firToken = "aa38ac9ade93397254698e8783adce7f";
 }
