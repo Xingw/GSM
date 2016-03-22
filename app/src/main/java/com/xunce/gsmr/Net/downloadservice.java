@@ -96,6 +96,8 @@ public class DownloadService extends Service {
                     installApk();
                     /***stop service*****/
                     stopSelf();
+                    //取消通知
+                    notificationManager.cancel(R.layout.notification_update_layout);
                     break;
 
                 case DOWN_ERROR:
