@@ -89,7 +89,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * 编辑的PrjItem
      */
     private PrjItem prjItem;
-
+    private static boolean firstOpen = true;
     /**
      * 控件
      */
@@ -175,7 +175,10 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         initdata();
 
         //检查版本更新
-        Update.checkversion(this);
+        if(firstOpen) {
+            Update.checkversion(this);
+            firstOpen = false;
+        }
     }
 
     /**
