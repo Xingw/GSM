@@ -114,8 +114,8 @@ public class XmlMarkerParser extends DefaultHandler {
         db.setTransactionSuccessful();
         db.endTransaction();
         db.close();
-        ToastHelper.show(context, addCount + "个标记点添加到当前工程中");
-        ToastHelper.show(context, failCount + "个标记点因格式不符无法添加");
+        ToastHelper.show(context, addCount + "个标记点添加到当前工程中\n+" +
+                 failCount + "个标记点因格式不符无法添加");
     }
 
     @Override
