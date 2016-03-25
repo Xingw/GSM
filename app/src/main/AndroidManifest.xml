@@ -56,7 +56,7 @@
         <!--高德地图的Key-->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="dab79a7dbf7b51f12ae158cf85292f56"/>
+            android:value="c0d2c8ea88dedc1ebe05077b72544025"/>
         <!--BUG_HD反馈-->
         <meta-data
             android:value="c0656f9c04d47b4a7a40737816064b3a"
