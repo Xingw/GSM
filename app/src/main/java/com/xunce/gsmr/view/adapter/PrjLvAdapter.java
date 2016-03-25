@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.gaodemap.graph.Text;
 import com.xunce.gsmr.util.DBHelper;
 
 import java.util.ArrayList;
@@ -42,8 +43,8 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
     private List<PrjItem> selectList;
     //颜色Id表单
     private int[] colorIdList={
-            R.color.blue_500,R.color.orange_500,R.color.red_500,R.color.cyan_500,R.color.brown_500,
-            R.color.purple_500,R.color.lime_500,R.color.pink_500,R.color.green_500
+            R.color.blue_500,R.color.cyan_500,R.color.lime_500,R.color.orange_500,R.color.pink_500,
+            R.color.red_500,R.color.purple_500,R.color.brown_500, R.color.green_500
     };
     private LayoutInflater inflater;
     private int anim = 0;
@@ -122,6 +123,7 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
             viewHolder.iv = (ImageView) convertView.findViewById(R.id.id_img_prj_icon);
             viewHolder.tv = (TextView) convertView.findViewById(R.id.id_tv_prj_name);
             viewHolder.cb = (CheckBox) convertView.findViewById(R.id.id_cb_prj_name);
+            viewHolder.date = (TextView) convertView.findViewById(R.id.id_tv_creation_date);
             //set to tag
             convertView.setTag(viewHolder);
             //set  data

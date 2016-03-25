@@ -9,26 +9,9 @@ import io.realm.RealmObject;
  * Created by ssthouse on 2015/7/18.
  */
 public class PrjItem extends RealmObject{
-    private static final String TAG = "PrjItem";
-
     private String prjName;
-
     private String dbLocation;
-
     private String creationTime;
-
-
-    public PrjItem(String prjName) {
-        super();
-        this.prjName = prjName;
-    }
-
-    public PrjItem(String prjName, String dbLocation) {
-        super();
-        this.prjName = prjName;
-        this.dbLocation = dbLocation;
-        this.creationTime = DBHelper.getTimeNow();
-    }
 
     public PrjItem(String prjName, String dbLocation,String creationTime) {
         super();
@@ -82,7 +65,6 @@ public class PrjItem extends RealmObject{
     public String getCreationTime() {
         return creationTime;
     }
-
     public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
     }

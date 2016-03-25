@@ -37,6 +37,7 @@
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_normal"/>
     <TextView
+        android:id="@+id/id_tv_creation_date"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="4"

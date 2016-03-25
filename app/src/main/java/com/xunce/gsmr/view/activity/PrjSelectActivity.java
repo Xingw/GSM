@@ -341,7 +341,7 @@ public class PrjSelectActivity extends AppCompatActivity {
                             PrjItem prjItem=new PrjItem(prjName, Constant.DbTempPath + prjName +
                                     ".db",DBHelper.getTimeNow());
                             realm.beginTransaction();
-                            PrjItem prjItem1 = realm.copyToRealm(prjItem);
+                            realm.copyToRealm(prjItem);
                             realm.commitTransaction();
                             DBHelper.insertPrjInfo(prjItem.getDbLocation(),prjItem);
                             //重新加载工程视图

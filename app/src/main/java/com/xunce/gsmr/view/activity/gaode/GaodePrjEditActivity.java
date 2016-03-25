@@ -46,6 +46,7 @@ import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
 import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
 import com.xunce.gsmr.model.gaodemap.graph.Vector;
+import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.gps.LonLatToUTMXY;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
@@ -163,7 +164,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //接收数据
         String prjName =(String)getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM_NAME);
         String DBpath =(String)getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH);
-        prjItem = new PrjItem(prjName,DBpath);
+        prjItem = new PrjItem(prjName,DBpath, DBHelper.getTimeNow());
 
         //启动定位
         super.initLocate();
