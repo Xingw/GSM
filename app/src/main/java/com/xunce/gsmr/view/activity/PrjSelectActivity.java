@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -105,18 +106,30 @@ public class PrjSelectActivity extends AppCompatActivity {
     private void checkDbLocation() {
         List<PrjItem> prjItemList = DBHelper.getPrjItemList(realm);
         if (prjItemList == null || prjItemList.size() == 0) return;
-        for (PrjItem item : prjItemList) {
-            File file = new File(item.getDbLocation());
+        for (int i = 0; i < prjItemList.size(); i++) {
+            File file = new File(prjItemList.get(i).getDbLocation());
             if (!file.exists()) {
-                if (PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(item
+                if (PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItemList.get(i)
                         .getPrjName())) {
                     PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
                 }
                 realm.beginTransaction();
-                item.removeFromRealm();
+                prjItemList.get(i).removeFromRealm();
                 realm.commitTransaction();
             }
         }
+//        for (PrjItem item : prjItemList) {
+//            File file = new File(item.getDbLocation());
+//            if (!file.exists()) {
+//                if (PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(item
+//                        .getPrjName())) {
+//                    PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
+//                }
+//                realm.beginTransaction();
+//                item.removeFromRealm();
+//                realm.commitTransaction();
+//            }
+//        }
     }
 
     /**
@@ -325,10 +338,12 @@ public class PrjSelectActivity extends AppCompatActivity {
                         if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
                             ToastHelper.showSnack(context, v, "该工程已存在，请重新命名或选择导入工程");
                         } else {
-                            PrjItem prjItem=new PrjItem(prjName, Constant.DbTempPath + prjName + ".db");
+                            PrjItem prjItem=new PrjItem(prjName, Constant.DbTempPath + prjName +
+                                    ".db",DBHelper.getTimeNow());
                             realm.beginTransaction();
                             PrjItem prjItem1 = realm.copyToRealm(prjItem);
                             realm.commitTransaction();
+                            DBHelper.insertPrjInfo(prjItem.getDbLocation(),prjItem);
                             //重新加载工程视图
                             adapter.notifyDataSetChanged();
                             //消除Dialog
@@ -414,22 +429,27 @@ public class PrjSelectActivity extends AppCompatActivity {
                     return;
                 }
                 SQLiteDatabase db = DBHelper.openDatabase(path);
-                Cursor cursor = db.rawQuery("SELECT * FROM " + Constant.TABLE_PROJECT_INFO, null);
-                if (cursor == null || !cursor.moveToFirst()) {
-                    return;
-                }
-                String prjName = cursor.getString(cursor.getColumnIndex(DBConstant
-                        .prjInfo_coloum_prjName));
-                if (DBHelper.isPrjExist(realm,prjName)) {
-                    ToastHelper.show(PrjSelectActivity.this, "该工程已存在");
-                } else {
-                    PrjItem prjItem = new PrjItem(prjName, path);
-                    realm.beginTransaction();
-                    PrjItem prjItem1 = realm.copyToRealm(prjItem);
-                    realm.commitTransaction();
-                    //重新加载工程视图
-                    adapter.notifyDataSetChanged();
-                    break;
+                try {
+                    Cursor cursor = db.rawQuery("SELECT * FROM " + Constant.TABLE_PROJECT_INFO, null);
+                    if (cursor == null || !cursor.moveToFirst()) {
+                        return;
+                    }
+                    String prjName = cursor.getString(cursor.getColumnIndex(DBConstant
+                            .prjInfo_coloum_prjName));
+                    String creationTime = cursor.getString(cursor.getColumnIndex(DBConstant
+                            .prjInfo_coloum_creationTime));
+                    if (DBHelper.isPrjExist(realm,prjName)) {
+                        ToastHelper.show(PrjSelectActivity.this, "该工程已存在");
+                    } else {
+                        PrjItem prjItem = new PrjItem(prjName, path,creationTime);
+                        realm.beginTransaction();
+                        PrjItem prjItem1 = realm.copyToRealm(prjItem);
+                        realm.commitTransaction();
+                        //重新加载工程视图
+                        adapter.notifyDataSetChanged();
+                    }
+                }catch (SQLException e){
+                    ToastHelper.show(this,"选择的数据库有误");
                 }
         }
         super.onActivityResult(requestCode, resultCode, data);

@@ -1,17 +1,6 @@
 package com.xunce.gsmr.model;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.util.DBHelper;
-import com.xunce.gsmr.util.preference.PreferenceHelper;
-
-import java.io.File;
-import java.io.Serializable;
-import java.util.List;
 
 import io.realm.RealmObject;
 
@@ -26,6 +15,8 @@ public class PrjItem extends RealmObject{
 
     private String dbLocation;
 
+    private String creationTime;
+
 
     public PrjItem(String prjName) {
         super();
@@ -36,6 +27,14 @@ public class PrjItem extends RealmObject{
         super();
         this.prjName = prjName;
         this.dbLocation = dbLocation;
+        this.creationTime = DBHelper.getTimeNow();
+    }
+
+    public PrjItem(String prjName, String dbLocation,String creationTime) {
+        super();
+        this.prjName = prjName;
+        this.dbLocation = dbLocation;
+        this.creationTime = creationTime;
     }
 
     public PrjItem() {
@@ -80,4 +79,11 @@ public class PrjItem extends RealmObject{
         this.dbLocation = dbLocation;
     }
 
+    public String getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(String creationTime) {
+        this.creationTime = creationTime;
+    }
 }

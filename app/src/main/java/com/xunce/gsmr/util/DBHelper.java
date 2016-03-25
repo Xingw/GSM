@@ -17,7 +17,9 @@ import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
@@ -28,6 +30,16 @@ import io.realm.Realm;
 public class DBHelper {
     private static String SELECTION_PRJNAME = DBConstant.photo_column_prjname + " = ?";
 
+    /**
+     * 按照年月日的格式生成日期
+     * 如：2016/03/25
+     * @return
+     */
+    public static String getTimeNow(){
+        SimpleDateFormat sDateFormat    =   new SimpleDateFormat("yyyy/MM/dd");
+        String date=sDateFormat.format(new Date());
+        return date;
+    }
     /************************************************判断部分*****************************/
     /**
      * 判断prjItem是不是空的
@@ -489,9 +501,19 @@ public class DBHelper {
             latitude,String content) {
         Object[] args = new Object[]{id, orderId, longitude, latitude,content};
         try {
-            db.execSQL(DBConstant.Poly__KML_sql_insert, args);
+            db.execSQL(DBConstant.Poly_KML_sql_insert, args);
         } catch (SQLException ex) {
             Logger.w("Poly插入失败 %s", ex.toString());
+        }
+    }
+
+    public static void insertPrjInfo(String dbpath,PrjItem prjItem){
+        SQLiteDatabase db = openDatabase(dbpath);
+        Object[] args = new Object[]{1,prjItem.getPrjName(),prjItem.getCreationTime()};
+        try {
+            db.execSQL(DBConstant.PrjInfo_sql_insert, args);
+        } catch (SQLException ex) {
+            Logger.w("PrjInfo插入失败 %s", ex.toString());
         }
     }
     /**

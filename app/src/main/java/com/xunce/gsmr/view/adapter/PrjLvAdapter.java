@@ -128,11 +128,13 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
             setviewcolor(viewHolder.iv,colorIdList[position%9]);
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
+            viewHolder.date.setText(prjItemList.get(position).getCreationTime());
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
             setviewcolor(viewHolder.iv,colorIdList[position%9]);
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
+            viewHolder.date.setText(prjItemList.get(position).getCreationTime());
             if (anim == 1) {
                 viewHolder.cb.setVisibility(View.VISIBLE);
                 viewHolder.iv.startAnimation(MoveIn);
@@ -176,6 +178,7 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
         CheckBox cb;
         ImageView iv;
         TextView tv;
+        TextView date;
     }
 
     @Override

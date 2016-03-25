@@ -94,11 +94,17 @@ public class DBConstant {
             ", " + content +
             ") values (?,?,?);";
 
-    public static String Poly__KML_sql_insert ="insert into " + Constant.TABLE_KML_POLY +
+    public static String Poly_KML_sql_insert ="insert into " + Constant.TABLE_KML_POLY +
             " (" + id +
             ", " + orderId +
             ", " + longitude +
             ", " + latitude +
             ", " + content +
             ") values (?,?,?,?,?);";
+
+    public static String PrjInfo_sql_insert ="insert into " + Constant.TABLE_PROJECT_INFO +
+            " (" + prjInfo_coloum_mapInfo +
+            ", " + prjInfo_coloum_prjName +
+            ", " + prjInfo_coloum_creationTime +
+            ") values (?,?,?);";
 }
