@@ -1,11 +1,7 @@
 package com.xunce.gsmr.view.adapter;
 
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.Shape;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +15,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
-import com.xunce.gsmr.model.gaodemap.graph.Text;
 import com.xunce.gsmr.util.DBHelper;
 
 import java.util.ArrayList;
@@ -31,8 +25,7 @@ import java.util.List;
 import io.realm.Realm;
 
 /**
- * 工程的adapter
- * Created by ssthouse on 2015/7/18.
+ * 工程的adapter Created by ssthouse on 2015/7/18.
  */
 public class PrjLvAdapter extends BaseAdapter implements Filterable {
     private PrjNameFilter prjNameFilter;
@@ -42,9 +35,9 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
     private List<PrjItem> prjItemListdata;
     private List<PrjItem> selectList;
     //颜色Id表单
-    private int[] colorIdList={
-            R.color.blue_500,R.color.cyan_500,R.color.lime_500,R.color.orange_500,R.color.pink_500,
-            R.color.red_500,R.color.purple_500,R.color.brown_500, R.color.green_500
+    private int[] colorIdList = {
+            R.color.red_500, R.color.pink_500, R.color.purple_500, R.color.blue_500, R.color.cyan_500,
+            R.color.green_600, R.color.yellow_600, R.color.orange_500, R.color.brown_500
     };
     private LayoutInflater inflater;
     private int anim = 0;
@@ -127,13 +120,13 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
             //set to tag
             convertView.setTag(viewHolder);
             //set  data
-            setviewcolor(viewHolder.iv,colorIdList[position%9]);
+            setviewcolor(viewHolder.iv, colorIdList[position % 9]);
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
             viewHolder.date.setText(prjItemList.get(position).getCreationTime());
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
-            setviewcolor(viewHolder.iv,colorIdList[position%9]);
+            setviewcolor(viewHolder.iv, colorIdList[position % 9]);
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
             viewHolder.date.setText(prjItemList.get(position).getCreationTime());
@@ -152,10 +145,11 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
-    private  void setviewcolor(ImageView v,int colorId){
+    private void setviewcolor(ImageView v, int colorId) {
         GradientDrawable bgshape = (GradientDrawable) v.getBackground();
         bgshape.setColor(context.getResources().getColor(colorId));
     }
+
     public void CheckBox_Movein() {
         anim = 1;
         notifyDataSetChanged();
