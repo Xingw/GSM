@@ -2,6 +2,10 @@ package com.xunce.gsmr.view.adapter;
 
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.Shape;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +16,7 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.orhanobut.logger.Logger;
@@ -31,9 +36,15 @@ import io.realm.Realm;
 public class PrjLvAdapter extends BaseAdapter implements Filterable {
     private PrjNameFilter prjNameFilter;
     private Context context;
+    //下面两份表单记录同样的数据，prjItemList用于查询时展示，prjItemListdata用于记录原始数据;
     private List<PrjItem> prjItemList;
     private List<PrjItem> prjItemListdata;
     private List<PrjItem> selectList;
+    //颜色Id表单
+    private int[] colorIdList={
+            R.color.blue_500,R.color.orange_500,R.color.red_500,R.color.cyan_500,R.color.brown_500,
+            R.color.purple_500,R.color.lime_500,R.color.pink_500,R.color.green_500
+    };
     private LayoutInflater inflater;
     private int anim = 0;
     private Animation MoveIn;
@@ -108,23 +119,28 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
             convertView = inflater.inflate(R.layout.view_lv_item_prj_select, null);
             //初始化ViewHoler
             viewHolder = new ViewHolder();
+            viewHolder.iv = (ImageView) convertView.findViewById(R.id.id_img_prj_icon);
             viewHolder.tv = (TextView) convertView.findViewById(R.id.id_tv_prj_name);
             viewHolder.cb = (CheckBox) convertView.findViewById(R.id.id_cb_prj_name);
             //set to tag
             convertView.setTag(viewHolder);
             //set  data
+            setviewcolor(viewHolder.iv,colorIdList[position%9]);
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
+            setviewcolor(viewHolder.iv,colorIdList[position%9]);
             viewHolder.tv.setText(prjItemList.get(position).getPrjName());
             viewHolder.cb.setChecked(isinselectList(prjItemList.get(position)));
             if (anim == 1) {
                 viewHolder.cb.setVisibility(View.VISIBLE);
+                viewHolder.iv.startAnimation(MoveIn);
                 viewHolder.cb.startAnimation(MoveIn);
                 viewHolder.tv.startAnimation(MoveIn);
             } else if (anim == 2) {
                 viewHolder.cb.startAnimation(MoveOut);
+                viewHolder.iv.startAnimation(MoveOutTv);
                 viewHolder.cb.setVisibility(View.GONE);
                 viewHolder.tv.startAnimation(MoveOutTv);
             }
@@ -132,6 +148,10 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
         return convertView;
     }
 
+    private  void setviewcolor(ImageView v,int colorId){
+        GradientDrawable bgshape = (GradientDrawable) v.getBackground();
+        bgshape.setColor(context.getResources().getColor(colorId));
+    }
     public void CheckBox_Movein() {
         anim = 1;
         notifyDataSetChanged();
@@ -154,6 +174,7 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
 
     class ViewHolder {
         CheckBox cb;
+        ImageView iv;
         TextView tv;
     }
 

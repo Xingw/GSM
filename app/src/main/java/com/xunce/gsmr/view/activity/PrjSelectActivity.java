@@ -173,6 +173,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isInSelectMode) {
+                    btnAdd.setVisibility(View.GONE);
                     btnAdd.setImageResource(R.drawable.fab_add);
                     adapter.CheckBox_Moveout();
                     isInSelectMode = false;
@@ -385,6 +386,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             case R.id.id_action_export_data:
                 isInSelectMode = true;
                 adapter.CheckBox_Movein();
+                btnAdd.setVisibility(View.VISIBLE);
                 btnAdd.setImageResource(R.drawable.ic_action_accept);
                 break;
             case R.id.id_action_setting:

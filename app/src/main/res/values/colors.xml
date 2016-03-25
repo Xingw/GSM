@@ -35,4 +35,15 @@
     <color name="lv_item_selected">#9e9e9e</color>
 
     <color name="dialog_color">#5503a9f4</color>
+    
+    //prj背景色
+    <color name="red_500">#e51c23</color>
+    <color name="pink_500">#e91e53</color>
+    <color name="purple_500">#9c27b0</color>
+    <color name="blue_500">#5677fc</color>
+    <color name="cyan_500">#00bcd4</color>
+    <color name="green_500">#259b24</color>
+    <color name="lime_500">#cddc39</color>
+    <color name="orange_500">#ff9800</color>
+    <color name="brown_500">#795548</color>
 </resources>
