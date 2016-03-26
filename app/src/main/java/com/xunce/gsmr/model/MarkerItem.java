@@ -172,9 +172,9 @@ public class MarkerItem implements Serializable {
     /**
      * 使用prjItem的构造方法
      *
-     * @param prjItem 根据PrjItem创建的MarkerItem
+     * @param prjItemRealmObject 根据PrjItem创建的MarkerItem
      */
-    public MarkerItem(PrjItem prjItem) {
+    public MarkerItem(PrjItemRealmObject prjItemRealmObject) {
         super();
         this.latitude = 0;
         this.longitude = 0;

@@ -12,6 +12,7 @@ import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.MarkerIconCons;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.PrjItemRealmObject;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 
@@ -46,7 +47,6 @@ public class MarkerHolder {
     /**
      * 构造方法
      *
-     * @param prjItem
      * @param aMap
      */
     public MarkerHolder(Context context, PrjItem prjItem, AMap aMap) {

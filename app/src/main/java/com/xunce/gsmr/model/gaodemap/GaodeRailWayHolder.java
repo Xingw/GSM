@@ -7,11 +7,9 @@ import android.os.AsyncTask;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.LatLng;
-import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;
-import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.model.gaodemap.graph.Circle;
 import com.xunce.gsmr.model.gaodemap.graph.Line;
@@ -28,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
-import timber.log.Timber;
 
 /**
  * 高德地图地图铁路绘图管理器 Created by ssthouse on 2015/9/15.

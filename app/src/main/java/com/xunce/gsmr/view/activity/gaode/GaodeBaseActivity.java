@@ -15,6 +15,7 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.PrjItemRealmObject;
 import com.xunce.gsmr.model.gaodemap.MarkerHolder;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;

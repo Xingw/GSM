@@ -3,28 +3,18 @@ package com.xunce.gsmr.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.DhcpInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Environment;
 
 import com.ipaulpro.afilechooser.FileChooserActivity;
-import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.BitmapItem;
-import com.xunce.gsmr.model.PrjItem;
-import com.xunce.gsmr.model.event.CompressFileEvent;
-import com.xunce.gsmr.util.view.ToastHelper;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 /**
@@ -78,9 +68,9 @@ public class FileHelper {
      * 删除不必要的文件
      */
 //    private static void deleteNoneUseFile() {
-//        List<PrjItem> prjItemList = DBHelper.getPrjItemList();
+//        List<PrjItemRealmObject> prjItemList = DBHelper.getPrjItemList();
 //        List<String> prjNameList = new ArrayList<>();
-//        for (PrjItem prjItem : prjItemList) {
+//        for (PrjItemRealmObject prjItem : prjItemList) {
 //            prjNameList.add(prjItem.getId());
 //            Timber.e("找到一个工程名:\t" + prjItem.getId());
 //        }

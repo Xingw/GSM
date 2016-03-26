@@ -1,28 +1,28 @@
 package com.xunce.gsmr.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.xunce.gsmr.util.DBHelper;
 
-import io.realm.Realm;
+import io.realm.RealmObject;
 
 /**
- * Created by Xingw on 2016/3/26.
+ * 单个数据库工程Item 注意RealmObject类只能定义getter和setter
+ * 并且不能跨线程使用Item 所以尽量使用PrjItem
+ * 这个类用于取数据即可
+ * Created by xingw on 2015/7/18.
  */
-public class PrjItem implements Parcelable {
+public class PrjItemRealmObject extends RealmObject{
     private String prjName;
     private String dbLocation;
     private String creationTime;
 
-    public PrjItem(String prjName, String dbLocation, String creationTime) {
+    public PrjItemRealmObject(String prjName, String dbLocation, String creationTime) {
         super();
         this.prjName = prjName;
         this.dbLocation = dbLocation;
         this.creationTime = creationTime;
     }
 
-    public PrjItem() {
+    public PrjItemRealmObject() {
         super();
     }
 
@@ -47,24 +47,6 @@ public class PrjItem implements Parcelable {
 //        realm.commitTransaction();
 //    }
 
-    protected PrjItem(Parcel in) {
-        prjName = in.readString();
-        dbLocation = in.readString();
-        creationTime = in.readString();
-    }
-
-    public static final Creator<PrjItem> CREATOR = new Creator<PrjItem>() {
-        @Override
-        public PrjItem createFromParcel(Parcel in) {
-            return new PrjItem(in);
-        }
-
-        @Override
-        public PrjItem[] newArray(int size) {
-            return new PrjItem[size];
-        }
-    };
-
     //getter-----------and---------------setter---------
     public String getPrjName() {
         return prjName;
@@ -87,22 +69,5 @@ public class PrjItem implements Parcelable {
     }
     public void setCreationTime(String creationTime) {
         this.creationTime = creationTime;
-    }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(prjName);
-        dest.writeString(dbLocation);
-        dest.writeString(creationTime);
-    }
-
-
-    public PrjItemRealmObject toRealmObject(Realm realm) {
-        return DBHelper.getPrjItemByName(realm,prjName);
     }
 }

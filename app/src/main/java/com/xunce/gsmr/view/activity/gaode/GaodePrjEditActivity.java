@@ -6,15 +6,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.CompoundButton;
 import android.widget.RadioGroup;
-import android.widget.SearchView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,7 +22,6 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
-import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -35,6 +31,7 @@ import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.lib.markerParser.XmlMarkerParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.PrjItemRealmObject;
 import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.DrawMapDataEvent;
@@ -45,10 +42,8 @@ import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
 import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
-import com.xunce.gsmr.model.gaodemap.graph.Vector;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.FileHelper;
-import com.xunce.gsmr.util.gps.LonLatToUTMXY;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
@@ -58,8 +53,6 @@ import com.xunce.gsmr.view.activity.SettingActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import timber.log.Timber;
@@ -143,8 +136,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     public static void start(Activity activity, PrjItem prjItem) {
         Intent intent = new Intent(activity, GaodePrjEditActivity.class);
-        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM_NAME, prjItem.getPrjName());
-        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH, prjItem.getDbLocation());
+        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM, prjItem);
+//        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH, prjItem.getDbLocation());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
     }
@@ -162,9 +155,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         PreferenceHelper.getInstance(this).initMarkerIconPreference();
 
         //接收数据
-        String prjName =(String)getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM_NAME);
-        String DBpath =(String)getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH);
-        prjItem = new PrjItem(prjName,DBpath, DBHelper.getTimeNow());
+        prjItem =(PrjItem)getIntent().getParcelableExtra(Constant.EXTRA_KEY_PRJ_ITEM);
 
         //启动定位
         super.initLocate();
@@ -251,7 +242,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
                 MarkerItem markerItem = new MarkerItem();
                 GaodeMarkerActivity.start(GaodePrjEditActivity.this,
-                        markerItem,prjItem.getDbLocation(), getaMap().getCameraPosition().target,
+                        markerItem, prjItem.getDbLocation(), getaMap().getCameraPosition().target,
                         REQUEST_CODE_MARKER_ACTIVITY);
                 handler.sendEmptyMessageDelayed(0, 300);
             }
@@ -285,7 +276,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * 初始化数据
      */
     private void initdata(){
-        railWayHolder = new GaodeRailWayHolder(this,prjItem.getDbLocation());
+        railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
         KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
         kmlParser.draw(getaMap());
     }
@@ -375,7 +366,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     public void clickEdit(View v) {
         //生成MarkerItem--跳转到MarkerEditActivity
-        GaodeMarkerActivity.start(this, getMarkerHolder().getCurrentMarkerItem(),prjItem
+        GaodeMarkerActivity.start(this, getMarkerHolder().getCurrentMarkerItem(), prjItem
                 .getDbLocation(), getaMap().getCameraPosition().target,
                 REQUEST_CODE_MARKER_EDIT_ACTIVITY);
     }
@@ -387,7 +378,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     public void clickPhoto(View v) {
         //这里传入的MarkerItem
-        PicGridActivity.start(this, getMarkerHolder().getCurrentMarkerItem(),prjItem
+        PicGridActivity.start(this, getMarkerHolder().getCurrentMarkerItem(), prjItem
                 .getDbLocation(), REQUEST_CODE_PICTURE_ACTIVITY);
     }
 
@@ -546,7 +537,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //加载数据
         railWayHolder.hide();
         railWayHolder.clearData();
-        railWayHolder = new GaodeRailWayHolder(this,prjItem.getDbLocation());
+        railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
     }
 
     @Override
@@ -566,7 +557,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                     xmlMarkerParser.parse();
                     //将数据增加到当前工程中去(给每一个Marker添加prjName---然后save)
                     xmlMarkerParser.saveMarkerItem(prjItem.getPrjName(), railWayHolder
-                            .getKilometerMarkHolder(),prjItem.getDbLocation());
+                            .getKilometerMarkHolder(), prjItem.getDbLocation());
                     //重画界面的Marker
                     loadMarker(prjItem);
                 }
@@ -587,7 +578,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         return;
                     }
                     //如果获取路径成功就----加载digitalMapHolder
-                    digitalMapHolder = new  DigitalMapHolder(this, path,prjItem.getDbLocation());
+                    digitalMapHolder = new  DigitalMapHolder(this, path, prjItem.getDbLocation());
                     //保存数字地图数据
                     railWayHolder.hide();
                     railWayHolder.clearData();
@@ -606,7 +597,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         ToastHelper.show(this, "您选取的XML文件格式有误!");
                         return;
                     }
-                    xmlParser = new XmlParser(this, path,prjItem.getDbLocation());
+                    xmlParser = new XmlParser(this, path, prjItem.getDbLocation());
                 }
                 break;
             //加载kml文件

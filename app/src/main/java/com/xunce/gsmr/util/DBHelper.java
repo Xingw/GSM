@@ -15,6 +15,7 @@ import com.xunce.gsmr.lib.kmlParser.KmlData;
 import com.xunce.gsmr.model.BitmapItem;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.PrjItemRealmObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * 数据库处理的工具类(处理app存储的本地数据库) Created by ssthouse on 2015/7/17.
@@ -44,18 +46,18 @@ public class DBHelper {
     /**
      * 判断prjItem是不是空的
      *
-     * @param prjItem
+     * @param prjItemRealmObject
      * @return 数据库中PrjItem是不是空的
      */
-//    public static boolean isPrjEmpty(PrjItem prjItem) {
+//    public static boolean isPrjEmpty(PrjItemRealmObject prjItemRealmObject) {
 //        List<MarkerItem> markerList = new Select()
 //                .from(MarkerItem.class)
-//                .where("prjName = " + "'" + prjItem.getId() + "'")
+//                .where("prjName = " + "'" + prjItemRealmObject.getId() + "'")
 //                .execute();
 //        return markerList == null || markerList.size() == 0;
 //    }
-    public static boolean isPrjEmpty(PrjItem prjItem) {
-        SQLiteDatabase db = openDatabase(prjItem.getDbLocation());
+    public static boolean isPrjEmpty(PrjItemRealmObject prjItemRealmObject) {
+        SQLiteDatabase db = openDatabase(prjItemRealmObject.getDbLocation());
         Cursor cursor = db.rawQuery("SELECT * FROM " + Constant.TABLE_MARKER_ITEM, null);
         if (cursor == null || !cursor.moveToFirst()) {
             return false;
@@ -93,10 +95,10 @@ public class DBHelper {
      */
 
     public static boolean isPrjExist(Realm realm,String prjName) {
-        List<PrjItem> prjItems = realm.where(PrjItem.class)
+        List<PrjItemRealmObject> prjItemRealmObjects = realm.where(PrjItemRealmObject.class)
                                       .equalTo("prjName",prjName)
                                       .findAll();
-        return !(prjItems == null || prjItems.size() == 0);
+        return !(prjItemRealmObjects == null || prjItemRealmObjects.size() == 0);
     }
 
     /********************************************获取部分************************************/
@@ -193,18 +195,34 @@ public class DBHelper {
      * 按照创建的Id的顺序获取PrjItm的列表
      */
     public static List<PrjItem> getPrjItemList(Realm realm) {
-        return realm.where(PrjItem.class)
-                .findAll();
+        List<PrjItemRealmObject> objects = realm.where(PrjItemRealmObject.class).findAll();
+        List<PrjItem> prjItems = new ArrayList<>();
+        for (PrjItemRealmObject object : objects) {
+            PrjItem item = toPrjItem(object);
+            prjItems.add(item);
+        }
+        return  prjItems;
     }
 
+    /**
+     * 按照创建的Id的顺序获取PrjItm的列表
+     */
+    public static RealmResults<PrjItemRealmObject> getPrjItemRealmList(Realm realm) {
+       return realm.where(PrjItemRealmObject.class).findAll();
+    }
+
+    public static PrjItem toPrjItem(PrjItemRealmObject prjItemRealmObject) {
+        return new PrjItem(prjItemRealmObject.getPrjName(),prjItemRealmObject.getDbLocation(),
+                prjItemRealmObject.getCreationTime());
+    }
     /**
      * 根据项目名查询PrjItem 返回单例
      *
      * @param prjName
      * @return
      */
-    public static PrjItem getPrjItemByName(Realm realm,String prjName) {
-        return  realm.where(PrjItem.class)
+    public static PrjItemRealmObject getPrjItemByName(Realm realm, String prjName) {
+        return  realm.where(PrjItemRealmObject.class)
                 .equalTo("prjName",prjName)
                 .findFirst();
     }
@@ -214,7 +232,7 @@ public class DBHelper {
 //     * @param prjItem
 //     * @return
 //     */
-//    public static List<MarkerItem> getMarkerList(PrjItem prjItem) {
+//    public static List<MarkerItem> getMarkerList(PrjItemRealmObject prjItem) {
 //        return new Select().from(MarkerItem.class)
 //                .where("prjName = " + "'" + prjItem.getId() + "'")
 //                .execute();
@@ -507,9 +525,9 @@ public class DBHelper {
         }
     }
 
-    public static void insertPrjInfo(String dbpath,PrjItem prjItem){
+    public static void insertPrjInfo(String dbpath,PrjItemRealmObject prjItemRealmObject){
         SQLiteDatabase db = openDatabase(dbpath);
-        Object[] args = new Object[]{1,prjItem.getPrjName(),prjItem.getCreationTime()};
+        Object[] args = new Object[]{1, prjItemRealmObject.getPrjName(), prjItemRealmObject.getCreationTime()};
         try {
             db.execSQL(DBConstant.PrjInfo_sql_insert, args);
         } catch (SQLException ex) {
