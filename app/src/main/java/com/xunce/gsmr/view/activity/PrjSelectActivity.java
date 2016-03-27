@@ -2,22 +2,27 @@ package com.xunce.gsmr.view.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
@@ -40,6 +45,7 @@ import com.xunce.gsmr.view.adapter.PrjLvAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.List;
 
 import io.realm.Realm;
@@ -56,6 +62,7 @@ public class PrjSelectActivity extends AppCompatActivity {
     private FloatingActionButton btnAdd;
     private long mExitTime;
     private Realm realm;
+    private CoordinatorLayout container;
 
     public static void start(Activity activity, boolean isCalledByPrjEditAty) {
         Intent intent = new Intent(activity, PrjSelectActivity.class);
@@ -133,7 +140,7 @@ public class PrjSelectActivity extends AppCompatActivity {
      */
     private void initView() {
         ViewHelper.initActionBar(this, getSupportActionBar(), "基址勘察");
-
+        container = (CoordinatorLayout) findViewById(R.id.container);
         lv = (ListView) findViewById(R.id.id_lv);
         adapter = new PrjLvAdapter(this, DBHelper.getPrjItemList(realm));
         lv.setAdapter(adapter);
@@ -262,12 +269,18 @@ public class PrjSelectActivity extends AppCompatActivity {
                 inflate(R.layout.dialog_prj_name, null);
         final EditText etPrjName = (EditText) llPrjName.findViewById(R.id.id_et);
         //导出Dialog
-        final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(context);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setTitle("重命名")
+                .setView(llPrjName)
+                .create();
         //创建监听事件
         View.OnClickListener cancelListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialogBuilder.dismiss();
+                dialog.dismiss();
             }
         };
         View.OnClickListener confirmListener = new View.OnClickListener() {
@@ -275,32 +288,23 @@ public class PrjSelectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String prjName = etPrjName.getText().toString();
                 if (prjName.equals("")) {
-                    ToastHelper.showSnack(context, v, "工程名不可为空");
+                    ToastHelper.showSnack(context, v.getRootView(), "工程名不可为空");
                 } else {
                     if (DBHelper.isPrjExist(realm,prjName)) {
-                        ToastHelper.showSnack(context, v, "该工程已存在");
+                        ToastHelper.showSnack(context, container, "该工程已存在");
                     } else {
                         changeName(prjItemRealmObject, prjName);
-                        dialogBuilder.dismiss();
-                        ToastHelper.showSnack(context, v, "重命名成功!");
+                        //刷新视图
+                        adapter.notifyDataSetChanged();
+                        dialog.dismiss();
+                        ToastHelper.showSnack(context, container, "重命名成功!");
                     }
                 }
             }
         };
-        dialogBuilder.withTitle("工程名")             //.withTitle(null)  no title
-                .withTitleColor("#FFFFFF")
-                .withDividerColor("#11000000")
-                .withMessage(null)//.withMessage(null)  no Msg
-                .withMessageColor("#FFFFFFFF")
-                .withDialogColor(context.getResources().getColor(R.color.dialog_color))
-                .withEffect(Effectstype.Slidetop)       //def Effectstype.Slidetop
-                .setCustomView(llPrjName, context)
-                .withButton1Text("确认")                 //def gone
-                .withButton2Text("取消")                 //def gone
-                .isCancelableOnTouchOutside(false)
-                .setButton1Click(confirmListener)
-                .setButton2Click(cancelListener)
-                .show();
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
     }
 
     /**
@@ -309,7 +313,7 @@ public class PrjSelectActivity extends AppCompatActivity {
      * @param context
      * @param adapter
      */
-    public void showPrjNameDialog(final Context context, final PrjLvAdapter adapter) {
+    public void showPrjNameDialog_Nifty(final Context context, final PrjLvAdapter adapter) {
         LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
                 inflate(R.layout.dialog_prj_name, null);
         final EditText etPrjName = (EditText) llPrjName.findViewById(R.id.id_et);
@@ -365,6 +369,63 @@ public class PrjSelectActivity extends AppCompatActivity {
                 .setButton1Click(confirmListener)
                 .setButton2Click(cancelListener)
                 .show();
+    }
+
+    /**
+     * 新建项目对话框
+     * @param context
+     * @param adapter
+     */
+    public void showPrjNameDialog(final Context context, final PrjLvAdapter adapter) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
+                inflate(R.layout.dialog_prj_name, null);
+        final EditText etPrjName = (EditText) llPrjName.findViewById(R.id.id_et);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                                    .setTitle("新建项目")
+                                    .setView(llPrjName)
+                                    .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String prjName = etPrjName.getText().toString();
+                if (prjName.equals("")) {
+                    ToastHelper.showSnack(context, container, "工程名不可为空");
+                } else {
+                    if (DBHelper.isPrjExist(realm,prjName)) {
+                        ToastHelper.showSnack(context, container, "该工程已存在");
+                    } else {
+                        //将新的prjItem保存进数据库
+                        if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
+                            ToastHelper.showSnack(context, container, "该工程已存在，请重新命名或选择导入工程");
+                        } else {
+                            PrjItemRealmObject prjItemRealmObject =new PrjItemRealmObject(prjName, Constant.DbTempPath + prjName +
+                                    ".db",DBHelper.getTimeNow());
+                            realm.beginTransaction();
+                            realm.copyToRealm(prjItemRealmObject);
+                            realm.commitTransaction();
+                            //重新加载工程视图
+                            adapter.notifyDataSetChanged();
+                            //消除Dialog
+                            dialog.dismiss();
+                            //Toast 提醒成功
+                            ToastHelper.showSnack(context, container, "工程创建成功!");
+                        }
+                    }
+                }
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
     }
 
     @Override

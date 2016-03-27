@@ -420,8 +420,6 @@ public class DBHelper {
         db.execSQL("CREATE TABLE KMLText(longitude REAL, latitude REAL, content TEXT)");
         db.execSQL("CREATE TABLE KMLPoly(id INTEGER, orderId, longitude REAL, latitude REAL, content TEXT)");
         db.execSQL("CREATE TABLE Photo (markerId  INTEGER, photoData  BLOB, photoName  TEXT)");
-        Object[] args = new Object[]{0, prjName, System.currentTimeMillis()};
-        db.execSQL("insert into ProjectInfo (mapInfo,prjName,creationTime) values (?,?,?)",args);
         db.close();
         return true;
     }
