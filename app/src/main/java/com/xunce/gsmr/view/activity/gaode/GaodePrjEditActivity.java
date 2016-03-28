@@ -236,7 +236,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             }
         });
         //选址
-        findViewById(R.id.id_btn_mark).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fb_action_choose_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
@@ -255,7 +255,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             }
         });
         //测量
-        findViewById(R.id.id_ib_measure).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fb_action_measure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GaodeMeasureActivity.start(GaodePrjEditActivity.this, getaMap().getCameraPosition().target);
@@ -263,7 +263,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         });
         //公里标
         llPosition = findViewById(R.id.id_ll_position);
-        findViewById(R.id.id_ib_position).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fb_action_marker).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 toggleLlPosition();
