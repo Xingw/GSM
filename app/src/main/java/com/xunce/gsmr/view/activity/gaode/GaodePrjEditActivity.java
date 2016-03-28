@@ -10,7 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.CompoundButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -22,6 +21,7 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
+import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -31,7 +31,6 @@ import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.lib.markerParser.XmlMarkerParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
-import com.xunce.gsmr.model.PrjItemRealmObject;
 import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.DrawMapDataEvent;
@@ -42,7 +41,6 @@ import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
 import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
-import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
@@ -91,8 +89,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private View pbBlock;
     //进度条说明文字
     private TextView tvPbComment;
-    //地图模式选择
-    private RadioGroup rgMapMode;
+
     //公里标显示标志位
     private View llPosition;
     private boolean isLlPositionShowed;
@@ -100,7 +97,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private Switch swDigitalFile;
     private boolean isDigitalMapTextShowed = false;
     //cad的xml文件开关
-    private Switch swMapData;
+    private FloatingActionButton swMapDatabtn;
     private boolean isMapTextShowed = false;
     //地图设置——指南针功能
     private UiSettings mUiSettings;
@@ -114,7 +111,10 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private GaodeRailWayHolder railWayHolder;
     //数字地图文件解析器
     private DigitalMapHolder digitalMapHolder;
-
+    private static boolean isChecked = false;
+    //地图模式选择
+    private FloatingActionButton mapModeBtn;
+    private static int ModeValue=Constant.MODE_MAP_2D;
     /**
      * 用于延时发送数据
      */
@@ -188,15 +188,16 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //初始化Marker的点击事件--以及InfoWindow的填充
         initMarkerClick();
         //初始化--xml文件的Switch
-        swMapData = (Switch) findViewById(R.id.id_sw_map_data);
-        swMapData.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+        swMapDatabtn = (FloatingActionButton) findViewById(R.id.id_btn_sw_map_data);
+        swMapDatabtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                //如果是想打开--并且没有加载文件
-                if ((isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
+            public void onClick(View v) {
+                if ((!isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
                     ToastHelper.show(GaodePrjEditActivity.this, "请先加载数据文件");
-                    buttonView.setChecked(false);
-                } else if (isChecked && railWayHolder != null) {
+                } else if (!isChecked && railWayHolder != null) {
+                    isChecked = true;
+                    swMapDatabtn.setIcon(R.drawable.map_action_draw_open);
                     if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
                         getaMap().moveCamera(CameraUpdateFactory.changeLatLng(railWayHolder.getTextList().get(0).getLatLng()));
                     }
@@ -207,7 +208,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                     } else {
                         railWayHolder.drawLine(getaMap());
                     }
-                } else if (!isChecked) {
+                } else if (isChecked) {
+                    isChecked = false;
+                    swMapDatabtn.setIcon(R.drawable.map_action_draw_close);
                     railWayHolder.hide();
                 }
             }
@@ -221,7 +224,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onCameraChangeFinish(CameraPosition cameraPosition) {
                 //如果 xml文件已经加载 且 switch为开
-                if (railWayHolder != null && swMapData.isChecked()) {
+                if (railWayHolder != null && isChecked) {
                     //如果放大到16以上
                     if (cameraPosition.zoom > GaodeMapCons.zoomLevel && !isMapTextShowed) {
                         railWayHolder.drawText(getaMap());
@@ -248,7 +251,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             }
         });
         //定位
-        findViewById(R.id.id_ib_locate).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.id_btn_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GaodePrjEditActivity.super.animateToMyLocation();
@@ -313,48 +316,42 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * 初始化地图Mode控件
      */
     private void initMapMode() {
+        //指南针功能
         mUiSettings = getaMap().getUiSettings();
         mUiSettings.setCompassEnabled(true);
-        //map_mode可见性的切换
-        findViewById(R.id.id_ib_open_map_mode).setOnClickListener(new View.OnClickListener() {
+        //地图模式切换
+        mapModeBtn = (FloatingActionButton) findViewById(R.id.id_ib_open_map_mode);
+        //map_mode切换
+        mapModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (rgMapMode.getVisibility() == View.VISIBLE) {
-                    rgMapMode.startAnimation(AnimationUtils.loadAnimation(GaodePrjEditActivity.this,
-                            R.anim.slide_right));
-                    rgMapMode.setVisibility(View.INVISIBLE);
-                } else {
-                    rgMapMode.startAnimation(AnimationUtils.loadAnimation(GaodePrjEditActivity.this,
-                            R.anim.slide_left));
-                    rgMapMode.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        //切换map_mode 的选项
-        rgMapMode = (RadioGroup) findViewById(R.id.id_rg_map_mode);
-        rgMapMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.id_rb_mode_normal: {
-                        getaMap().setMapType(AMap.MAP_TYPE_NORMAL);
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
-                        getaMap().moveCamera(cameraUpdate);
-                        break;
-                    }
-                    case R.id.id_rb_mode_satellite: {
-                        getaMap().setMapType(AMap.MAP_TYPE_SATELLITE);
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
-                        getaMap().moveCamera(cameraUpdate);
-                        break;
-                    }
-                    case R.id.id_rb_mode_3d: {
+                switch (ModeValue){
+                    case Constant.MODE_MAP_2D: {//2D地图切换至3D地图
+                        ModeValue = Constant.MODE_MAP_3D;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
                         CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(45);
                         getaMap().moveCamera(cameraUpdate);
                         getaMap().setMapType(AMap.MAP_TYPE_NORMAL);
                         break;
                     }
+                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
+                        ModeValue = Constant.MODE_MAP_SATELLITE;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
+                        getaMap().setMapType(AMap.MAP_TYPE_SATELLITE);
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
+                        getaMap().moveCamera(cameraUpdate);
+                        break;
+                    }
+                    case Constant.MODE_MAP_SATELLITE: {//卫星地图切换至2D地图
+                        ModeValue = Constant.MODE_MAP_2D;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_2d);
+                        getaMap().setMapType(AMap.MAP_TYPE_NORMAL);
+                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
+                        getaMap().moveCamera(cameraUpdate);
+                        break;
+                    }
                 }
+
             }
         });
     }

@@ -8,9 +8,8 @@
         android:id="@+id/multiple_actions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        fab:fab_addButtonColorNormal="@color/blue_500"
-        fab:fab_addButtonColorPressed="@color/white_pressed"
+        fab:fab_addButtonColorNormal="@color/blue_semi_transparent"
+        fab:fab_addButtonColorPressed="@color/blue_semi_transparent_pressed"
         fab:fab_addButtonPlusIconColor="@color/white"
         fab:fab_expandDirection="left"
     >
@@ -22,7 +21,7 @@
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/white_pressed"
             fab:fab_icon="@drawable/map_action_choose_location"
-            fab:fab_size="mini"/>
+            />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fb_action_measure"
@@ -31,7 +30,7 @@
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/white_pressed"
             fab:fab_icon="@drawable/map_action_measure"
-            fab:fab_size="mini"/>
+            />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/fb_action_marker"
@@ -40,7 +39,7 @@
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/white_pressed"
             fab:fab_icon="@drawable/map_action_marker"
-            fab:fab_size="mini"/>
+            />
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 </FrameLayout>

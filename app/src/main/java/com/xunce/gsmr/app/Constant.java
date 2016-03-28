@@ -51,4 +51,9 @@ public class Constant {
 
     //FIR更新用的token
     public static String firToken = "aa38ac9ade93397254698e8783adce7f";
+
+    //地图模式
+    public static final int MODE_MAP_2D = 2005;
+    public static final int MODE_MAP_3D = 2006;
+    public static final int MODE_MAP_SATELLITE = 2007;
 }

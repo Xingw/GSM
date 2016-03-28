@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:fitsSystemWindows="true"
+             android:orientation="vertical">
 
     <!-- 地图 -->
     <com.amap.api.maps.MapView
@@ -12,56 +13,62 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
-    <!--地图模式选择-->
-    <include layout="@layout/view_map_mode" />
-
-    <include layout="@layout/view_map_floatactionbutton"/>
+    <include
+        layout="@layout/view_map_floatactionbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+    />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="66dp"
+        android:layout_gravity="right|bottom"
+        android:layout_marginBottom="80dp"
         android:orientation="vertical">
 
-        <!--选址按钮-->
-        <Button
-            android:id="@+id/id_btn_mark"
-            android:layout_width="@dimen/btn_mark_size"
-            android:layout_height="@dimen/btn_mark_size"
-            android:layout_gravity="right"
-            android:background="@color/white"
-            android:text="选址"
-            android:textSize="@dimen/text_size_button" />
-
-        <!--xml开关-->
-        <LinearLayout
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/id_ib_open_map_mode"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:text="地图绘制" />
-            <Switch
-                android:id="@+id/id_sw_map_data"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:textSize="@dimen/text_size_button" />
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            app:fab_icon="@drawable/map_action_mode_2d"
+            app:fab_colorNormal="@color/white"
+            app:fab_colorPressed="@color/white_pressed"
+        />
+        <!--xml开关-->
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/id_btn_sw_map_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            app:fab_icon="@drawable/map_action_draw_close"
+            app:fab_colorNormal="@color/white_unpressed"
+            app:fab_colorPressed="@color/white_pressed"
+        />
+        <!--定位按钮-->
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/id_btn_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            app:fab_icon="@drawable/map_action_location"
+            app:fab_colorNormal="@color/white"
+            app:fab_colorPressed="@color/white_pressed"
+        />
+
+
     </LinearLayout>
 
-    <!--下面的功能键-->
-    <include
-        layout="@layout/activity_prj_edit_function"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+    <!--&lt;!&ndash;下面的功能键&ndash;&gt;-->
+    <!--<include-->
+        <!--layout="@layout/activity_prj_edit_function"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom"/>-->
 
     <!--公里标输入框-->
-    <include layout="@layout/view_position" />
+    <include layout="@layout/view_position"/>
 
     <!--progressbar作为遮挡-->
     <include layout="@layout/view_progress_block"/>
