@@ -15,29 +15,29 @@
                 android:title="项目管理"
                 app:showAsAction="never" />
 
-            <item
-                android:id="@+id/id_action_load_xml_marker"
-                android:orderInCategory="100"
-                android:title="初始标记点文件加载(.xml)"
-                app:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/id_action_load_xml_marker"-->
+                <!--android:orderInCategory="100"-->
+                <!--android:title="初始标记点文件加载(.xml)"-->
+                <!--app:showAsAction="never" />-->
 
-            <item
-                android:id="@+id/id_action_load_digital_file"
-                android:orderInCategory="100"
-                android:title="数字地图文件加载(.db)"
-                app:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/id_action_load_digital_file"-->
+                <!--android:orderInCategory="100"-->
+                <!--android:title="数字地图文件加载(.db)"-->
+                <!--app:showAsAction="never" />-->
 
-            <item
-                android:id="@+id/id_action_load_xml_file"
-                android:orderInCategory="100"
-                android:title="CAD文件加载(.xml)"
-                app:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/id_action_load_xml_file"-->
+                <!--android:orderInCategory="100"-->
+                <!--android:title="CAD文件加载(.xml)"-->
+                <!--app:showAsAction="never" />-->
 
-            <item
-                android:id="@+id/id_action_load_kml_file"
-                android:orderInCategory="100"
-                android:title="kml文件加载(.kml)"
-                app:showAsAction="never" />
+            <!--<item-->
+                <!--android:id="@+id/id_action_load_kml_file"-->
+                <!--android:orderInCategory="100"-->
+                <!--android:title="kml文件加载(.kml)"-->
+                <!--app:showAsAction="never" />-->
 
 
             <item

@@ -1,16 +1,21 @@
 package com.xunce.gsmr.view.activity.gaode;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
-import android.widget.RadioGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +27,6 @@ import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -49,6 +53,7 @@ import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
+import com.xunce.gsmr.view.adapter.PrjLvAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
@@ -270,7 +275,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         findViewById(R.id.fb_action_marker).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                toggleLlPosition();
+                showFindMarkerDialog(GaodePrjEditActivity.this);
                 loadMarker(prjItem);
             }
         });
@@ -410,27 +415,27 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 finish();
                 PrjSelectActivity.start(this, true);
                 break;
-            //加载初始xml中的Marker数据
-            case R.id.id_action_load_xml_marker:
-                //只有加载了xml文件才加载初始选址文件
-                if (railWayHolder == null) {
-                    ToastHelper.show(this, "请先加载地图文件");
-                } else {
-                    FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_XML_MARKER_FILE);
-                }
-                break;
-            // 加载数字地图
-            case R.id.id_action_load_digital_file:
-                FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_DIGITAL_FILE);
-                break;
-            //加载xml文件
-            case R.id.id_action_load_xml_file:
-                FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_XML_FILE);
-                break;
-            //加载kml文件
-            case R.id.id_action_load_kml_file:
-                FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_KML_FILE);
-                break;
+//            //加载初始xml中的Marker数据
+//            case R.id.id_action_load_xml_marker:
+//                //只有加载了xml文件才加载初始选址文件
+//                if (railWayHolder == null) {
+//                    ToastHelper.show(this, "请先加载地图文件");
+//                } else {
+//                    FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_XML_MARKER_FILE);
+//                }
+//                break;
+//            // 加载数字地图
+//            case R.id.id_action_load_digital_file:
+//                FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_DIGITAL_FILE);
+//                break;
+//            //加载xml文件
+//            case R.id.id_action_load_xml_file:
+//                FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_XML_FILE);
+//                break;
+//            //加载kml文件
+//            case R.id.id_action_load_kml_file:
+//                FileHelper.showFileChooser(this, REQUEST_CODE_LOAD_KML_FILE);
+//                break;
             //数据导出
             case R.id.id_action_export_data:
                 //FileHelper.sendDbFile(this);
@@ -472,6 +477,38 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             case UNCHANGED:
                 break;
         }
+    }
+
+    /**
+     * Marker对话框
+     * @param context
+     */
+    public void showFindMarkerDialog(final Context context) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
+                inflate(R.layout.dialog_prj_name, null);
+        final EditText etPrjName = (EditText) llPrjName.findViewById(R.id.id_et);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setTitle("公里标")
+                .setView(llPrjName)
+                .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastHelper.show(context,"功能正在开发中……");
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
     }
 
     /**
