@@ -22,6 +22,7 @@ import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -319,6 +320,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //指南针功能
         mUiSettings = getaMap().getUiSettings();
         mUiSettings.setCompassEnabled(true);
+        mUiSettings.setZoomControlsEnabled(false);
         //地图模式切换
         mapModeBtn = (FloatingActionButton) findViewById(R.id.id_ib_open_map_mode);
         //map_mode切换
