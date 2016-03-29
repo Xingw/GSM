@@ -105,13 +105,13 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraUpdateFactory.zoomIn();
+                getaMap().moveCamera(CameraUpdateFactory.zoomIn());
             }
         });
         findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CameraUpdateFactory.zoomOut();
+                getaMap().moveCamera(CameraUpdateFactory.zoomOut());
             }
         });
         //地图触控事件
