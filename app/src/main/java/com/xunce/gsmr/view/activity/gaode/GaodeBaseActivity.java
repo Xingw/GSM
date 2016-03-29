@@ -12,6 +12,7 @@ import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.LocationSource;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
@@ -58,10 +59,13 @@ public class GaodeBaseActivity extends AppCompatActivity {
      */
     public void init(Bundle savedInstanceState) {
         mapView = (MapView) findViewById(R.id.id_map_view);
+
         // 此方法必须重写
         mapView.onCreate(savedInstanceState);
         if (aMap == null) {
             aMap = mapView.getMap();
+            UiSettings mUiSettings = getaMap().getUiSettings();//隐藏放大缩小按钮
+            mUiSettings.setZoomControlsEnabled(false);
         }
     }
 

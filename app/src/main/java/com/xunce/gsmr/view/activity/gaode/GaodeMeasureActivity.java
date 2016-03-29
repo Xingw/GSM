@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.AMapUtils;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
@@ -101,7 +102,18 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
                 GaodeMeasureActivity.super.animateToMyLocation();
             }
         });
-
+        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CameraUpdateFactory.zoomIn();
+            }
+        });
+        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CameraUpdateFactory.zoomOut();
+            }
+        });
         //地图触控事件
         getaMap().setOnMapClickListener(new AMap.OnMapClickListener() {
             @Override
@@ -162,9 +174,9 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         }
         if (length != 0) {
             int result = (int) length;
-            tvLength.setText(result + "米");
+            tvLength.setText(result + "m");
         } else {
-            tvLength.setText(0 + "米");
+            tvLength.setText(0 + "m");
         }
     }
 
