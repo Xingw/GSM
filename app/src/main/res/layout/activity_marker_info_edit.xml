@@ -6,6 +6,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical">
 
 
@@ -22,7 +23,8 @@
                 android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="设备类型:" />
 
             <EditText
@@ -42,7 +44,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="公里标:" />
 
             <EditText
@@ -60,7 +63,8 @@
             android:orientation="vertical">
 
             <TextView
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="距线路中心距离（m）:" />
@@ -81,7 +85,8 @@
             android:orientation="vertical">
 
             <TextView
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="杆塔高度:" />
@@ -140,7 +145,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="天线1方向角:" />
 
             <EditText
@@ -160,7 +166,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="天线2方向角:" />
 
             <EditText
@@ -180,7 +187,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="天线3方向角:" />
 
             <EditText
@@ -201,7 +209,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
                 android:text="天线4方向角:" />
 
             <EditText

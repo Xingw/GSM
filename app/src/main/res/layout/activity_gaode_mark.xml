@@ -20,11 +20,9 @@
         <!--上方的输入框-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="76dp"
+            android:layout_height="80dp"
             android:background="@color/white"
-            android:dividerPadding="5dp"
-            android:orientation="horizontal"
-            android:showDividers="middle">
+            android:orientation="horizontal">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -32,6 +30,7 @@
                 android:layout_weight="8"
                 android:orientation="vertical">
                 <LinearLayout
+                    android:layout_marginTop="2dp"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1">
@@ -66,7 +65,12 @@
                         android:inputType="number"/>
                 </LinearLayout>
             </LinearLayout>
-
+            <!--分割线-->
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_margin="3dp"
+                android:background="@color/gray" />
             <Button
                 android:id="@+id/id_btn_submit"
                 android:layout_width="0dp"

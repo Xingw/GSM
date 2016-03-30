@@ -326,6 +326,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deletePrj(prjItemRealmObject);
+                dialog.dismiss();
             }
         };
         confirmButton.setOnClickListener(confirmListener);
@@ -549,6 +550,10 @@ public class PrjSelectActivity extends AppCompatActivity {
                 ())) {
             PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
         }
+        //删除DB数据库
+        File file = new File(prjItemRealmObject.getDbLocation());
+        file.delete();
+
         realm.beginTransaction();
         prjItemRealmObject.removeFromRealm();
         realm.commitTransaction();

@@ -58,8 +58,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        app:fab_addButtonColorNormal="@color/blue_semi_transparent"
-        app:fab_addButtonColorPressed="@color/blue_semi_transparent_pressed"
+        app:fab_addButtonColorNormal="@color/blue_500"
+        app:fab_addButtonColorPressed="@color/blue_400"
         app:fab_addButtonPlusIconColor="@color/white"
         app:fab_expandDirection="left"
     >
