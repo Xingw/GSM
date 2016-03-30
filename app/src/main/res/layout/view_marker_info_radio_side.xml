@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:gravity="center"
+              android:orientation="vertical">
+    <RadioGroup
+        android:id="@+id/id_rg_marker_side"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkedButton="@+id/id_rb_mode_normal"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <!--正常状态-->
+        <RadioButton
+            android:id="@+id/id_marker_side_left"
+            android:layout_width="@dimen/map_mode_item_width"
+            android:layout_height="48dp"
+            android:text="下行左侧"
+            android:textColor="@color/material_blue_grey_800"/>
+
+        <!--卫星状态-->
+        <RadioButton
+            android:id="@+id/id_marker_side_right"
+            android:layout_width="@dimen/map_mode_item_width"
+            android:layout_height="48dp"
+            android:text="下行右侧"
+            android:textColor="@color/material_blue_grey_800"/>
+    </RadioGroup>
+</LinearLayout>

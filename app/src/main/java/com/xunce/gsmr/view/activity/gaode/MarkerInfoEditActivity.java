@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.xunce.gsmr.R;
@@ -111,33 +112,33 @@ public class MarkerInfoEditActivity extends AppCompatActivity {
         });
 
         //下行侧向
-        Spinner spSideDirection = (Spinner) findViewById(R.id.id_sp_side_direction);
-        switch (markerItem.getSideDirection()){
-            case MarkerItem.MarkerItemCons.sideDirectionLeft:
-                spSideDirection.setSelection(0);
-                break;
-            case MarkerItem.MarkerItemCons.sideDirectionRight:
-                spSideDirection.setSelection(1);
-                break;
-        }
-        spSideDirection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
-                        markerItem.setSideDirection(MarkerItem.MarkerItemCons.sideDirectionLeft);
-                        break;
-                    case 1:
-                        markerItem.setSideDirection(MarkerItem.MarkerItemCons.sideDirectionRight);
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+//        Spinner spSideDirection = (Spinner) findViewById(R.id.id_sp_side_direction);
+//        switch (markerItem.getSideDirection()){
+//            case MarkerItem.MarkerItemCons.sideDirectionLeft:
+//                spSideDirection.setSelection(0);
+//                break;
+//            case MarkerItem.MarkerItemCons.sideDirectionRight:
+//                spSideDirection.setSelection(1);
+//                break;
+//        }
+//        spSideDirection.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                switch (position) {
+//                    case 0:
+//                        markerItem.setSideDirection(MarkerItem.MarkerItemCons.sideDirectionLeft);
+//                        break;
+//                    case 1:
+//                        markerItem.setSideDirection(MarkerItem.MarkerItemCons.sideDirectionRight);
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//
+//            }
+//        });
 
         //距离线路中心距离
         etDistanceToRail = (EditText) findViewById(R.id.id_et_distance_to_rail);
@@ -166,41 +167,101 @@ public class MarkerInfoEditActivity extends AppCompatActivity {
             }
         });
 
+        //下行侧向
+        RadioGroup rgSideDirection = (RadioGroup) findViewById(R.id.id_rg_marker_side);
+        if(markerItem.getSideDirection() !=null) {
+            switch (markerItem.getSideDirection()) {
+                case MarkerItem.MarkerItemCons.sideDirectionLeft:
+                    rgSideDirection.check(R.id.id_marker_side_left);
+                    break;
+                case MarkerItem.MarkerItemCons.sideDirectionRight:
+                    rgSideDirection.check(R.id.id_marker_side_right);
+                    break;
+            }
+        }else {
+            rgSideDirection.clearCheck();
+        }
+        rgSideDirection.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.id_marker_side_right:
+                        markerItem.setSideDirection(MarkerItem.MarkerItemCons.sideDirectionRight);
+                        break;
+                    case R.id.id_marker_side_left:
+                        markerItem.setSideDirection(MarkerItem.MarkerItemCons.sideDirectionLeft);
+                        break;
+                }
+            }
+        });
+
         //杆塔类型
-        Spinner spTowerType = (Spinner) findViewById(R.id.id_sp_tower_type);
+        RadioGroup rgTowerType = (RadioGroup) findViewById(R.id.id_rg_marker_tower_type);
         if(markerItem.getTowerType() !=null) {
             switch (markerItem.getTowerType()) {
                 case MarkerItem.MarkerItemCons.towerTypePole:
-                    spTowerType.setSelection(0);
+                    rgTowerType.check(R.id.id_marker_tower_pole);
                     break;
                 case MarkerItem.MarkerItemCons.towerTypeSingleTower:
-                    spTowerType.setSelection(1);
+                    rgTowerType.check(R.id.id_marker_tower_single);
                     break;
                 case MarkerItem.MarkerItemCons.towerTypeFourTower:
-                    spTowerType.setSelection(2);
+                    rgTowerType.check(R.id.id_marker_tower_four);
                     break;
             }
-        }else {spTowerType.setSelection(0);}
-        spTowerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        }else {
+            rgTowerType.clearCheck();
+        }
+        rgTowerType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case 0:
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.id_marker_tower_pole:
                         markerItem.setTowerType(MarkerItem.MarkerItemCons.towerTypePole);
                         break;
-                    case 1:
+                    case R.id.id_marker_tower_single:
                         markerItem.setTowerType(MarkerItem.MarkerItemCons.towerTypeSingleTower);
                         break;
-                    case 2:
+                    case R.id.id_marker_tower_four:
                         markerItem.setTowerType(MarkerItem.MarkerItemCons.towerTypeFourTower);
                         break;
                 }
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
         });
+//        Spinner spTowerType = (Spinner) findViewById(R.id.id_sp_tower_type);
+//        if(markerItem.getTowerType() !=null) {
+//            switch (markerItem.getTowerType()) {
+//                case MarkerItem.MarkerItemCons.towerTypePole:
+//                    spTowerType.setSelection(0);
+//                    break;
+//                case MarkerItem.MarkerItemCons.towerTypeSingleTower:
+//                    spTowerType.setSelection(1);
+//                    break;
+//                case MarkerItem.MarkerItemCons.towerTypeFourTower:
+//                    spTowerType.setSelection(2);
+//                    break;
+//            }
+//        }else {spTowerType.setSelection(0);}
+//        spTowerType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                switch (position) {
+//                    case 0:
+//                        markerItem.setTowerType(MarkerItem.MarkerItemCons.towerTypePole);
+//                        break;
+//                    case 1:
+//                        markerItem.setTowerType(MarkerItem.MarkerItemCons.towerTypeSingleTower);
+//                        break;
+//                    case 2:
+//                        markerItem.setTowerType(MarkerItem.MarkerItemCons.towerTypeFourTower);
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            }
+//        });
 
         //杆塔高度
         etTowerHeight = (EditText) findViewById(R.id.id_et_tower_height);

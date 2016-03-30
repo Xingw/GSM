@@ -99,9 +99,6 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     //公里标显示标志位
     private View llPosition;
     private boolean isLlPositionShowed;
-    //数字地图的开关
-    private Switch swDigitalFile;
-    private boolean isDigitalMapTextShowed = false;
     //cad的xml文件开关
     private FloatingActionButton swMapDatabtn;
     private boolean isMapTextShowed = false;
