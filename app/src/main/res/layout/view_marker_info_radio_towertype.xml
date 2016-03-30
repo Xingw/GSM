@@ -15,7 +15,7 @@
         <!--正常状态-->
         <RadioButton
             android:id="@+id/id_marker_tower_pole"
-            android:layout_width="60dp"
+            android:layout_width="54dp"
             android:layout_height="48dp"
             android:text="杆"
             android:textColor="@color/material_blue_grey_800"/>
@@ -23,7 +23,7 @@
         <!--卫星状态-->
         <RadioButton
             android:id="@+id/id_marker_tower_single"
-            android:layout_width="@dimen/map_mode_item_width"
+            android:layout_width="78dp"
             android:layout_height="48dp"
             android:text="独管塔"
             android:textColor="@color/material_blue_grey_800"/>
@@ -31,7 +31,7 @@
         <!--正常状态-->
         <RadioButton
             android:id="@+id/id_marker_tower_four"
-            android:layout_width="@dimen/map_mode_item_width"
+            android:layout_width="78dp"
             android:layout_height="48dp"
             android:text="四管塔"
             android:textColor="@color/material_blue_grey_800"/>

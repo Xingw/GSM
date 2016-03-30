@@ -88,13 +88,13 @@ public class PrjSelectActivity extends AppCompatActivity {
         //判断---如果有上次打开的Project---就直接跳转
         //判断是否有上次编辑的project
         if (PreferenceHelper.getInstance(this).hasLastEditPrjItem(this)) {
-            PrjItemRealmObject prjItemRealmObject = DBHelper.getPrjItemByName(realm,PreferenceHelper.getInstance(this)
+            PrjItemRealmObject prjItemRealmObject = DBHelper.getPrjItemByName(realm, PreferenceHelper.getInstance(this)
                     .getLastEditPrjName(this));
             if (prjItemRealmObject != null) {
                 //判断MapType
                 //判断地图类型--启动Activity
-                    GaodePrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem
-                            (prjItemRealmObject));
+                GaodePrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem
+                        (prjItemRealmObject));
                 finish();
             }
         }
@@ -166,8 +166,8 @@ public class PrjSelectActivity extends AppCompatActivity {
                                     adapter.getPrjItemList().get(position).getPrjName());
                     finish();
                     //判断地图类型--启动Activity
-                        GaodePrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
-                                .get(position));
+                    GaodePrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
+                            .get(position));
                 }
             }
         });
@@ -224,7 +224,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialogBuilder.dismiss();
-                deletePrj(prjItem.toRealmObject(realm));
+                showMakesureDeleteDialog(context,prjItem.toRealmObject(realm));
                 //刷新视图
                 adapter.notifyDataSetChanged();
             }
@@ -290,7 +290,7 @@ public class PrjSelectActivity extends AppCompatActivity {
                 if (prjName.equals("")) {
                     ToastHelper.showSnack(context, v.getRootView(), "工程名不可为空");
                 } else {
-                    if (DBHelper.isPrjExist(realm,prjName)) {
+                    if (DBHelper.isPrjExist(realm, prjName)) {
                         ToastHelper.showSnack(context, container, "该工程已存在");
                     } else {
                         changeName(prjItemRealmObject, prjName);
@@ -300,6 +300,32 @@ public class PrjSelectActivity extends AppCompatActivity {
                         ToastHelper.showSnack(context, container, "重命名成功!");
                     }
                 }
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
+    }
+
+    public void showMakesureDeleteDialog(Context context, final PrjItemRealmObject prjItemRealmObject) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
+                inflate(R.layout.dialog_delete_makesure, null);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setView(llPrjName)
+                .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deletePrj(prjItemRealmObject);
             }
         };
         confirmButton.setOnClickListener(confirmListener);
@@ -331,15 +357,15 @@ public class PrjSelectActivity extends AppCompatActivity {
                 if (prjName.equals("")) {
                     ToastHelper.showSnack(context, v, "工程名不可为空");
                 } else {
-                    if (DBHelper.isPrjExist(realm,prjName)) {
+                    if (DBHelper.isPrjExist(realm, prjName)) {
                         ToastHelper.showSnack(context, v, "该工程已存在");
                     } else {
                         //将新的prjItem保存进数据库
                         if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
                             ToastHelper.showSnack(context, v, "该工程已存在，请重新命名或选择导入工程");
                         } else {
-                            PrjItemRealmObject prjItemRealmObject =new PrjItemRealmObject(prjName, Constant.DbTempPath + prjName +
-                                    ".db",DBHelper.getTimeNow());
+                            PrjItemRealmObject prjItemRealmObject = new PrjItemRealmObject(prjName, Constant.DbTempPath + prjName +
+                                    ".db", DBHelper.getTimeNow());
                             realm.beginTransaction();
                             realm.copyToRealm(prjItemRealmObject);
                             realm.commitTransaction();
@@ -373,6 +399,7 @@ public class PrjSelectActivity extends AppCompatActivity {
 
     /**
      * 新建项目对话框
+     *
      * @param context
      * @param adapter
      */
@@ -384,9 +411,9 @@ public class PrjSelectActivity extends AppCompatActivity {
         Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final AlertDialog dialog = dialogBuilder
-                                    .setTitle("新建项目")
-                                    .setView(llPrjName)
-                                    .create();
+                .setTitle("新建项目")
+                .setView(llPrjName)
+                .create();
         View.OnClickListener cancelListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -400,15 +427,15 @@ public class PrjSelectActivity extends AppCompatActivity {
                 if (prjName.equals("")) {
                     ToastHelper.showSnack(context, container, "工程名不可为空");
                 } else {
-                    if (DBHelper.isPrjExist(realm,prjName)) {
+                    if (DBHelper.isPrjExist(realm, prjName)) {
                         ToastHelper.showSnack(context, container, "该工程已存在");
                     } else {
                         //将新的prjItem保存进数据库
                         if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
                             ToastHelper.showSnack(context, container, "该工程已存在，请重新命名或选择导入工程");
                         } else {
-                            PrjItemRealmObject prjItemRealmObject =new PrjItemRealmObject(prjName, Constant.DbTempPath + prjName +
-                                    ".db",DBHelper.getTimeNow());
+                            PrjItemRealmObject prjItemRealmObject = new PrjItemRealmObject(prjName, Constant.DbTempPath + prjName +
+                                    ".db", DBHelper.getTimeNow());
                             realm.beginTransaction();
                             realm.copyToRealm(prjItemRealmObject);
                             realm.commitTransaction();
@@ -495,18 +522,18 @@ public class PrjSelectActivity extends AppCompatActivity {
                             .prjInfo_coloum_prjName));
                     String creationTime = cursor.getString(cursor.getColumnIndex(DBConstant
                             .prjInfo_coloum_creationTime));
-                    if (DBHelper.isPrjExist(realm,prjName)) {
+                    if (DBHelper.isPrjExist(realm, prjName)) {
                         ToastHelper.show(PrjSelectActivity.this, "该工程已存在");
                     } else {
-                        PrjItemRealmObject prjItemRealmObject = new PrjItemRealmObject(prjName, path,creationTime);
+                        PrjItemRealmObject prjItemRealmObject = new PrjItemRealmObject(prjName, path, creationTime);
                         realm.beginTransaction();
                         PrjItemRealmObject prjItemRealmObject1 = realm.copyToRealm(prjItemRealmObject);
                         realm.commitTransaction();
                         //重新加载工程视图
                         adapter.notifyDataSetChanged();
                     }
-                }catch (SQLException e){
-                    ToastHelper.show(this,"选择的数据库有误");
+                } catch (SQLException e) {
+                    ToastHelper.show(this, "选择的数据库有误");
                 }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -515,11 +542,11 @@ public class PrjSelectActivity extends AppCompatActivity {
     /**
      * 删除一个PrjItem的所有数据
      */
-    public void deletePrj(PrjItemRealmObject prjItemRealmObject){
+    public void deletePrj(PrjItemRealmObject prjItemRealmObject) {
         //首先要判断Preference中保存的是不是当前工程
         //如果是要删除Preference
-        if(PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItemRealmObject.getPrjName
-                ())){
+        if (PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItemRealmObject.getPrjName
+                ())) {
             PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
         }
         realm.beginTransaction();
@@ -529,22 +556,24 @@ public class PrjSelectActivity extends AppCompatActivity {
 
     /**
      * 改变工程名
+     *
      * @param newName
      */
-    public void changeName(PrjItemRealmObject prjItemRealmObject, String newName){
+    public void changeName(PrjItemRealmObject prjItemRealmObject, String newName) {
         //首先要判断Preference中保存的是不是当前工程
         //如果是要修改Preference
-        if(PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItemRealmObject.getPrjName())){
+        if (PreferenceHelper.getInstance(this).getLastEditPrjName(this).equals(prjItemRealmObject.getPrjName())) {
             PreferenceHelper.getInstance(this).setLastEditPrjName(this, newName);
         }
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(prjItemRealmObject.getDbLocation(),null,SQLiteDatabase
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(prjItemRealmObject.getDbLocation(), null, SQLiteDatabase
                 .OPEN_READWRITE);
-        db.execSQL("update Projectinfo set prjName = '"+newName+"' WHERE prjName = '" + prjItemRealmObject
-                .getPrjName()+"'");
+        db.execSQL("update Projectinfo set prjName = '" + newName + "' WHERE prjName = '" + prjItemRealmObject
+                .getPrjName() + "'");
         realm.beginTransaction();
         prjItemRealmObject.setPrjName(newName);
         realm.commitTransaction();
     }
+
     /**
      * 实现两次返回退出程序
      */
