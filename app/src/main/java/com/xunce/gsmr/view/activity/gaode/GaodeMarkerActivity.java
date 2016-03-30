@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.R;
@@ -126,6 +127,19 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
         etLatitude = (EditText) findViewById(R.id.id_et_latitude);
         etLongitude = (EditText) findViewById(R.id.id_et_longitude);
 
+        //放大缩小按钮
+        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getaMap().moveCamera(CameraUpdateFactory.zoomIn());
+            }
+        });
+        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getaMap().moveCamera(CameraUpdateFactory.zoomOut());
+            }
+        });
         //确认按钮
         findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override
