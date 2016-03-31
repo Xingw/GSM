@@ -112,7 +112,10 @@ public class PicGridActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PictureHelper.getPictureFromCamera(PicGridActivity.this, markerItem);
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");//相片类型
+                startActivityForResult(intent, Constant.REQUEST_CODE_ALBUM);
+//                PictureHelper.getPictureFromCamera(PicGridActivity.this, markerItem);
             }
         });
 

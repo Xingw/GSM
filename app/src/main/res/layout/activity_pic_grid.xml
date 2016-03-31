@@ -21,9 +21,8 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="bottom|right"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/fab_add"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_photo_camera_white_18dp"
         fab:backgroundTint="@color/color_primary"
         fab:borderWidth="0dp"
         fab:rippleColor="@color/app_ripple" />

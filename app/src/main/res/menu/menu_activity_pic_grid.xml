@@ -6,13 +6,14 @@
 
     <item
         android:id="@+id/id_action_over_flow"
-        android:icon="@drawable/icon_action_overflow"
+        android:icon="@drawable/ic_more_vert_white_48dp"
         android:title="菜单"
         app:showAsAction="always">
+        <menu>
         <item
             android:id="@+id/id_action_add_from_storage"
             android:orderInCategory="100"
-            android:title="从图库导入照片"
-            app:showAsAction="never" />
+            android:title="从图库导入照片"/>
+        </menu>
     </item>
 </menu>
