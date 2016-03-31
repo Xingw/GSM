@@ -181,6 +181,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     private void initView() {
         ViewHelper.initActionBar(this, getSupportActionBar(), prjItem.getPrjName());
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         //progressbar控件
         pbBlock = findViewById(R.id.id_pb_block);
         tvPbComment = (TextView) findViewById(R.id.id_tv_pb_comment);
@@ -407,11 +409,11 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            //项目管理
-            case R.id.id_action_change_project:
-                finish();
-                PrjSelectActivity.start(this, true);
-                break;
+//            //项目管理
+//            case R.id.id_action_change_project:
+//                finish();
+//                PrjSelectActivity.start(this, true);
+//                break;
 //            //加载初始xml中的Marker数据
 //            case R.id.id_action_load_xml_marker:
 //                //只有加载了xml文件才加载初始选址文件
@@ -449,6 +451,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             //返回
             case android.R.id.home:
                 finish();
+                PrjSelectActivity.start(this, true);
                 break;
         }
         return super.onOptionsItemSelected(item);

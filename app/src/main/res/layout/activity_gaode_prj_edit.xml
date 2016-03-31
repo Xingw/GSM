@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="72dp"
         android:orientation="vertical">
 
@@ -29,6 +30,7 @@
             android:layout_gravity="right"
             app:fab_colorNormal="@color/white"
             app:fab_colorPressed="@color/white_pressed"
+            app:fab_size="mini"
             app:fab_icon="@drawable/map_action_mode_2d"
         />
         <!--xml开关-->
@@ -39,6 +41,7 @@
             android:layout_gravity="right"
             app:fab_colorNormal="@color/white_unpressed"
             app:fab_colorPressed="@color/white_pressed"
+            app:fab_size="mini"
             app:fab_icon="@drawable/map_action_draw_close"
         />
         <!--定位按钮-->
@@ -48,6 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             app:fab_colorNormal="@color/white"
+            app:fab_size="mini"
             app:fab_colorPressed="@color/white_pressed"
             app:fab_icon="@drawable/map_action_location"/>
     </LinearLayout>
@@ -60,8 +64,8 @@
         android:layout_alignParentRight="true"
         app:fab_addButtonColorNormal="@color/blue_500"
         app:fab_addButtonColorPressed="@color/blue_400"
-        app:fab_addButtonPlusIconColor="@color/white"
         app:fab_expandDirection="left"
+        app:fab_icon="@drawable/ic_menu_white_48dp"
     >
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -71,6 +75,7 @@
             app:fab_colorNormal="@color/white"
             app:fab_colorPressed="@color/white_pressed"
             app:fab_icon="@drawable/map_action_choose_location"
+            app:fab_size="mini"
         />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -80,6 +85,7 @@
             app:fab_colorNormal="@color/white"
             app:fab_colorPressed="@color/white_pressed"
             app:fab_icon="@drawable/map_action_measure"
+            app:fab_size="mini"
         />
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -89,6 +95,7 @@
             app:fab_colorNormal="@color/white"
             app:fab_colorPressed="@color/white_pressed"
             app:fab_icon="@drawable/map_action_marker"
+            app:fab_size="mini"
         />
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
     <!--&lt;!&ndash;下面的功能键&ndash;&gt;-->
