@@ -67,7 +67,6 @@ dependencies {
     compile 'com.nineoldandroids:library:2.4.0'
     compile 'com.github.sd6352051.niftydialogeffects:niftydialogeffects:1.0.0@aar'
     //fabButton
-    compile 'com.github.clans:fab:1.5.4'
     compile 'com.getbase:floatingactionbutton:1.10.1'
     //progressBar
     compile 'com.github.rahatarmanahmed:circularprogressview:2.4.0'

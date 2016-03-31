@@ -16,7 +16,7 @@
         android:numColumns="3"
         android:verticalSpacing="1dp" />
 
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/id_btn_add"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -24,9 +24,9 @@
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
         android:src="@drawable/fab_add"
-        fab:fab_colorNormal="@color/color_primary"
-        fab:fab_colorPressed="@color/app_primary_pressed"
-        fab:fab_colorRipple="@color/app_ripple" />
+        fab:backgroundTint="@color/color_primary"
+        fab:borderWidth="0dp"
+        fab:rippleColor="@color/app_ripple" />
 
     <LinearLayout
         android:id="@+id/id_ll_options"

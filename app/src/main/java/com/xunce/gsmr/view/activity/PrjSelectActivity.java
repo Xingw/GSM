@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -25,7 +26,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.clans.fab.FloatingActionButton;
 import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 import com.orhanobut.logger.Logger;
@@ -288,7 +288,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String prjName = etPrjName.getText().toString();
                 if (prjName.equals("")) {
-                    ToastHelper.showSnack(context, v.getRootView(), "工程名不可为空");
+                    ToastHelper.showSnack(context, container, "工程名不可为空");
                 } else {
                     if (DBHelper.isPrjExist(realm, prjName)) {
                         ToastHelper.showSnack(context, container, "该工程已存在");

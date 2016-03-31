@@ -20,8 +20,13 @@
             tools:listitem="@layout/view_lv_item_prj_select"/>
 
     </LinearLayout>
-
-    <com.github.clans.fab.FloatingActionButton
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="bottom"
+    >
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/id_btn_add"
         android:layout_width="56dp"
         android:layout_height="56dp"
@@ -29,14 +34,10 @@
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
         android:src="@drawable/fab_add"
-        fab:fab_colorNormal="@color/color_primary"
-        fab:fab_colorPressed="@color/app_primary_pressed"
-        fab:fab_colorRipple="@color/app_ripple"/>
+        fab:backgroundTint="@color/blue_500"
+        fab:rippleColor="@color/blue_400"
+        fab:borderWidth="0dp"
+        />
 
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-    ></android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </FrameLayout>
