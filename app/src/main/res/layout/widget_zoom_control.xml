@@ -4,8 +4,8 @@
               android:layout_width="49dp"
               android:layout_height="97dp"
               android:layout_gravity="right|bottom"
-              android:layout_marginBottom="88dp"
-              android:layout_marginRight="12dp"
+              android:layout_marginBottom="106dp"
+              android:layout_marginRight="34dp"
               android:background="@color/gray"
               android:orientation="vertical">
 

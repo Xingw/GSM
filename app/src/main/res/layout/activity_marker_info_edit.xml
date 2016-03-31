@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,17 +20,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:focusable="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
+                android:focusable="true"
                 android:paddingBottom="8dp"
-                android:text="设备类型:" />
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="设备类型:"/>
 
             <EditText
                 android:id="@+id/id_et_device_type"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <!--公里标-->
@@ -44,14 +45,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="公里标:" />
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="公里标:"/>
 
             <EditText
                 android:id="@+id/id_et_kilometer_mark"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <!--距离线路中心距离-->
@@ -63,17 +65,18 @@
             android:orientation="vertical">
 
             <TextView
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="距线路中心距离（m）:" />
+                android:paddingBottom="8dp"
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="距线路中心距离（m）:"/>
 
             <EditText
                 android:id="@+id/id_et_distance_to_rail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
+                android:inputType="numberDecimal"/>
         </LinearLayout>
 
         <!--杆塔高度-->
@@ -85,16 +88,17 @@
             android:orientation="vertical">
 
             <TextView
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="杆塔高度:" />
+                android:paddingBottom="8dp"
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="杆塔高度:"/>
 
             <EditText
                 android:id="@+id/id_et_tower_height"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
         <!--下行侧向-->
         <LinearLayout
@@ -108,9 +112,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:textSize="@dimen/text_size_normal"
                 android:gravity="left"
-                android:text="下行侧向:" />
+                android:text="下行侧向:"
+                android:textSize="@dimen/text_size_normal"/>
 
             <include layout="@layout/view_marker_info_radio_side"/>
         </LinearLayout>
@@ -127,9 +131,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:textSize="@dimen/text_size_normal"
                 android:gravity="left"
-                android:text="杆塔类型:" />
+                android:text="杆塔类型:"
+                android:textSize="@dimen/text_size_normal"/>
 
             <include layout="@layout/view_marker_info_radio_towertype"/>
         </LinearLayout>
@@ -138,85 +142,89 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="天线1方向角:" />
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="天线1方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_1"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <!--天线2方向角-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="天线2方向角:" />
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="天线2方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_2"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <!--天线1方向角-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="天线3方向角:" />
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="天线3方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_3"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
         <!--天线1方向角-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="天线4方向角:" />
+                android:paddingLeft="2dp"
+                android:paddingTop="8dp"
+                android:text="天线4方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_4"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
     </LinearLayout>

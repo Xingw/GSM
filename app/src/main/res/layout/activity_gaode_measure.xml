@@ -51,9 +51,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/floating_action_menu_bottom"
+            android:layout_marginRight="@dimen/floating_action_menu_right"
             fab:fab_colorNormal="@color/white"
             fab:fab_colorPressed="@color/white_pressed"
-            fab:fab_icon="@drawable/map_action_location" />
-
+            fab:fab_icon="@drawable/ic_map_action_location_big" />
     </FrameLayout>
 </LinearLayout>

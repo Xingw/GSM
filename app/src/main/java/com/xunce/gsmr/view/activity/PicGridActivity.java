@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -56,7 +57,7 @@ public class PicGridActivity extends AppCompatActivity {
     private String dbPath;
 
     private GridView gv;
-    private ImageButton btnAdd;
+    private FloatingActionButton btnAdd;
     private LinearLayout ll;
     private Button btnDelete;
     private Button btnShare;
@@ -107,7 +108,7 @@ public class PicGridActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         //添加照片
-        btnAdd = (ImageButton) findViewById(R.id.id_btn_add);
+        btnAdd = (FloatingActionButton) findViewById(R.id.id_btn_add);
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
