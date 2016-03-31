@@ -12,17 +12,16 @@
         android:id="@+id/id_map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
-
-
-    <LinearLayout
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/multiple_actions_hide_up"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="72dp"
-        android:orientation="vertical">
-
+        app:fab_addButtonColorNormal="@color/blue_500"
+        app:fab_addButtonColorPressed="@color/blue_400"
+        app:fab_expandDirection="up"
+    >
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/id_ib_open_map_mode"
             android:layout_width="wrap_content"
@@ -30,8 +29,8 @@
             android:layout_gravity="right"
             app:fab_colorNormal="@color/white"
             app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
             app:fab_icon="@drawable/map_action_mode_2d"
+            app:fab_size="mini"
         />
         <!--xml开关-->
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -41,8 +40,8 @@
             android:layout_gravity="right"
             app:fab_colorNormal="@color/white_unpressed"
             app:fab_colorPressed="@color/white_pressed"
-            app:fab_size="mini"
             app:fab_icon="@drawable/map_action_draw_close"
+            app:fab_size="mini"
         />
         <!--定位按钮-->
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -51,13 +50,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             app:fab_colorNormal="@color/white"
-            app:fab_size="mini"
             app:fab_colorPressed="@color/white_pressed"
-            app:fab_icon="@drawable/map_action_location"/>
-    </LinearLayout>
+            app:fab_icon="@drawable/map_action_location"
+            app:fab_size="mini"/>
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu
-        android:id="@+id/multiple_actions"
+        android:id="@+id/multiple_actions_hide_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -65,7 +64,6 @@
         app:fab_addButtonColorNormal="@color/blue_500"
         app:fab_addButtonColorPressed="@color/blue_400"
         app:fab_expandDirection="left"
-        app:fab_icon="@drawable/ic_menu_white_48dp"
     >
 
         <com.getbase.floatingactionbutton.FloatingActionButton
@@ -94,17 +92,34 @@
             android:layout_height="wrap_content"
             app:fab_colorNormal="@color/white"
             app:fab_colorPressed="@color/white_pressed"
-            app:fab_icon="@drawable/map_action_marker"
+            app:fab_icon="@drawable/ic_map_action_marker"
             app:fab_size="mini"
         />
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
+    <com.getbase.floatingactionbutton.FloatingActionButton
+        android:id="@+id/multiple_actions_expand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:fab_colorNormal="@color/blue_500"
+        app:fab_colorPressed="@color/blue_400"
+        app:fab_icon="@drawable/ic_menu_white_48dp"
+    />
     <!--&lt;!&ndash;下面的功能键&ndash;&gt;-->
     <!--<include-->
     <!--layout="@layout/activity_prj_edit_function"-->
     <!--android:layout_width="wrap_content"-->
     <!--android:layout_height="wrap_content"-->
     <!--android:layout_gravity="bottom"/>-->
-
+    <include
+        layout="@layout/widget_zoom_control"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="88dp"
+        android:layout_marginRight="12dp"/>
     <!--公里标输入框-->
     <include layout="@layout/view_position"/>
 
