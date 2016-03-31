@@ -22,9 +22,10 @@
 
             <ImageView
                 android:id="@+id/image"
+                android:layout_gravity="center"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@mipmap/ic_launcher" />
+                android:background="@drawable/ic_launcher" />
 
             <LinearLayout
                 xmlns:android="http://schemas.android.com/apk/res/android"
@@ -47,7 +48,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:text="xxxx.apk"
-                        android:textColor="#000" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:id="@+id/tv_progress_update"
@@ -56,7 +57,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center"
                         android:minWidth="60dp"
-                        android:textColor="#000" />
+                        android:textColor="@color/white" />
                 </LinearLayout>
 
                 <ProgressBar

@@ -25,7 +25,7 @@
         android:layout_marginLeft="10dp"
         android:background="@drawable/icon_prj_background"
         android:scaleType="centerInside"
-        android:src="@drawable/icon_prj_24dp"
+        android:src="@drawable/ic_directions_railway_white_36dp"
     />
     <TextView
         android:id="@+id/id_tv_prj_name"
