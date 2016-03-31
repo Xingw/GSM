@@ -43,7 +43,7 @@ public class Update {
                     int currentVersionCode = info.versionCode; // 版本号
                     if (version > currentVersionCode) {
                         showUpateDialog(context,url);
-                    }else if(version == currentVersionCode && appVersion.equals(versionShort)){
+                    }else if(version == currentVersionCode && !appVersion.equals(versionShort)){
                         showUpateDialog(context,url);
                     }
                 } catch (JSONException e) {
