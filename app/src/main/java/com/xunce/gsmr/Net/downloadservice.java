@@ -41,7 +41,7 @@ public class DownloadService extends Service {
     /********
      * download progress step
      *********/
-    private static final int down_step_custom = 3;
+    private static final int down_step_custom = 1;
 
     private static final int TIMEOUT = 10 * 1000;// 超时
     private static String down_url;
@@ -173,7 +173,7 @@ public class DownloadService extends Service {
         //notification = new Notification(R.drawable.dot_enable,app_name + getString(R.string.is_downing) ,System.currentTimeMillis());
         notification = new Notification(
                 //R.drawable.video_player,//应用的图标
-                R.mipmap.ic_launcher,//应用的图标
+                R.drawable.ic_launcher,//应用的图标
                 app_name + "正在下载",
                 System.currentTimeMillis());
         notification.flags = Notification.FLAG_ONGOING_EVENT;

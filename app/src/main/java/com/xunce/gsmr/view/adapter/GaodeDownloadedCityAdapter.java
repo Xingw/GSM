@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.amap.api.maps.offlinemap.OfflineMapCity;
 import com.amap.api.maps.offlinemap.OfflineMapManager;
 import com.amap.api.maps.offlinemap.OfflineMapProvince;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.util.L;
 
@@ -65,6 +66,17 @@ public class GaodeDownloadedCityAdapter extends BaseExpandableListAdapter {
         //初始化数据
         cityMap.clear();
         provinceList = offlineMapManager.getDownloadOfflineMapProvinceList();
+        ArrayList<OfflineMapCity> offlineMapCities = offlineMapManager
+                .getDownloadOfflineMapCityList();
+        for (int i = 0; i < provinceList.size(); i++) {
+            offlineMapCities.removeAll(provinceList.get(i).getCityList());
+        }
+        if (offlineMapCities.size() != 0) {
+            OfflineMapProvince province = new OfflineMapProvince();
+            province.setCityList(offlineMapCities);
+            province.setProvinceName("其他");
+            provinceList.add(province);
+        }
         L.log(TAG, "数据一共有:  " + provinceList.size() + "条");
         for (int i = 0; i < provinceList.size(); i++) {
             cityMap.put(i, provinceList.get(i).getCityList());
