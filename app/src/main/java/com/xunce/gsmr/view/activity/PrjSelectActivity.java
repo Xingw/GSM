@@ -79,12 +79,13 @@ public class PrjSelectActivity extends AppCompatActivity {
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
         //监测是否为PrjEditActivity调用
         boolean isCalled = getIntent().getBooleanExtra(EXTRA_KEY_IS_CALLED, false);
+        //检查工程内存的数据库是否存在
+        checkDbLocation();
         if (isCalled) {
             initView();
             return;
         }
-        //检查工程内存的数据库是否存在
-        checkDbLocation();
+
         //判断---如果有上次打开的Project---就直接跳转
         //判断是否有上次编辑的project
         if (PreferenceHelper.getInstance(this).hasLastEditPrjItem(this)) {
@@ -597,5 +598,11 @@ public class PrjSelectActivity extends AppCompatActivity {
             //杀掉当前app的进程---释放地图的内存
             System.exit(0);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkDbLocation();
     }
 }
