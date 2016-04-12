@@ -16,6 +16,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,7 +27,6 @@ import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.getbase.floatingactionbutton.FloatingActionButton;
-import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -53,6 +53,7 @@ import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
+import com.xunce.gsmr.view.adapter.PrjLvAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
@@ -98,6 +99,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     //公里标显示标志位
     private View llPosition;
     private boolean isLlPositionShowed;
+    //数字地图的开关
+    private Switch swDigitalFile;
+    private boolean isDigitalMapTextShowed = false;
     //cad的xml文件开关
     private FloatingActionButton swMapDatabtn;
     private boolean isMapTextShowed = false;
@@ -117,14 +121,6 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     //地图模式选择
     private FloatingActionButton mapModeBtn;
     private static int ModeValue=Constant.MODE_MAP_2D;
-
-    //菜单按钮展开
-    private FloatingActionsMenu floatingActionsMenu_hide_left;
-    private FloatingActionsMenu floatingActionsMenu_hide_up;
-    private FloatingActionButton floatingActionButton_expand;
-    private boolean expand = false;
-
-    private LinearLayout zoomlayout;
     /**
      * 用于延时发送数据
      */
@@ -188,48 +184,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     private void initView() {
         ViewHelper.initActionBar(this, getSupportActionBar(), prjItem.getPrjName());
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        zoomlayout = (LinearLayout) findViewById(R.id.view_zoom_control);
         //progressbar控件
         pbBlock = findViewById(R.id.id_pb_block);
         tvPbComment = (TextView) findViewById(R.id.id_tv_pb_comment);
-
-        floatingActionsMenu_hide_left = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_left);
-        floatingActionsMenu_hide_up = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_up);
-        floatingActionButton_expand = (FloatingActionButton) findViewById(R.id
-                .multiple_actions_expand);
-        floatingActionButton_expand.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!expand) {
-                    expand=true;
-                    zoomlayout.setVisibility(View.GONE);
-                    floatingActionsMenu_hide_left.expand();
-                    floatingActionsMenu_hide_up.expand();
-                    floatingActionButton_expand.setIcon(R.drawable.ic_close);
-                }else {
-                    expand=false;
-                    zoomlayout.setVisibility(View.VISIBLE);
-                    floatingActionsMenu_hide_left.collapse();
-                    floatingActionsMenu_hide_up.collapse();
-                    floatingActionButton_expand.setIcon(R.drawable.ic_menu_white_48dp);
-                }
-            }
-        });
-
-        //放大缩小按钮
-        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getaMap().moveCamera(CameraUpdateFactory.zoomIn());
-            }
-        });
-        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getaMap().moveCamera(CameraUpdateFactory.zoomOut());
-            }
-        });
         //初始化地图Mode控件
         initMapMode();
         //填充Marker
@@ -453,11 +410,11 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-//            //项目管理
-//            case R.id.id_action_change_project:
-//                finish();
-//                PrjSelectActivity.start(this, true);
-//                break;
+            //项目管理
+            case R.id.id_action_change_project:
+                finish();
+                PrjSelectActivity.start(this, true);
+                break;
 //            //加载初始xml中的Marker数据
 //            case R.id.id_action_load_xml_marker:
 //                //只有加载了xml文件才加载初始选址文件
@@ -495,7 +452,6 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             //返回
             case android.R.id.home:
                 finish();
-                PrjSelectActivity.start(this, true);
                 break;
         }
         return super.onOptionsItemSelected(item);
