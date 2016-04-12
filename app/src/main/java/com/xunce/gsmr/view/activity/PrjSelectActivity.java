@@ -40,6 +40,7 @@ import com.xunce.gsmr.util.VibrateHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
+import com.xunce.gsmr.view.activity.baidu.BaiduPrjEditActivity;
 import com.xunce.gsmr.view.activity.gaode.GaodePrjEditActivity;
 import com.xunce.gsmr.view.adapter.PrjLvAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
@@ -94,8 +95,12 @@ public class PrjSelectActivity extends AppCompatActivity {
             if (prjItemRealmObject != null) {
                 //判断MapType
                 //判断地图类型--启动Activity
-                GaodePrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem
-                        (prjItemRealmObject));
+                if (PreferenceHelper.getInstance(PrjSelectActivity.this).getMapType()
+                        == PreferenceHelper.MapType.BAIDU_MAP) {
+                    BaiduPrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem(prjItemRealmObject));
+                } else {
+                    GaodePrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem(prjItemRealmObject));
+                }
                 finish();
             }
         }
@@ -167,8 +172,14 @@ public class PrjSelectActivity extends AppCompatActivity {
                                     adapter.getPrjItemList().get(position).getPrjName());
                     finish();
                     //判断地图类型--启动Activity
-                    GaodePrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
-                            .get(position));
+                    if (PreferenceHelper.getInstance(PrjSelectActivity.this).getMapType()
+                            == PreferenceHelper.MapType.BAIDU_MAP) {
+                        BaiduPrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
+                                .get(position));
+                    } else {
+                        GaodePrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
+                                .get(position));
+                    }
                 }
             }
         });
