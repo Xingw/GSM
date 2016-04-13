@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -31,7 +32,6 @@ import com.xunce.gsmr.util.gps.MarkerHelper;
 import com.xunce.gsmr.util.view.AnimHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.view.style.TransparentStyle;
-import com.xunce.gsmr.view.widget.ZoomControlView;
 
 /**
  * 取点Activity
@@ -119,8 +119,28 @@ public class BaiduGetLatLngActivity extends AppCompatActivity {
                 MyLocationConfiguration.LocationMode.NORMAL, true, null));
 
         //获取缩放控件
-        ZoomControlView zcvZomm = (ZoomControlView) findViewById(R.id.id_zoom_control);
-        zcvZomm.setMapView(mMapView);//设置百度地图控件
+        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float zoomLevel = mBaiduMap.getMapStatus().zoom;
+                if(zoomLevel<=18){
+                    mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomIn());
+                }else{
+                    Toast.makeText(BaiduGetLatLngActivity.this, "已经放至最大！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float zoomLevel = mBaiduMap.getMapStatus().zoom;
+                if(zoomLevel>4){
+                    mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomOut());
+                }else{
+                    Toast.makeText(BaiduGetLatLngActivity.this, "已经缩至最小！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         //地图的触摸监听事件
         mBaiduMap.setOnMapTouchListener(new BaiduMap.OnMapTouchListener() {

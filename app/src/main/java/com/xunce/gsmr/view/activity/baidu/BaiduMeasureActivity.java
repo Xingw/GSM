@@ -11,7 +11,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.amap.api.maps.CameraUpdateFactory;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -19,6 +21,7 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapPoi;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
@@ -35,7 +38,6 @@ import com.xunce.gsmr.util.gps.LocateHelper;
 import com.xunce.gsmr.util.gps.MapHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.style.TransparentStyle;
-import com.xunce.gsmr.view.widget.ZoomControlView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -130,8 +132,28 @@ public class BaiduMeasureActivity extends AppCompatActivity {
         MapHelper.animateToPoint(mBaiduMap, latLng);
 
         //获取缩放控件
-        ZoomControlView zcvZomm = (ZoomControlView) findViewById(R.id.id_zoom_control);
-        zcvZomm.setMapView(mMapView);//设置百度地图控件
+        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float zoomLevel = mBaiduMap.getMapStatus().zoom;
+                if(zoomLevel<=18){
+                    mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomIn());
+                }else{
+                    Toast.makeText(BaiduMeasureActivity.this, "已经放至最大！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                float zoomLevel = mBaiduMap.getMapStatus().zoom;
+                if(zoomLevel>4){
+                    mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomOut());
+                }else{
+                    Toast.makeText(BaiduMeasureActivity.this, "已经缩至最小！", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         mBaiduMap.setOnMapTouchListener(new BaiduMap.OnMapTouchListener() {
             @Override

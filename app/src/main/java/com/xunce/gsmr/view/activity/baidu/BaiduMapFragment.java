@@ -112,7 +112,7 @@ public class BaiduMapFragment extends Fragment {
         //初始化数据
         mapView = (MapView) layout.findViewById(R.id.id_map_view);
         context = getActivity();
-        prjItem = (PrjItem) getArguments().getSerializable("prjItem");
+        prjItem = (PrjItem) getArguments().getParcelable("prjItem");
 
         //正式初始化
         init();

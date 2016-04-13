@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,13 +22,19 @@ import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.event.DrawMapDataEvent;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
+import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
+import com.xunce.gsmr.view.activity.gaode.GaodeMarkerActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
+
+import de.greenrobot.event.EventBus;
+import io.realm.Realm;
 
 /**
  * 开启时会接收到一个PrjItem---intent中
@@ -61,6 +69,19 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private RadioGroup rg;
 
     /**
+     * 用于延时发送数据
+     */
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if (msg.what == 0) {
+                //EventBus.getDefault().post(new DrawMapDataEvent(railWayHolder));
+            }
+        }
+    };
+
+    /**
      * 用于更加方便的开启Activity
      * 后面几个参数可以用来传递-----放入intent 的数据
      *
@@ -79,7 +100,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_baidu_prj_edit);
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
 
-        prjItem = (PrjItem) getIntent().getSerializableExtra(Constant.EXTRA_KEY_PRJ_ITEM);
+        //对sharedpreference进行初始化
+        PreferenceHelper.getInstance(this).initMarkerIconPreference();
+
+        prjItem = (PrjItem) getIntent().getParcelableExtra(Constant.EXTRA_KEY_PRJ_ITEM);
 
         //初始化View
         initView();
@@ -96,7 +120,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
         //启动Map的片段
         Bundle bundle = new Bundle();
-        bundle.putSerializable("prjItem", prjItem);
+        bundle.putParcelable("prjItem", prjItem);
         baiduMapFragment = BaiduMapFragment.getInstance(bundle);
         getFragmentManager().beginTransaction().replace(R.id.id_fragment_container,
                 baiduMapFragment).commit();
@@ -105,11 +129,11 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.id_btn_mark).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //先保存进数据库---然后传递
-                MarkerItem markerItem = new MarkerItem(prjItem);
-//                markerItem.save();
-                BaiduMarkerActivity.start(BaiduPrjEditActivity.this, markerItem,prjItem.getDbLocation(),
-                        REQUEST_CODE_MARKER_ACTIVITY);
+                //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
+                MarkerItem markerItem = new MarkerItem();
+                BaiduMarkerActivity.start(BaiduPrjEditActivity.this,
+                        markerItem, prjItem.getDbLocation(), REQUEST_CODE_MARKER_ACTIVITY);
+                handler.sendEmptyMessageDelayed(0, 300);
             }
         });
     }
@@ -207,11 +231,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 finish();
                 PrjSelectActivity.start(this, true);
                 //加载铁路地图
-            case R.id.id_action_load_digital_file:
-                //TODO---加载铁路地图
-                //首先判断数据库是否绑定
-                baiduMapFragment.loadRail();
-                break;
+//            case R.id.id_action_load_digital_file:
+//                //首先判断数据库是否绑定
+//                baiduMapFragment.loadRail();
+//                break;
             //数据导出
             case R.id.id_action_export_data:
                 FileHelper.sendDbFile(this,prjItem.getDbLocation());

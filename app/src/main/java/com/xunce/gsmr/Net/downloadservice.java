@@ -33,7 +33,7 @@ import java.net.URLConnection;
 /**
  * Created by Xingw on 2016/3/21.
  */
-public class DownloadService extends Service {
+class DownloadService extends Service {
     public static final String Install_Apk = "Install_Apk";
     public static final String Key_App_Name = "Key_App_Name";
     public static final String Key_Down_Url = "Key_Down_Url";

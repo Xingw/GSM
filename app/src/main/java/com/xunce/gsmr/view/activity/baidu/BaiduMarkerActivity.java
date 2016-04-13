@@ -66,6 +66,8 @@ public class BaiduMarkerActivity extends AppCompatActivity {
     private EditText etLatitude, etLongitude;
     //定位按钮
     private ImageButton ibLocate;
+    //数据库地址
+    private String dbPath;
 
     //定位监听器---每秒触发
     public BDLocationListener myListener = new BDLocationListener() {
@@ -116,7 +118,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         //获取数据
         MarkerItem wrongItem = (MarkerItem) getIntent()
                 .getSerializableExtra(Constant.EXTRA_KEY_MARKER_ITEM);
-        String dbPath = (String) getIntent().getSerializableExtra(Constant.EXTRA_KEY_DBPATH);
+        dbPath = (String) getIntent().getSerializableExtra(Constant.EXTRA_KEY_DBPATH);
         markerItem = DBHelper.getMarkerItemInDB(dbPath,wrongItem.getMarkerId());
         requestCode = getIntent().getIntExtra(Constant.EXTRA_KEY_REQUEST_CODE,
                 BaiduPrjEditActivity.REQUEST_CODE_MARKER_ACTIVITY);
@@ -190,7 +192,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                     LatLng bdLatLng = new LatLng(MarkerHelper.getLatitude(etLatitude),
                             MarkerHelper.getLongitude(etLongitude));
                     //将高德地图数据传入
-                    markerItem.changeData(PositionUtil.bd_2_gaode_latlng(bdLatLng));
+                    markerItem.changeData(PositionUtil.bd_2_gaode_latlng(bdLatLng),dbPath);
                     //设置返回值
                     setResult(Constant.RESULT_CODE_OK);
                     //退出
@@ -230,8 +232,8 @@ public class BaiduMarkerActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.id_action_load_digital_file:
-                break;
+//            case R.id.id_action_load_digital_file:
+//                break;
 //            case R.id.id_action_load_marker:
 //                break;
             case android.R.id.home:

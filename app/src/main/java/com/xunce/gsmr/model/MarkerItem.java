@@ -1,5 +1,7 @@
 package com.xunce.gsmr.model;
 
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.CoordinateConverter;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.gps.PositionUtil;
@@ -12,6 +14,8 @@ import java.io.Serializable;
  * Created by ssthouse on 2015/7/17.
  */
 public class MarkerItem implements Serializable {
+
+
 
     /**
      * 保存数据常量
@@ -215,6 +219,20 @@ public class MarkerItem implements Serializable {
         initFields();
     }
 
+    /**
+     * 获取百度LatLng
+     * 将国测局坐标转换为百度坐标
+     *
+     * @return 百度地图LatLng
+     */
+    public LatLng getBaiduLatLng() {
+        // 将google地图、soso地图、aliyun地图、mapabc地图和amap地图// 所用坐标转换成百度坐标
+        CoordinateConverter converter = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.COMMON);
+        // sourceLatLng待转换坐标
+        converter.coord(new LatLng(latitude, longitude));
+        return converter.convert();
+    }
 
     /**
      * 获取高德LatLng
@@ -240,11 +258,13 @@ public class MarkerItem implements Serializable {
      *
      * @param latLng 传入高德地图的数据
      */
-    public void changeData(com.amap.api.maps.model.LatLng latLng) {
+    public void changeData(com.amap.api.maps.model.LatLng latLng,String DBLocation) {
         //改变坐标
         double wgsLatlng[] = PositionUtil.gcj_To_Gps84(latLng.latitude, latLng.longitude);
         this.latitude = wgsLatlng[0];
         this.longitude = wgsLatlng[1];
+
+        DBHelper.updateMarkerItemLatlng(DBLocation,MarkerId,longitude,latitude);
         //保存数据
 //        this.save();
     }
