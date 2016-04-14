@@ -66,17 +66,17 @@
 	<type extension=".gz" mimetype="application/gzip" />
 	
 	<!-- Web browser types -->
-	<type extension=".htm" mimetype="text/html" />
-	<type extension=".html" mimetype="text/html" />
-	<type extension=".php" mimetype="text/php " />
+	<type extension=".htm" mimetype="content/html" />
+	<type extension=".html" mimetype="content/html" />
+	<type extension=".php" mimetype="content/php " />
 	
 	<!-- Doc types -->
-	<type extension=".txt" mimetype="text/plain" />
-	<type extension=".rtf" mimetype="text/rtf" />
-	<type extension=".csv" mimetype="text/csv" />
-	<type extension=".xml" mimetype="text/xml" />
-	<type extension=".xml" mimetype="text/xml" />
-	<type extension=".css" mimetype="text/css" />
+	<type extension=".txt" mimetype="content/plain" />
+	<type extension=".rtf" mimetype="content/rtf" />
+	<type extension=".csv" mimetype="content/csv" />
+	<type extension=".xml" mimetype="content/xml" />
+	<type extension=".xml" mimetype="content/xml" />
+	<type extension=".css" mimetype="content/css" />
 	<type extension=".doc" mimetype="application/msword" />
 	<type extension=".docx" mimetype="application/msword" />
 	<type extension=".ppt" mimetype="application/vnd.ms-powerpoint" />

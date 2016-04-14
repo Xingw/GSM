@@ -47,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
-                        android:text="xxxx.apk"
+                        android:content="xxxx.apk"
                         android:textColor="@color/white" />
 
                     <TextView
@@ -69,7 +69,7 @@
                     android:layout_marginTop="3dp"
                     android:max="100"
                     android:progress="0"
-                    android:text="xxxx.apk" />
+                    android:content="xxxx.apk" />
             </LinearLayout>
         </LinearLayout>
 

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:padding="0dp"
-            android:text="下载管理"
+            android:content="下载管理"
             android:textSize="16sp" />
 
         <Button
@@ -30,7 +30,7 @@
             android:background="@color/white"
             android:onClick="clickCityListButton"
             android:padding="0dp"
-            android:text="城市列表"
+            android:content="城市列表"
             android:textSize="16sp" />
     </LinearLayout>
 
@@ -68,7 +68,7 @@
                     android:gravity="center_vertical|left"
                     android:hint="省或城市名称"
                     android:paddingLeft="8dp"
-                    android:text="" />
+                    android:content="" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -96,7 +96,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="省/市" />
+            android:content="省/市" />
 
         <ListView
             android:id="@+id/lv_all_city"
@@ -115,7 +115,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:text="已下载城市 " />
+            android:content="已下载城市 " />
 
         <ListView
             android:id="@+id/lv_local_maps"

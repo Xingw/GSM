@@ -20,7 +20,7 @@
             android:layout_margin="0dp"
             android:background="@color/white"
             android:padding="0dp"
-            android:text="下载管理"
+            android:content="下载管理"
             android:textSize="16sp" />
 
         <Button
@@ -31,7 +31,7 @@
             android:layout_margin="0dp"
             android:onClick="clickCityListButton"
             android:padding="0dp"
-            android:text="城市列表"
+            android:content="城市列表"
             android:textSize="16sp" />
     </LinearLayout>
 

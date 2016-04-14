@@ -135,23 +135,13 @@ public class BaiduMeasureActivity extends AppCompatActivity {
         findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float zoomLevel = mBaiduMap.getMapStatus().zoom;
-                if(zoomLevel<=18){
                     mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomIn());
-                }else{
-                    Toast.makeText(BaiduMeasureActivity.this, "已经放至最大！", Toast.LENGTH_SHORT).show();
-                }
             }
         });
         findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                float zoomLevel = mBaiduMap.getMapStatus().zoom;
-                if(zoomLevel>4){
                     mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomOut());
-                }else{
-                    Toast.makeText(BaiduMeasureActivity.this, "已经缩至最小！", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 

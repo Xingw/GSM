@@ -21,21 +21,21 @@
             android:id="@+id/id_rb_mode_normal"
             android:layout_width="@dimen/map_mode_item_width"
             android:layout_height="48dp"
-            android:text="标准地图"/>
+            android:content="标准地图"/>
 
         <!--卫星状态-->
         <RadioButton
             android:id="@+id/id_rb_mode_satellite"
             android:layout_width="@dimen/map_mode_item_width"
             android:layout_height="48dp"
-            android:text="卫星地图"/>
+            android:content="卫星地图"/>
 
         <!--3D状态-->
         <RadioButton
             android:id="@+id/id_rb_mode_3d"
             android:layout_width="@dimen/map_mode_item_width"
             android:layout_height="48dp"
-            android:text="3D地图"/>
+            android:content="3D地图"/>
     </RadioGroup>
 
 </FrameLayout>

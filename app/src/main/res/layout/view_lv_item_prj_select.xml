@@ -34,7 +34,7 @@
         android:layout_weight="8"
         android:gravity="left|center_vertical"
         android:paddingLeft="14dp"
-        android:text="123"
+        android:content="123"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_large"/>
     <TextView
@@ -43,5 +43,5 @@
         android:layout_height="match_parent"
         android:layout_weight="4"
         android:gravity="center"
-        android:text="2016/01/01"/>
+        android:content="2016/01/01"/>
 </LinearLayout>

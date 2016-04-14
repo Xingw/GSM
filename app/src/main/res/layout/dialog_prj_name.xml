@@ -30,7 +30,7 @@
                 android:gravity="center"
                 android:textColor="#03a9f4"
                 android:textSize="@dimen/text_size_normal"
-                android:text="确认"/>
+                android:content="确认"/>
             <Button
                 android:id="@+id/tv_input_cancel"
                 android:layout_width="0dp"
@@ -40,6 +40,6 @@
                 android:gravity="center"
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_normal"
-                android:text="取消"/>
+                android:content="取消"/>
         </LinearLayout>
 </LinearLayout>

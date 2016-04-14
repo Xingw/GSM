@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/btn_selector"
             android:gravity="center"
-            android:text="选择起点:"
+            android:content="选择起点:"
             android:textSize="@dimen/text_size_button" />
 
         <android.support.design.widget.TextInputLayout
@@ -69,7 +69,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/btn_selector"
             android:gravity="center"
-            android:text="选择终点:"
+            android:content="选择终点:"
             android:textSize="@dimen/text_size_button" />
 
         <android.support.design.widget.TextInputLayout
@@ -128,7 +128,7 @@
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_selector"
-                android:text="在线规划"
+                android:content="在线规划"
                 android:textSize="@dimen/text_size_button" />
 
             <Button
@@ -138,7 +138,7 @@
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_selector"
-                android:text="模拟导航"
+                android:content="模拟导航"
                 android:textSize="@dimen/text_size_button" />
 
             <Button
@@ -148,7 +148,7 @@
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_selector"
-                android:text="真实导航"
+                android:content="真实导航"
                 android:textSize="@dimen/text_size_button" />
         </LinearLayout>
 

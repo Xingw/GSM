@@ -1,6 +1,8 @@
 package com.xunce.gsmr.util.gps;
 
 import com.amap.api.maps.model.LatLng;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.utils.CoordinateConverter;
 
 /**
  * 各地图API坐标系统比较与转换;
@@ -126,6 +128,40 @@ public class PositionUtil {
         double wgsLatlng[] = PositionUtil.gcj_To_Gps84(gcjLatlng[0], gcjLatlng[1]);
         return wgsLatlng;
     }
+
+    /**
+     * GPS84 -> BD09 (尚未检验）
+     * @return
+     */
+    public static com.baidu.mapapi.model.LatLng Gps84_To_bd09(com.baidu.mapapi.model.LatLng sourceLatLng) {
+        // 将GPS设备采集的原始GPS坐标转换成百度坐标
+        CoordinateConverter converter  = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.GPS);
+        // sourceLatLng待转换坐标
+        converter.coord(sourceLatLng);
+        com.baidu.mapapi.model.LatLng desLatLng = converter.convert();
+        double[] result = new double[2];
+        result[0] =desLatLng.latitude;
+        result[1] = desLatLng.longitude;
+        return desLatLng;
+    }
+    /**
+     * GPS84 -> BD09 (尚未检验）
+     * @return
+     */
+    public static com.baidu.mapapi.model.LatLng Gps84_To_bd09(double lat,double lon) {
+        // 将GPS设备采集的原始GPS坐标转换成百度坐标
+        CoordinateConverter converter  = new CoordinateConverter();
+        converter.from(CoordinateConverter.CoordType.GPS);
+        // sourceLatLng待转换坐标
+        converter.coord(new com.baidu.mapapi.model.LatLng(lat,lon));
+        com.baidu.mapapi.model.LatLng desLatLng = converter.convert();
+        double[] result = new double[2];
+        result[0] =desLatLng.latitude;
+        result[1] = desLatLng.longitude;
+        return desLatLng;
+    }
+
 
     public static boolean outOfChina(double lat, double lon) {
         if (lon < 72.004 || lon > 137.8347)

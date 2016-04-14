@@ -39,7 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="经度："
+                        android:content="经度："
                         android:textSize="@dimen/text_size_normal"/>
                     <EditText
                         android:id="@+id/id_et_latitude"
@@ -56,7 +56,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="纬度："
+                        android:content="纬度："
                         android:textSize="@dimen/text_size_normal"/>
                     <EditText
                         android:id="@+id/id_et_longitude"
@@ -81,7 +81,7 @@
                 android:layout_weight="3"
                 android:gravity="center"
                 android:background="@drawable/selector_btn_blue_2_white"
-                android:text="确认"
+                android:content="确认"
                 android:textColor="@color/btn_marker_txcolor"
                 android:textSize="@dimen/text_size_normal"/>
         </LinearLayout>

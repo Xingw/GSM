@@ -29,12 +29,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center|right"
-                android:text="总距离："
+                android:content="总距离："
                 android:textColor="@color/black"
                 android:textSize="@dimen/text_size_normal" />
 
             <TextView
-                android:text="0m"
+                android:content="0m"
                 android:id="@+id/id_tv_length"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

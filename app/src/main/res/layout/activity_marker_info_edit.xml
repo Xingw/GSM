@@ -26,7 +26,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="设备类型:"/>
+                android:content="设备类型:"/>
 
             <EditText
                 android:id="@+id/id_et_device_type"
@@ -48,7 +48,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="公里标:"/>
+                android:content="公里标:"/>
 
             <EditText
                 android:id="@+id/id_et_kilometer_mark"
@@ -70,7 +70,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="距线路中心距离（m）:"/>
+                android:content="距线路中心距离（m）:"/>
 
             <EditText
                 android:id="@+id/id_et_distance_to_rail"
@@ -93,7 +93,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="杆塔高度:"/>
+                android:content="杆塔高度:"/>
 
             <EditText
                 android:id="@+id/id_et_tower_height"
@@ -113,7 +113,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:text="下行侧向:"
+                android:content="下行侧向:"
                 android:textSize="@dimen/text_size_normal"/>
 
             <include layout="@layout/view_marker_info_radio_side"/>
@@ -132,7 +132,7 @@
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:gravity="left"
-                android:text="杆塔类型:"
+                android:content="杆塔类型:"
                 android:textSize="@dimen/text_size_normal"/>
 
             <include layout="@layout/view_marker_info_radio_towertype"/>
@@ -152,7 +152,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="天线1方向角:"/>
+                android:content="天线1方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_1"
@@ -174,7 +174,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="天线2方向角:"/>
+                android:content="天线2方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_2"
@@ -196,7 +196,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="天线3方向角:"/>
+                android:content="天线3方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_3"
@@ -219,7 +219,7 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="2dp"
                 android:paddingTop="8dp"
-                android:text="天线4方向角:"/>
+                android:content="天线4方向角:"/>
 
             <EditText
                 android:id="@+id/id_et_antenna_direction_4"

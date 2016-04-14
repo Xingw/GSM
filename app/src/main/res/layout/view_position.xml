@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:text="公里标"
+        android:content="公里标"
         android:layout_margin="4dp"
         android:textSize="@dimen/text_size_normal" />
 
@@ -32,5 +32,5 @@
         android:layout_gravity="center_vertical"
         android:textColor="@drawable/selector_text_black_2_white"
         android:background="@drawable/selector_btn_white_2_blue"
-        android:text="确认"/>
+        android:content="确认"/>
 </LinearLayout>

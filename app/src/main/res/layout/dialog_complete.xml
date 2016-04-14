@@ -10,11 +10,11 @@
         android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="删除完成"/>
+        android:content="删除完成"/>
 
     <Button
         android:id="@+id/id_btn_ensure"
-        android:text="ok"
+        android:content="ok"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

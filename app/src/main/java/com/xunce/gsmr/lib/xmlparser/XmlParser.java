@@ -200,7 +200,7 @@ public class XmlParser extends DefaultHandler {
 //            line.setPolyline(null);
 //        }
 //        for (Text text : textList) {
-//            text.setText(null);
+//            text.setContent(null);
 //        }
 //        for (com.xunce.gsmr.model.gaodemap.graph.Vector vector : vectorList) {
 //            vector.setPolyline(null);

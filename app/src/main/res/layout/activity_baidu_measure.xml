@@ -27,12 +27,12 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:text="总长"
+                android:content="总长"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_normal" />
 
             <TextView
-                android:text="0米"
+                android:content="0米"
                 android:id="@+id/id_tv_length"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

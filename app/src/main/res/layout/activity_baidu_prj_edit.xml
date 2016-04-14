@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     tools:context=".MainActivity">
@@ -17,24 +18,143 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/multiple_actions_hide_up"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/floating_action_menu_bottom"
+            android:layout_marginRight="@dimen/floating_action_menu_right"
+            app:fab_addButtonColorNormal="@color/blue_500"
+            app:fab_addButtonColorPressed="@color/blue_400"
+            app:fab_expandDirection="up"
+            >
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/id_ib_open_map_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_icon="@drawable/map_action_mode_2d"
+                app:fab_size="mini"
+                />
+            <!--xml开关-->
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/id_btn_sw_map_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                app:fab_colorNormal="@color/white_unpressed"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_icon="@drawable/map_action_draw_close"
+                app:fab_size="mini"
+                />
+            <!--定位按钮-->
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/id_btn_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_icon="@drawable/map_action_location"
+                app:fab_size="mini"/>
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
-        <!--地图模式选择-->
-        <include layout="@layout/view_map_mode" />
+        <com.getbase.floatingactionbutton.FloatingActionsMenu
+            android:id="@+id/multiple_actions_hide_left"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/floating_action_menu_bottom"
+            android:layout_marginRight="@dimen/floating_action_menu_right"
+            app:fab_addButtonColorNormal="@color/blue_500"
+            app:fab_addButtonColorPressed="@color/blue_400"
+            app:fab_expandDirection="left"
+            >
 
-        <!--选址按钮-->
-        <ImageButton
-            android:id="@+id/id_btn_mark"
-            android:layout_width="@dimen/btn_mark_size"
-            android:layout_height="@dimen/btn_mark_size"
-            android:layout_gravity="right"
-            android:layout_marginRight="8dp"
-            android:layout_marginTop="66dp"
-            android:background="@color/white"
-            android:padding="8dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/icon_marker_blue"
-            android:text="选址"
-            android:textSize="@dimen/text_size_button" />
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_action_choose_location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_icon="@drawable/map_action_choose_location"
+                app:fab_size="mini"
+                />
 
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_action_measure"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_icon="@drawable/map_action_measure"
+                app:fab_size="mini"
+                />
+
+            <com.getbase.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fb_action_marker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:fab_colorNormal="@color/white"
+                app:fab_colorPressed="@color/white_pressed"
+                app:fab_icon="@drawable/ic_map_action_marker"
+                app:fab_size="mini"
+                />
+        </com.getbase.floatingactionbutton.FloatingActionsMenu>
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/multiple_actions_expand"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/floating_action_menu_bottom"
+            android:layout_marginRight="@dimen/floating_action_menu_right"
+            app:fab_colorNormal="@color/blue_500"
+            app:fab_colorPressed="@color/blue_400"
+            app:fab_icon="@drawable/ic_menu_white_48dp"
+            />
+        <!--&lt;!&ndash;下面的功能键&ndash;&gt;-->
+        <!--<include-->
+        <!--layout="@layout/activity_prj_edit_function"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom"/>-->
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/view_zoom_control"
+            android:layout_width="49dp"
+            android:layout_height="97dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="106dp"
+            android:layout_marginRight="34dp"
+            android:background="@color/gray"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/btn_zoom_in"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/zoom_button_background"
+                android:scaleType="center"
+                android:src="@drawable/zoom_control_in"/>
+
+            <ImageButton
+                android:id="@+id/btn_zoom_out"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/zoom_button_background"
+                android:scaleType="center"
+                android:src="@drawable/zoom_control_out"/>
+
+        </LinearLayout>
+        </RelativeLayout>
     </FrameLayout>
 </LinearLayout>

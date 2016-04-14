@@ -3,17 +3,29 @@ package com.xunce.gsmr.model.baidumap;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
+import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.kilometerMark.KilometerMark;
+import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.graph.Circle;
 import com.xunce.gsmr.model.baidumap.graph.Line;
 import com.xunce.gsmr.model.baidumap.graph.Text;
+import com.xunce.gsmr.model.baidumap.graph.Vector;
+import com.xunce.gsmr.model.event.ProgressbarEvent;
+import com.xunce.gsmr.util.DBConstant;
+import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.L;
+import com.xunce.gsmr.util.gps.PositionUtil;
+import com.xunce.gsmr.util.view.ToastHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 铁路的管理类
@@ -23,16 +35,89 @@ import java.util.List;
 public class BaiduRailWayHolder {
     private static final String TAG = "BaiduRailWayHolder";
 
+    /**
+     * 用于接收数据的临时变量
+     */
+    private Line line;
+    private Text text;
+    private Vector vector;
+
+    /**
+     * 所有绘图数据
+     */
     private List<Circle> circles;
+    private List<Line> lineList = new ArrayList<>();
+    private List<Text> textList = new ArrayList<>();
+    private List<Vector> vectorList = new ArrayList<>();
 
-    private List<Line> lines;
+    /**
+     * 公里标管理器
+     */
+    private KilometerMarkHolder kilometerMarkHolder = new KilometerMarkHolder();
 
-    private List<Text> texts;
+    public BaiduRailWayHolder(final Context context, final String dbPath){
+        lineList = new ArrayList<>();
+        textList = new ArrayList<>();
+        vectorList = new ArrayList<>();
+        kilometerMarkHolder = new KilometerMarkHolder();
+        //启动线程前___显示progressbar
+        EventBus.getDefault().post(new ProgressbarEvent(true));
+        //启动异步线程解析数据
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                SQLiteDatabase db = DBHelper.openDatabase(dbPath);
+                db.beginTransaction();
+                //开启线程执行前显示进度条
+                getLineList(db);
+                getTextList(db);
+                getPolyList(db);
+                getP2DPolyList(db);
+                db.setTransactionSuccessful();
+                db.endTransaction();
+                db.close();
+                return null;
+            }
 
-    public BaiduRailWayHolder(Context context, PrjItem prjItem){
-        circles = new ArrayList<>();
-        lines = new ArrayList<>();
-        texts = new ArrayList<>();
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                //将公里标进行排序
+                kilometerMarkHolder.sort();
+                //运行完将progressbar隐藏
+                EventBus.getDefault().post(new ProgressbarEvent(false));
+                ToastHelper.show(context, "地图数据加载成功!");
+            }
+        }.execute();
+    }
+
+    /**
+     * 构造方法 传入数据
+     *
+     * @param lineList
+     * @param textList
+     * @param vectorList
+     */
+    public BaiduRailWayHolder(List<Line> lineList, List<Text> textList, List<Vector> vectorList) {
+        this.lineList = lineList;
+        this.textList = textList;
+        this.vectorList = vectorList;
+
+        for (Text text : textList) {
+            text.setLatLng(PositionUtil.Gps84_To_bd09(text.getLatLng()));
+        }
+        for (Line line : lineList) {
+            line.setLatLngBegin(PositionUtil.Gps84_To_bd09(line.getLatLngBegin()));
+            line.setLatLngEnd(PositionUtil.Gps84_To_bd09(line.getLatLngEnd()));
+        }
+        kilometerMarkHolder = new KilometerMarkHolder();
+        for (Text text1 : textList) {
+            //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)
+            KilometerMark kilometerMark = KilometerMark.getKilometerMark(text1.getLatLng().longitude,
+                    text1.getLatLng().latitude, text1.getContent());
+            kilometerMarkHolder.addKilometerMark(kilometerMark);
+        }
+
     }
 
     /**
@@ -42,36 +127,38 @@ public class BaiduRailWayHolder {
         for(Circle circle : circles){
             circle.draw(baiduMap);
         }
-        for(Line line :lines){
+        for(Line line : lineList){
             line.draw(baiduMap);
         }
-        for(Text text : texts){
+        for(Text text : textList){
             text.draw(baiduMap);
         }
     }
-    private static List<Line> getLineList(SQLiteDatabase database) {
-        List<Line> lineList = new ArrayList<>();
-        Cursor cursor = database.query("Line", null, null, null, null, null, null);
+    private void getLineList(SQLiteDatabase database) {
+        Cursor cursor = database.query(Constant.TABLE_LINE, null, null, null, null, null, null);
         if (cursor == null) {
-            return null;
+            return;
         }
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
-            LatLng latLngBegin = new LatLng(cursor.getFloat(1), cursor.getFloat(2));
-            LatLng latLngEnd = new LatLng(cursor.getFloat(3), cursor.getFloat(4));
-            lineList.add(new Line(latLngBegin, latLngEnd));
-            L.log(TAG, cursor.getFloat(1) + ":" + cursor.getFloat(2) + ":" +
-                    cursor.getFloat(1) + ":" + cursor.getFloat(2));
+            LatLng latLngStart = PositionUtil.Gps84_To_bd09(
+                    cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_start)),
+                    cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_start)));
+            LatLng latLngEnd = PositionUtil.Gps84_To_bd09(
+                    cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_end)),
+                    cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_end)));
+            line = new Line(latLngStart, latLngEnd);
+            lineList.add(line);
             cursor.moveToNext();
         }
-        return lineList;
+        return;
     }
 
-    private static List<Circle> getCircleList(SQLiteDatabase database){
+    private void getCircleList(SQLiteDatabase database){
         List<Circle> circleList = new ArrayList<>();
         Cursor cursor = database.query("Circle", null, null, null, null, null, null);
         if (cursor == null) {
-            return null;
+            return;
         }
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
@@ -81,23 +168,59 @@ public class BaiduRailWayHolder {
                     cursor.getFloat(3));
             cursor.moveToNext();
         }
-        return circleList;
+        return;
     }
 
-    private static List<Text> getTextList(SQLiteDatabase database){
-        List<Text> circleList = new ArrayList<>();
-        Cursor cursor = database.query("Text", null, null, null, null, null, null);
+    private void getTextList(SQLiteDatabase database){
+        Cursor cursor = database.query(Constant.TABLE_TEXT, null, null, null, null, null, null);
         if (cursor == null) {
-            return null;
+            return;
         }
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
-            LatLng latLng = new LatLng(cursor.getFloat(2), cursor.getFloat(3));
-            circleList.add(new Text(latLng, cursor.getString(1)));
-            L.log(TAG, cursor.getString(1) + ":" + cursor.getFloat(2) + ":" +
-                    cursor.getFloat(3));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+            double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+            LatLng latLng = PositionUtil.Gps84_To_bd09(latitude, longitude);
+            String content = cursor.getString(cursor.getColumnIndex(DBConstant.content));
+            text = new Text(latLng, content);
+            textList.add(text);
+            //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)
+            KilometerMark kilometerMark = KilometerMark.getKilometerMark(longitude, latitude, content);
+            kilometerMarkHolder.addKilometerMark(kilometerMark);
             cursor.moveToNext();
         }
-        return circleList;
+        return;
+    }
+
+
+    /**
+     * 获取Poly矢量List
+     *
+     * @param database
+     * @return
+     */
+    private void getPolyList(SQLiteDatabase database) {
+        Cursor cursor = database.rawQuery("SELECT * FROM " + Constant.TABLE_POLY + " ORDER BY " +
+                DBConstant.id + " , " + DBConstant.orderId, null);
+        if (cursor == null || !cursor.moveToFirst()) {
+            return;
+        }
+        do {
+            int order = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBConstant
+                    .orderId)));
+            if (order == 0) {
+                if (vector != null && vector.getPointList().size() != 0) {
+                    vectorList.add(vector);
+                }
+                //存入Vector的图层名
+                vector = new Vector(cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
+            } else {
+                double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+                double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+                vector.getPointList().add(new Point(longitude, latitude));
+            }
+        } while (cursor.moveToNext());
+        vectorList.add(vector);
+        return;
     }
 }

@@ -19,17 +19,17 @@ public class Text extends Graph {
 
     private LatLng latLng;
     private float rotate;
-    private String text;
+    private String content;
 
-    public Text(LatLng latLng, float rotate, String text) {
+    public Text(LatLng latLng, float rotate, String content) {
         this.latLng = latLng;
         this.rotate = rotate;
-        this.text = text;
+        this.content = content;
     }
 
     public Text(LatLng latLng, String string) {
         this.latLng = latLng;
-        this.text = string;
+        this.content = string;
         this.rotate = 0;
     }
 
@@ -40,7 +40,7 @@ public class Text extends Graph {
                 .bgColor(textBgColor)
                 .fontSize(textSize)
                 .fontColor(textColor)
-                .text(text)
+                .text(content)
                 .rotate(-rotate)
                 .position(latLng);
         baiduMap.addOverlay(ooText);
@@ -56,12 +56,12 @@ public class Text extends Graph {
         this.latLng = latLng;
     }
 
-    public String getText() {
-        return text;
+    public String getContent() {
+        return content;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public float getRotate() {

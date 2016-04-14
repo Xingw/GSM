@@ -1,36 +1,51 @@
 package com.xunce.gsmr.view.activity.baidu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.baidumap.BaiduMapCons;
 import com.xunce.gsmr.model.event.DrawMapDataEvent;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
+import com.xunce.gsmr.util.gps.MapHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
+import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
 import com.xunce.gsmr.view.activity.gaode.GaodeMarkerActivity;
+import com.xunce.gsmr.view.activity.gaode.GaodePrjEditActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import de.greenrobot.event.EventBus;
@@ -63,11 +78,25 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      */
     private PrjItem prjItem;
 
-    /**
-     * map_mode选择控件
-     */
-    private RadioGroup rg;
+    //菜单按钮展开
+    private FloatingActionsMenu floatingActionsMenu_hide_left;
+    private FloatingActionsMenu floatingActionsMenu_hide_up;
+    private FloatingActionButton floatingActionButton_expand;
+    private boolean expand = false;
 
+    //地图模式选择
+    private FloatingActionButton mapModeBtn;
+    private static int ModeValue=Constant.MODE_MAP_2D;
+    /**
+     * 缩放控件
+     */
+    private LinearLayout zoomlayout;
+    //地图数据显示
+    private FloatingActionButton swMapDatabtn;
+    private boolean isChecked = false;
+    public boolean isMapTextShowed = false;
+    //公里标显示标志位
+    private View llPosition;
     /**
      * 用于延时发送数据
      */
@@ -80,6 +109,8 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             }
         }
     };
+
+
 
     /**
      * 用于更加方便的开启Activity
@@ -115,6 +146,28 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private void initView() {
         ViewHelper.initActionBar(this, getSupportActionBar(), prjItem.getPrjName());
 
+        floatingActionsMenu_hide_left = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_left);
+        floatingActionsMenu_hide_up = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_up);
+        floatingActionButton_expand = (FloatingActionButton) findViewById(R.id
+                .multiple_actions_expand);
+        floatingActionButton_expand.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!expand) {
+                    expand=true;
+                    zoomlayout.setVisibility(View.GONE);
+                    floatingActionsMenu_hide_left.expand();
+                    floatingActionsMenu_hide_up.expand();
+                    floatingActionButton_expand.setIcon(R.drawable.ic_close);
+                }else {
+                    expand=false;
+                    zoomlayout.setVisibility(View.VISIBLE);
+                    floatingActionsMenu_hide_left.collapse();
+                    floatingActionsMenu_hide_up.collapse();
+                    floatingActionButton_expand.setIcon(R.drawable.ic_menu_white_48dp);
+                }
+            }
+        });
         //初始化map_mode控件
         initMapMode();
 
@@ -126,7 +179,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 baiduMapFragment).commit();
 
         //选址
-        findViewById(R.id.id_btn_mark).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fb_action_choose_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
@@ -136,59 +189,174 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         });
+
+        //获取缩放控件
+        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baiduMapFragment.getBaiduMap().setMapStatus(MapStatusUpdateFactory.zoomIn());
+            }
+        });
+        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baiduMapFragment.getBaiduMap().setMapStatus(MapStatusUpdateFactory.zoomOut());
+            }
+        });
+        //显示地图数据按钮
+        swMapDatabtn = (FloatingActionButton) findViewById(R.id.id_btn_sw_map_data);
+        swMapDatabtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if ((!isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
+                    ToastHelper.show(BaiduPrjEditActivity.this, "请先加载数据文件");
+                } else if (!isChecked && railWayHolder != null) {
+                    isChecked = true;
+                    swMapDatabtn.setIcon(R.drawable.map_action_draw_open);
+                    if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
+                        MapHelper.animateToPoint(baiduMapFragment.getBaiduMap(),railWayHolder.getTextList().get(0).getLatLng());
+                    }
+                    Float zoom =baiduMapFragment.getBaiduMap().getMapStatus().zoom;
+                    if (zoom > BaiduMapCons.zoomLevel) {
+                        railWayHolder.draw(baiduMapFragment.getBaiduMap());
+                    } else {
+                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap());
+                    }
+                } else if (isChecked) {
+                    isChecked = false;
+                    swMapDatabtn.setIcon(R.drawable.map_action_draw_close);
+                    railWayHolder.hide();
+                }
+            }
+        });
+
+        //监测---地图的大小变化---画出/隐藏---文字
+        BaiduMap.OnMapStatusChangeListener listener = new BaiduMap.OnMapStatusChangeListener() {
+
+            /**
+             * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
+             * @param status 地图状态改变开始时的地图状态
+             */
+            public void onMapStatusChangeStart(MapStatus status){
+            }
+            /**
+             * 地图状态变化中
+             * @param status 当前地图状态
+             */
+            public void onMapStatusChange(MapStatus status){
+            }
+            /**
+             * 地图状态改变结束
+             * @param status 地图状态改变结束后的地图状态
+             */
+            public void onMapStatusChangeFinish(MapStatus status){
+                //如果 xml文件已经加载 且 switch为开
+                if (railWayHolder != null && isChecked) {
+                    Float zoom =baiduMapFragment.getBaiduMap().getMapStatus().zoom;
+                    //如果放大到16以上
+                    if (zoom > BaiduMapCons.zoomLevel && !isMapTextShowed) {
+                        railWayHolder.drawText(baiduMapFragment.getBaiduMap());
+                        isMapTextShowed = true;
+                    } else if (zoom < BaiduMapCons.zoomLevel && isMapTextShowed) {
+                        railWayHolder.hideText();
+                        isMapTextShowed = false;
+                    }
+                }
+            }
+        };
+
+        //定位
+        findViewById(R.id.id_btn_location).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baiduMapFragment.locate();
+            }
+        });
+
+        //测量
+        findViewById(R.id.fb_action_measure).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //开启测量Activity
+                BaiduMeasureActivity.start(BaiduPrjEditActivity.this, baiduMapFragment.getBaiduMap().getMapStatus().target);
+            }
+        });
+        //公里标
+        llPosition = findViewById(R.id.id_ll_position);
+        findViewById(R.id.fb_action_marker).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showFindMarkerDialog(BaiduPrjEditActivity.this);
+                loadMarker(prjItem);
+            }
+        });
+    }
+
+    private void showFindMarkerDialog(final Context context) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
+                inflate(R.layout.dialog_prj_name, null);
+        final EditText etPrjName = (EditText) llPrjName.findViewById(R.id.id_et);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setTitle("公里标")
+                .setView(llPrjName)
+                .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ToastHelper.show(context,"功能正在开发中……");
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
     }
 
     /**
      * 初始化地图Mode控件
      */
     private void initMapMode() {
-        //map_mode可见性的切换
-        findViewById(R.id.id_ib_open_map_mode).setOnClickListener(new View.OnClickListener() {
+        //地图模式切换
+        mapModeBtn = (FloatingActionButton) findViewById(R.id.id_ib_open_map_mode);
+        //map_mode切换
+        mapModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (rg.getVisibility() == View.VISIBLE) {
-                    rg.startAnimation(AnimationUtils.loadAnimation(BaiduPrjEditActivity.this,
-                            R.anim.slide_right));
-                    rg.setVisibility(View.INVISIBLE);
-                } else {
-                    rg.startAnimation(AnimationUtils.loadAnimation(BaiduPrjEditActivity.this,
-                            R.anim.slide_left));
-                    rg.setVisibility(View.VISIBLE);
-                }
-            }
-        });
-        //切换map_mode 的选项
-        rg = (RadioGroup) findViewById(R.id.id_rg_map_mode);
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.id_rb_mode_normal: {
+                switch (ModeValue){
+                    case Constant.MODE_MAP_2D: {//2D地图切换至3D地图
+                        ModeValue = Constant.MODE_MAP_3D;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_NORMAL);
-                        MapStatus ms = new MapStatus.Builder(baiduMapFragment.getBaiduMap()
-                                .getMapStatus()).overlook(0).build();
-                        MapStatusUpdate u = MapStatusUpdateFactory.newMapStatus(ms);
-                        baiduMapFragment.getBaiduMap().animateMapStatus(u);
+                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).rotate(45).build();
+                        MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
+                        baiduMapFragment.getBaiduMap().animateMapStatus(msu);
                         break;
                     }
-                    case R.id.id_rb_mode_satellite: {
+                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
+                        ModeValue = Constant.MODE_MAP_SATELLITE;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_SATELLITE);
-                        MapStatus ms = new MapStatus.Builder(baiduMapFragment.getBaiduMap()
-                                .getMapStatus()).overlook(0).build();
-                        MapStatusUpdate u = MapStatusUpdateFactory.newMapStatus(ms);
-                        baiduMapFragment.getBaiduMap().animateMapStatus(u);
+                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).rotate(0).build();
+                        MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
+                        baiduMapFragment.getBaiduMap().animateMapStatus(msu);
                         break;
                     }
-                    case R.id.id_rb_mode_3d: {
-                        int overlookAngle = -45;
-                        MapStatus ms = new MapStatus.Builder(baiduMapFragment.getBaiduMap()
-                                .getMapStatus()).overlook(overlookAngle).build();
-                        MapStatusUpdate u = MapStatusUpdateFactory.newMapStatus(ms);
-                        baiduMapFragment.getBaiduMap().animateMapStatus(u);
+                    case Constant.MODE_MAP_SATELLITE: {//卫星地图切换至2D地图
+                        ModeValue = Constant.MODE_MAP_2D;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_2d);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_NORMAL);
                         break;
                     }
                 }
+
             }
         });
     }
@@ -227,9 +395,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             //切换工程
-            case R.id.id_action_change_project:
-                finish();
-                PrjSelectActivity.start(this, true);
+//            case R.id.id_action_change_project:
+//                finish();
+//                PrjSelectActivity.start(this, true);
                 //加载铁路地图
 //            case R.id.id_action_load_digital_file:
 //                //首先判断数据库是否绑定
@@ -250,6 +418,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             //返回
             case android.R.id.home:
                 finish();
+                PrjSelectActivity.start(this, true);
                 break;
         }
         return super.onOptionsItemSelected(item);
