@@ -20,6 +20,7 @@ public class Text extends Graph {
     private LatLng latLng;
     private float rotate;
     private String content;
+    private TextOptions ooText;
 
     public Text(LatLng latLng, float rotate, String content) {
         this.latLng = latLng;
@@ -35,15 +36,23 @@ public class Text extends Graph {
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        // 添加文字
-        OverlayOptions ooText = new TextOptions()
-                .bgColor(textBgColor)
-                .fontSize(textSize)
-                .fontColor(textColor)
-                .text(content)
-                .rotate(-rotate)
-                .position(latLng);
-        baiduMap.addOverlay(ooText);
+        if(ooText == null){
+            // 添加文字
+            OverlayOptions ooText = new TextOptions()
+                    .bgColor(textBgColor)
+                    .fontSize(textSize)
+                    .fontColor(textColor)
+                    .text(content)
+                    .rotate(-rotate)
+                    .position(latLng);
+            baiduMap.addOverlay(ooText);
+        }else{
+            ooText.visible(true);
+        }
+    }
+
+    public void hide(){
+        ooText.visible(false);
     }
 
 

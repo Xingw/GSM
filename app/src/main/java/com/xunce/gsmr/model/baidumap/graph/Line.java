@@ -2,6 +2,7 @@ package com.xunce.gsmr.model.baidumap.graph;
 
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 
@@ -23,22 +24,34 @@ public class Line extends Graph {
 
     private LatLng latLngEnd;
 
+    private PolylineOptions ooPolyline;
     public Line(LatLng latLngBegin, LatLng latLngEnd) {
         this.latLngBegin = latLngBegin;
         this.latLngEnd = latLngEnd;
+
+
     }
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        // 添加折线
-        List<LatLng> points = new ArrayList<>();
-        points.add(latLngBegin);
-        points.add(latLngEnd);
-        OverlayOptions ooPolyline = new PolylineOptions()
-                .width(lineWidth)
-                .color(lineColor)
-                .points(points);
-        baiduMap.addOverlay(ooPolyline);
+        if(ooPolyline == null)
+        {
+            // 添加折线
+            List<LatLng> points = new ArrayList<>();
+            points.add(latLngBegin);
+            points.add(latLngEnd);
+            ooPolyline = new PolylineOptions()
+                    .width(lineWidth)
+                    .color(lineColor)
+                    .points(points);
+            baiduMap.addOverlay(ooPolyline);
+        }else {
+            ooPolyline.visible(true);
+        }
+    }
+
+    public void hide(){
+        ooPolyline.visible(false);
     }
 
     public LatLng getLatLngBegin() {
