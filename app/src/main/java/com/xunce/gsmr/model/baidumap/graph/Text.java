@@ -79,4 +79,12 @@ public class Text extends Graph {
     public void setRotate(float rotate) {
         this.rotate = rotate;
     }
+
+    public TextOptions getOoText() {
+        return ooText;
+    }
+
+    public void setOoText(TextOptions ooText) {
+        this.ooText = ooText;
+    }
 }

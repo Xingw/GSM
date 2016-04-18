@@ -232,7 +232,7 @@ public class DBHelper {
 //     * @param prjItem
 //     * @return
 //     */
-//    public static List<MarkerItem> getMarkerList(PrjItemRealmObject prjItem) {
+//    public static List<MarkerItem> getMarkerOnMapList(PrjItemRealmObject prjItem) {
 //        return new Select().from(MarkerItem.class)
 //                .where("prjName = " + "'" + prjItem.getId() + "'")
 //                .execute();

@@ -16,7 +16,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +38,7 @@ import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
-import com.xunce.gsmr.model.event.DrawMapDataEvent;
+import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
@@ -54,7 +53,6 @@ import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
-import com.xunce.gsmr.view.adapter.PrjLvAdapter;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
@@ -88,7 +86,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * 编辑的PrjItem
      */
     private PrjItem prjItem;
-    private static boolean firstOpen = true;
+    public static boolean firstOpen = true;
     /**
      * 控件
      */
@@ -135,7 +133,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                EventBus.getDefault().post(new DrawMapDataEvent(railWayHolder));
+                EventBus.getDefault().post(new GaoDeDrawMapDataEvent(railWayHolder));
             }
         }
     };
@@ -179,9 +177,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         initdata();
 
         //检查版本更新
-        if(firstOpen) {
+        if(Constant.firstOpen) {
             Update.checkversion(this);
-            firstOpen = false;
+            Constant.firstOpen = false;
         }
     }
 

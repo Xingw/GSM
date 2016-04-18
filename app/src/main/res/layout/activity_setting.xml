@@ -20,7 +20,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:padding="8dp"
-            android:content="使用wifi定位方式"
+            android:text="使用wifi定位方式"
             android:textColor="@drawable/selector_text_black_2_white"
             android:textSize="@dimen/activity_setting_item_text_size" />
 
@@ -46,7 +46,7 @@
             android:layout_weight="1"
             android:gravity="center|left"
             android:padding="8dp"
-            android:content="地图类型"
+            android:text="地图类型"
             android:textColor="@drawable/selector_text_black_2_white"
             android:textSize="@dimen/activity_setting_item_text_size" />
 
@@ -73,7 +73,7 @@
             android:layout_weight="1"
             android:gravity="center|left"
             android:padding="8dp"
-            android:content="标记点图标设置"
+            android:text="标记点图标设置"
             android:textColor="@drawable/selector_text_black_2_white"
             android:textSize="@dimen/activity_setting_item_text_size" />
     </LinearLayout>
@@ -87,7 +87,7 @@
         android:clickable="true"
         android:gravity="center_vertical"
         android:padding="8dp"
-        android:content="软件版本"
+        android:text="软件版本"
         android:textColor="@drawable/selector_text_black_2_white"
         android:textSize="@dimen/activity_setting_item_text_size" />
 </LinearLayout>

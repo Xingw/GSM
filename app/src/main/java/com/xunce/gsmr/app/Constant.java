@@ -56,4 +56,6 @@ public class Constant {
     public static final int MODE_MAP_2D = 2005;
     public static final int MODE_MAP_3D = 2006;
     public static final int MODE_MAP_SATELLITE = 2007;
+
+    public static boolean firstOpen = true;
 }

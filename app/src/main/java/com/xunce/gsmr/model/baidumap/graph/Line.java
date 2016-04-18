@@ -25,6 +25,7 @@ public class Line extends Graph {
     private LatLng latLngEnd;
 
     private PolylineOptions ooPolyline;
+
     public Line(LatLng latLngBegin, LatLng latLngEnd) {
         this.latLngBegin = latLngBegin;
         this.latLngEnd = latLngEnd;
@@ -68,5 +69,13 @@ public class Line extends Graph {
 
     public void setLatLngEnd(LatLng latLngEnd) {
         this.latLngEnd = latLngEnd;
+    }
+
+    public PolylineOptions getOoPolyline() {
+        return ooPolyline;
+    }
+
+    public void setOoPolyline(PolylineOptions ooPolyline) {
+        this.ooPolyline = ooPolyline;
     }
 }

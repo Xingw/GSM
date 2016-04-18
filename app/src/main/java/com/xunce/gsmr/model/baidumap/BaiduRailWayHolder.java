@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
+import com.amap.api.maps.AMap;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
 import com.xunce.gsmr.app.Constant;
@@ -13,6 +14,7 @@ import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.graph.Circle;
 import com.xunce.gsmr.model.baidumap.graph.Line;
+import com.xunce.gsmr.model.baidumap.graph.Point;
 import com.xunce.gsmr.model.baidumap.graph.Text;
 import com.xunce.gsmr.model.baidumap.graph.Vector;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
@@ -91,6 +93,30 @@ public class BaiduRailWayHolder {
         }.execute();
     }
 
+    private void getP2DPolyList(SQLiteDatabase db) {
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constant.TABLE_P2DPOLY + " ORDER BY " +
+                DBConstant.id + " , " + DBConstant.orderId, null);
+        if (cursor == null || !cursor.moveToFirst()) {
+            return;
+        }
+        do {
+            int order = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBConstant
+                    .orderId)));
+            if (order == 0) {
+                if (vector != null && vector.getPointList().size() != 0) {
+                    vectorList.add(vector);
+                }
+                vector = new Vector("");
+            } else {
+                double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+                double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+                vector.getPointList().add(new Point(longitude, latitude));
+            }
+        } while (cursor.moveToNext());
+        vectorList.add(vector);
+        return;
+    }
+
     /**
      * 构造方法 传入数据
      *
@@ -121,6 +147,16 @@ public class BaiduRailWayHolder {
     }
 
     /**
+     * 判断是否为空
+     */
+    public boolean isempty() {
+        if (textList != null && lineList == null && vectorList == null)
+            return true;
+        if (textList.size() == 0 && lineList.size() == 0 && vectorList.size() == 0)
+            return true;
+        return false;
+    }
+    /**
      * 画出自己
      */
     public void draw(BaiduMap baiduMap){
@@ -134,6 +170,33 @@ public class BaiduRailWayHolder {
             text.draw(baiduMap);
         }
     }
+
+    /**
+     * 仅仅画出线段
+     *
+     * @param baiduMap
+     */
+    public void drawLine(BaiduMap baiduMap) {
+        for (Line line : lineList) {
+            line.draw(baiduMap);
+        }
+        for (Vector vector : vectorList) {
+            vector.draw(baiduMap);
+            //Timber.e("我画了一条vector");
+        }
+    }
+
+    /**
+     * 仅仅画出文字
+     *
+     * @param baiduMap
+     */
+    public void drawText(BaiduMap baiduMap) {
+        for (Text text : textList) {
+            text.draw(baiduMap);
+        }
+    }
+
     private void getLineList(SQLiteDatabase database) {
         Cursor cursor = database.query(Constant.TABLE_LINE, null, null, null, null, null, null);
         if (cursor == null) {
@@ -222,5 +285,76 @@ public class BaiduRailWayHolder {
         } while (cursor.moveToNext());
         vectorList.add(vector);
         return;
+    }
+
+    /**
+     * 将画好的图像隐藏
+     */
+    public void hide() {
+        for (Line line : lineList) {
+            line.hide();
+        }
+        for (Text text : textList) {
+            text.hide();
+        }
+        for (Vector vector : vectorList) {
+            vector.hide();
+        }
+    }
+    /**
+     * 隐藏文字
+     */
+    public void hideText() {
+        for (Text text : textList) {
+            text.hide();
+        }
+    }
+
+
+    /**
+     * 清除数据
+     */
+    public void clearData() {
+        for (Line line : lineList) {
+            line.setOoPolyline(null);
+        }
+        for (Text text : textList) {
+            text.setOoText(null);
+        }
+        for (Vector vector : vectorList) {
+            vector.setPolylineOptions(null);
+        }
+    }
+
+    public List<Line> getLineList() {
+        return lineList;
+    }
+
+    public void setLineList(List<Line> lineList) {
+        this.lineList = lineList;
+    }
+
+    public List<Text> getTextList() {
+        return textList;
+    }
+
+    public void setTextList(List<Text> textList) {
+        this.textList = textList;
+    }
+
+    public List<Vector> getVectorList() {
+        return vectorList;
+    }
+
+    public void setVectorList(List<Vector> vectorList) {
+        this.vectorList = vectorList;
+    }
+
+    public KilometerMarkHolder getKilometerMarkHolder() {
+        return kilometerMarkHolder;
+    }
+
+    public void setKilometerMarkHolder(KilometerMarkHolder kilometerMarkHolder) {
+        this.kilometerMarkHolder = kilometerMarkHolder;
     }
 }

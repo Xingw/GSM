@@ -27,6 +27,10 @@ public class GpsPoint {
         return PositionUtil.gps84_To_Gcj02(latitude, longitude);
     }
 
+    public com.baidu.mapapi.model.LatLng getBaiduLatLng(){
+        return PositionUtil.Gps84_To_bd09(latitude, longitude);
+    }
+
     public double getLongitude() {
         return longitude;
     }

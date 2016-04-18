@@ -16,10 +16,8 @@ import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
-import com.xunce.gsmr.lib.xmlparser.XmlParser;
-import com.xunce.gsmr.lib.digitalmap.DigitalMapHolder;
 import com.xunce.gsmr.model.MarkerItem;
-import com.xunce.gsmr.model.event.DrawMapDataEvent;
+import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerInfoSaveEvent;
 import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
@@ -225,29 +223,29 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
     /**
      * 画出PrjEditActivity上已有的地图数据
      *
-     * @param drawMapDataEvent
+     * @param gaoDeDrawMapDataEvent
      */
-    public void onEventMainThread(DrawMapDataEvent drawMapDataEvent) {
+    public void onEventMainThread(GaoDeDrawMapDataEvent gaoDeDrawMapDataEvent) {
         //复制一份holder到当前activity
-        if(drawMapDataEvent.getRailWayHolder()!=null){
-            railWayHolder = new GaodeRailWayHolder(drawMapDataEvent.getRailWayHolder()
-                    .getLineList(),drawMapDataEvent.getRailWayHolder().getTextList(),
-                    drawMapDataEvent.getRailWayHolder().getVectorList());
+        if(gaoDeDrawMapDataEvent.getRailWayHolder()!=null){
+            railWayHolder = new GaodeRailWayHolder(gaoDeDrawMapDataEvent.getRailWayHolder()
+                    .getLineList(), gaoDeDrawMapDataEvent.getRailWayHolder().getTextList(),
+                    gaoDeDrawMapDataEvent.getRailWayHolder().getVectorList());
         }
         if(railWayHolder !=null){
             railWayHolder.drawLine(getaMap());
         }
-//        if(drawMapDataEvent.getDigitalMapHolder() != null) {
+//        if(gaoDeDrawMapDataEvent.getDigitalMapHolder() != null) {
 //            digitalMapHolder = new DigitalMapHolder();
-//            digitalMapHolder.setTextList(drawMapDataEvent.getDigitalMapHolder().getTextList());
-//            digitalMapHolder.setVectorList(drawMapDataEvent.getDigitalMapHolder().getVectorList());
+//            digitalMapHolder.setTextList(gaoDeDrawMapDataEvent.getDigitalMapHolder().getTextList());
+//            digitalMapHolder.setVectorList(gaoDeDrawMapDataEvent.getDigitalMapHolder().getVectorList());
 //            digitalMapHolder.clearData();
 //        }
-//        if(drawMapDataEvent.getXmlParser() != null) {
+//        if(gaoDeDrawMapDataEvent.getXmlParser() != null) {
 //            xmlParser = new XmlParser();
-//            xmlParser.setTextList(drawMapDataEvent.getXmlParser().getTextList());
-//            xmlParser.setLineList(drawMapDataEvent.getXmlParser().getLineList());
-//            xmlParser.setVectorList(drawMapDataEvent.getXmlParser().getVectorList());
+//            xmlParser.setTextList(gaoDeDrawMapDataEvent.getXmlParser().getTextList());
+//            xmlParser.setLineList(gaoDeDrawMapDataEvent.getXmlParser().getLineList());
+//            xmlParser.setVectorList(gaoDeDrawMapDataEvent.getXmlParser().getVectorList());
 //            xmlParser.clearData();
 //        }
 //        if(digitalMapHolder != null){

@@ -93,6 +93,7 @@ public class BaiduMapFragment extends Fragment {
     private EditText etPosition;
     private boolean isPositionShowed = false;
 
+
     /**
      * 获取Instance
      *
@@ -128,9 +129,7 @@ public class BaiduMapFragment extends Fragment {
         //初始化BaiduMap
         initBaiduMap();
         //初始化marker控制器
-        markerHolder = new MarkerHolder(prjItem, baiduMap);
-        //初始化Graph控制器
-        baiduRailWayHolder = new BaiduRailWayHolder(context, prjItem);
+        markerHolder = new MarkerHolder(getActivity(),prjItem, baiduMap);
         //初始化定位控制器
         initLocationClient();
     }
@@ -165,44 +164,6 @@ public class BaiduMapFragment extends Fragment {
                     showInfoWindow(marker.getPosition());
                 }
                 return true;
-            }
-        });
-
-        //定位按钮点击事件
-        layout.findViewById(R.id.id_ib_locate).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                locate();
-            }
-        });
-
-        //启动测量的按钮
-        layout.findViewById(R.id.id_ib_measure).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //开启测量Activity
-                BaiduMeasureActivity.start((Activity) context, baiduMap.getMapStatus().target);
-            }
-        });
-
-        //公里标开关按钮
-        layout.findViewById(R.id.id_ib_position).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isPositionShowed) {
-                    hideLlPosition();
-                } else {
-                    showLlPosition();
-                }
-            }
-        });
-        llPosition = (LinearLayout) layout.findViewById(R.id.id_ll_position);
-        etPosition = (EditText) llPosition.findViewById(R.id.id_et);
-        llPosition.findViewById(R.id.id_btn_confirm).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //TODO---地图定位到指定的DK文字位置去...
-                hideLlPosition();
             }
         });
     }
@@ -246,7 +207,7 @@ public class BaiduMapFragment extends Fragment {
     /**
      * 初始化LocationClient
      */
-    private void initLocationClient() {
+    public void initLocationClient() {
         //创建client
         locationClient = new LocationClient(context);
         final LocationClientOption locateOptions = new LocationClientOption();
@@ -301,6 +262,18 @@ public class BaiduMapFragment extends Fragment {
             LatLng ll = new LatLng(currentBDLocation.getLatitude(),
                     currentBDLocation.getLongitude());
             MapHelper.animateToPoint(baiduMap, ll);
+        }
+    }
+
+    /**
+     * 加载marker
+     */
+    public void loadMarker(PrjItem prjItem) {
+        //MarkerHolder模块
+        if (markerHolder == null) {
+            markerHolder = new MarkerHolder(getActivity(), prjItem, baiduMap);
+        } else {
+            markerHolder.initMarkerList();
         }
     }
 

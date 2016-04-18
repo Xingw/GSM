@@ -368,6 +368,10 @@ public class GaodeRailWayHolder {
     }
 
 
+    /**
+     * 判断是否为空
+     * @return
+     */
     public boolean isempty() {
         if (textList != null && lineList == null && vectorList == null)
             return true;

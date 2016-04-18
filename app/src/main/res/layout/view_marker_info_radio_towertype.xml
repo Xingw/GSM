@@ -17,7 +17,7 @@
             android:id="@+id/id_marker_tower_pole"
             android:layout_width="54dp"
             android:layout_height="48dp"
-            android:content="杆"
+            android:text="杆"
             android:textColor="@color/material_blue_grey_800"/>
 
         <!--卫星状态-->
@@ -25,7 +25,7 @@
             android:id="@+id/id_marker_tower_single"
             android:layout_width="78dp"
             android:layout_height="48dp"
-            android:content="独管塔"
+            android:text="独管塔"
             android:textColor="@color/material_blue_grey_800"/>
 
         <!--正常状态-->
@@ -33,7 +33,7 @@
             android:id="@+id/id_marker_tower_four"
             android:layout_width="78dp"
             android:layout_height="48dp"
-            android:content="四管塔"
+            android:text="四管塔"
             android:textColor="@color/material_blue_grey_800"/>
 
     </RadioGroup>

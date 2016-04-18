@@ -16,7 +16,7 @@
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="20dp"
-        android:content="北京" />
+        android:text="北京" />
 
     <TextView
         android:id="@+id/id_tv_size"
@@ -26,7 +26,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="5dp"
         android:layout_toRightOf="@id/id_tv_name"
-        android:content="总大小" />
+        android:text="总大小" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="7dp"
             android:gravity="center_vertical"
-            android:content="删除地图" />
+            android:text="删除地图" />
 
     </LinearLayout>
 

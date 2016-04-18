@@ -5,6 +5,8 @@ import android.graphics.Color;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.maps.model.TextOptions;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,32 @@ public class KmlData {
                     .fontColor(Color.GREEN)
                     .text(name);
             amap.addText(textOptions);
+        }
+    }
+
+        /**
+         * 在地图上画出多边形
+         *
+         * @param baidumap
+         */
+    public void draw(BaiduMap baidumap) {
+        if (styleUrl.equals(POLY_STYLE)) {
+            com.baidu.mapapi.map.PolylineOptions polylineOptions = new com.baidu.mapapi.map.PolylineOptions();
+            polylineOptions.width(8)
+                    .color(Color.GREEN);
+            List<LatLng> Latlnglist = new ArrayList<>();
+            for (GpsPoint polyCoordinates : pointList) {
+                Latlnglist.add(polyCoordinates.getBaiduLatLng());
+            }
+            polylineOptions.points(Latlnglist);
+            baidumap.addOverlay(polylineOptions);
+        } else if (styleUrl.equals(TEXT_STYLE)) {
+            com.baidu.mapapi.map.TextOptions textOptions = new com.baidu.mapapi.map.TextOptions();
+            textOptions.fontSize(12)
+                    .position(pointList.get(0).getBaiduLatLng())
+                    .fontColor(Color.GREEN)
+                    .text(name);
+            baidumap.addOverlay(textOptions);
         }
         //查看所有数据点
 //        for (GpsPoint polyCoordinates : pointList) {

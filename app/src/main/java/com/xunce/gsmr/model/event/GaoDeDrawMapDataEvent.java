@@ -7,11 +7,11 @@ import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
 /**
  * Created by ssthouse on 2015/12/8.
  */
-public class DrawMapDataEvent {
+public class GaoDeDrawMapDataEvent {
 
     private GaodeRailWayHolder railWayHolder;
 
-    public DrawMapDataEvent(GaodeRailWayHolder railWayHolder) {
+    public GaoDeDrawMapDataEvent(GaodeRailWayHolder railWayHolder) {
         this.railWayHolder = railWayHolder;
     }
 
@@ -26,7 +26,7 @@ public class DrawMapDataEvent {
     //    private DigitalMapHolder digitalMapHolder;
 //    private XmlParser xmlParser;
 //
-//    public DrawMapDataEvent(DigitalMapHolder digitalMapHolder, XmlParser xmlParser) {
+//    public GaoDeDrawMapDataEvent(DigitalMapHolder digitalMapHolder, XmlParser xmlParser) {
 //        this.digitalMapHolder = digitalMapHolder;
 //        this.xmlParser = xmlParser;
 //    }

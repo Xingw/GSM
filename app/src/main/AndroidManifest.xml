@@ -86,6 +86,26 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".view.activity.SettingActivity"/>
+        <!--百度地图-->
+        <!--工程编辑Activity-->
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.activity.baidu.BaiduPrjEditActivity">
+        </activity>
+        <!--选址-->
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.activity.baidu.BaiduMarkerActivity"/>
+        <!--测量Activity-->
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.activity.baidu.BaiduMeasureActivity"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.activity.baidu.BaiduOfflineActivity"/>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".view.activity.baidu.BaiduGetLatLngActivity"/>
 
         <!--高德地图-->
         <activity android:name=".view.activity.gaode.GaodeBaseActivity"
@@ -120,5 +140,6 @@
             </intent-filter>
         </activity>
         <service android:name=".Net.DownloadService"></service>
+
     </application>
 </manifest>

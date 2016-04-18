@@ -98,4 +98,12 @@ public class Vector extends Graph{
             polylineOptions.visible(true);
         }
     }
+
+    public PolylineOptions getPolylineOptions() {
+        return polylineOptions;
+    }
+
+    public void setPolylineOptions(PolylineOptions polylineOptions) {
+        this.polylineOptions = polylineOptions;
+    }
 }

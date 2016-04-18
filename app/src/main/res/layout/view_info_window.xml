@@ -11,7 +11,7 @@
         android:layout_height="42dp"
         android:background="@drawable/selector_btn_white_2_blue"
         android:onClick="clickEdit"
-        android:content="修改"
+        android:text="修改"
         android:textColor="@drawable/selector_text_black_2_white" />
 
     <Button
@@ -20,6 +20,6 @@
         android:layout_height="42dp"
         android:background="@drawable/selector_btn_white_2_blue"
         android:onClick="clickPhoto"
-        android:content="照片"
+        android:text="照片"
         android:textColor="@drawable/selector_text_black_2_white" />
 </LinearLayout>

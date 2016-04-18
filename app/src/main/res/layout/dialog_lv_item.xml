@@ -10,7 +10,7 @@
         android:layout_height="56dp"
         android:background="@drawable/selector_btn_white_2_blue"
         android:gravity="center"
-        android:content="删除"
+        android:text="删除"
         android:textColor="@drawable/selector_text_black_2_white"
         android:textSize="@dimen/text_size_normal" />
 
@@ -20,7 +20,7 @@
         android:layout_height="56dp"
         android:background="@drawable/selector_btn_white_2_blue"
         android:gravity="center"
-        android:content="发送"
+        android:text="发送"
         android:textColor="@drawable/selector_text_black_2_white"
         android:textSize="@dimen/text_size_normal" />
 
@@ -30,7 +30,7 @@
         android:layout_height="56dp"
         android:background="@drawable/selector_btn_white_2_blue"
         android:gravity="center"
-        android:content="重命名"
+        android:text="重命名"
         android:textColor="@drawable/selector_text_black_2_white"
         android:textSize="@dimen/text_size_normal" />
 </LinearLayout>

@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.amap.api.maps.AMap;
+import com.baidu.mapapi.map.BaiduMap;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.gaodemap.graph.Point;
 import com.xunce.gsmr.model.gaodemap.graph.Text;
@@ -66,6 +67,17 @@ public class KMLParser extends DefaultHandler {
         for(KmlData data : polyList){
             data.draw(amap);
         }
+    }
+
+    public void draw(BaiduMap baidu){
+        if (textList !=null && textList.size() !=0)
+            for(KmlData data : textList){
+                data.draw(baidu);
+            }
+        if (polyList!=null && polyList.size() !=0)
+            for(KmlData data : polyList){
+                data.draw(baidu);
+            }
     }
 
     @Override

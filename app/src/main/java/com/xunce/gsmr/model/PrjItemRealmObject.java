@@ -26,7 +26,7 @@ public class PrjItemRealmObject extends RealmObject{
         super();
     }
 
-//    public List<MarkerItem> getMarkerItemList(){
+//    public List<MarkerItem> getMarkerOnDbList(){
 //        return new Select().from(MarkerItem.class)
 //                .where("prjName = "+ "'"+prjName+"'")
 //                .execute();

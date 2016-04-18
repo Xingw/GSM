@@ -13,28 +13,33 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.amap.api.maps.AMap;
-import com.amap.api.maps.CameraUpdate;
-import com.amap.api.maps.CameraUpdateFactory;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.BaiduMapCons;
-import com.xunce.gsmr.model.event.DrawMapDataEvent;
+import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
+import com.xunce.gsmr.model.event.BaiDuDrawMapDataEvent;
+import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
+import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
+import com.xunce.gsmr.model.event.LocateModeChangeEvent;
+import com.xunce.gsmr.model.event.MarkerEditEvent;
+import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
+import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
+import com.xunce.gsmr.model.gaodemap.MarkerHolder;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -44,12 +49,9 @@ import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
-import com.xunce.gsmr.view.activity.gaode.GaodeMarkerActivity;
-import com.xunce.gsmr.view.activity.gaode.GaodePrjEditActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import de.greenrobot.event.EventBus;
-import io.realm.Realm;
 
 /**
  * 开启时会接收到一个PrjItem---intent中
@@ -83,7 +85,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private FloatingActionsMenu floatingActionsMenu_hide_up;
     private FloatingActionButton floatingActionButton_expand;
     private boolean expand = false;
-
+    /**
+     * 地图数据
+     */
+    private BaiduRailWayHolder railWayHolder;
     //地图模式选择
     private FloatingActionButton mapModeBtn;
     private static int ModeValue=Constant.MODE_MAP_2D;
@@ -105,7 +110,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                //EventBus.getDefault().post(new DrawMapDataEvent(railWayHolder));
+                EventBus.getDefault().post(new BaiDuDrawMapDataEvent(railWayHolder));
             }
         }
     };
@@ -138,6 +143,23 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
         //初始化View
         initView();
+
+        initdata();
+
+        //检查版本更新
+        if(Constant.firstOpen) {
+            Update.checkversion(this);
+            Constant.firstOpen = false;
+        }
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initdata(){
+        railWayHolder = new BaiduRailWayHolder(this, prjItem.getDbLocation());
+        KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
+        kmlParser.draw(baiduMapFragment.getBaiduMap());
     }
 
     /**
@@ -145,7 +167,8 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      */
     private void initView() {
         ViewHelper.initActionBar(this, getSupportActionBar(), prjItem.getPrjName());
-
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        zoomlayout = (LinearLayout) findViewById(R.id.view_zoom_control);
         floatingActionsMenu_hide_left = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_left);
         floatingActionsMenu_hide_up = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_up);
         floatingActionButton_expand = (FloatingActionButton) findViewById(R.id
@@ -166,6 +189,20 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     floatingActionsMenu_hide_up.collapse();
                     floatingActionButton_expand.setIcon(R.drawable.ic_menu_white_48dp);
                 }
+            }
+        });
+
+        //获取缩放控件
+        findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baiduMapFragment.getBaiduMap().setMapStatus(MapStatusUpdateFactory.zoomIn());
+            }
+        });
+        findViewById(R.id.btn_zoom_out).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                baiduMapFragment.getBaiduMap().setMapStatus(MapStatusUpdateFactory.zoomOut());
             }
         });
         //初始化map_mode控件
@@ -252,7 +289,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             public void onMapStatusChangeFinish(MapStatus status){
                 //如果 xml文件已经加载 且 switch为开
                 if (railWayHolder != null && isChecked) {
-                    Float zoom =baiduMapFragment.getBaiduMap().getMapStatus().zoom;
+                    Float zoom =status.zoom;
                     //如果放大到16以上
                     if (zoom > BaiduMapCons.zoomLevel && !isMapTextShowed) {
                         railWayHolder.drawText(baiduMapFragment.getBaiduMap());
@@ -287,7 +324,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 showFindMarkerDialog(BaiduPrjEditActivity.this);
-                loadMarker(prjItem);
+                //baiduMapFragment.loadMarker(prjItem);
             }
         });
     }
@@ -480,5 +517,52 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         baiduMapFragment.destory();
+    }
+
+    //事件监听******************************************************************
+    /**
+     * setting界面的定位mode改变事件
+     *
+     * @param event
+     */
+    public void onEventMainThread(LocateModeChangeEvent event) {
+        baiduMapFragment.initLocationClient();
+    }
+
+    /**
+     * prjEditActivity的回调方法
+     */
+    public void onEventMainThread(MarkerEditEvent markerEditEvent) {
+        switch (markerEditEvent.getBackState()) {
+            case CHANGED:
+                baiduMapFragment.loadMarker(prjItem);
+                break;
+            case UNCHANGED:
+                break;
+        }
+    }
+
+    /**
+     * 更新Marker图标颜色
+     *
+     * @param event
+     */
+    public void onEventMainThread(MarkerIconChangeEvent event) {
+        if (event.isChanged()) {
+            baiduMapFragment.loadMarker(prjItem);
+        }
+    }
+
+    /**
+     * 提示xml文件加载情况
+     *
+     * @param excelXmlDataEvent
+     */
+    public void onEventMainThread(ExcelXmlDataEvent excelXmlDataEvent) {
+        if (excelXmlDataEvent.isParseSuccess()) {
+            ToastHelper.show(this, "xml中预设标记点数据添加成功");
+        } else {
+            ToastHelper.show(this, "xml中预设标记点数据添加失败, 请检查excel文件格式是否正确");
+        }
     }
 }

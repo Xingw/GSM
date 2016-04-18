@@ -1,5 +1,6 @@
 package com.xunce.gsmr.model.baidumap;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.baidu.mapapi.map.BaiduMap;
@@ -12,9 +13,11 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.xunce.gsmr.R;
+import com.xunce.gsmr.model.MarkerIconCons;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.util.DBHelper;
+import com.xunce.gsmr.util.preference.PreferenceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +43,14 @@ public class MarkerHolder {
     private Marker currentMarker;
     private MarkerItem currentMarkerItem;
     //marker和markerItem的list
-    private List<Marker> markerList;
-    private List<MarkerItem> markerItemList;
+    private List<Marker> markerOnMapList;
+    private List<MarkerItem> markerOnDbList;
 
     /**
      * 地图和数据源头
      */
     private BaiduMap baiduMap;
+    private Context context;
     private PrjItem prjItem;
 
     /**
@@ -55,11 +59,12 @@ public class MarkerHolder {
      * @param prjItem
      * @param baiduMap
      */
-    public MarkerHolder(PrjItem prjItem, BaiduMap baiduMap) {
+    public MarkerHolder(Context context, PrjItem prjItem, BaiduMap baiduMap) {
+        this.context = context;
         this.prjItem = prjItem;
         this.baiduMap = baiduMap;
-        markerList = new ArrayList<>();
-        markerItemList = new ArrayList<>();
+        markerOnMapList = new ArrayList<>();
+        markerOnDbList = new ArrayList<>();
 
         initMarkerList();
     }
@@ -70,27 +75,59 @@ public class MarkerHolder {
     public void initMarkerList() {
         baiduMap.clear();
         //清空markerList
-        markerList.clear();
-        markerItemList.clear();
+        markerOnMapList.clear();
+        markerOnDbList.clear();
+        currentMarker = null;
+        currentMarkerItem = null;
         //初始化markerList
         SQLiteDatabase db = SQLiteDatabase.openDatabase(prjItem.getDbLocation(),null,
                 SQLiteDatabase.OPEN_READWRITE);
-        markerItemList = DBHelper.getMarkerList(db);
+        markerOnDbList = DBHelper.getMarkerList(db);
         db.close();
-        for (int i = 0; i < markerItemList.size(); i++) {
-            LatLng latLng = markerItemList.get(i).getBaiduLatLng();
-            OverlayOptions redOverlay = new MarkerOptions()
+        for (int i = 0; i < markerOnDbList.size(); i++) {
+            LatLng latLng = markerOnDbList.get(i).getBaiduLatLng();
+            BitmapDescriptor bitmapDescriptor;
+            String deviceType = markerOnDbList.get(i).getDeviceType();
+            String colorStr = PreferenceHelper.getInstance(context).getMarkerColorName(deviceType);
+            switch (colorStr){
+                case MarkerIconCons.ColorName.BLUE:
+                    bitmapDescriptor = BitmapDescriptorFactory
+                            .fromResource(R.drawable.icon_marker_blue);
+                    break;
+                case MarkerIconCons.ColorName.GREEN:
+                    bitmapDescriptor = BitmapDescriptorFactory
+                            .fromResource(R.drawable.icon_marker_green);
+                    break;
+                case MarkerIconCons.ColorName.ORANGE:
+                    bitmapDescriptor =BitmapDescriptorFactory
+                            .fromResource(R.drawable.icon_marker_orange);
+                    break;
+                case MarkerIconCons.ColorName.PURPLE:
+                    bitmapDescriptor = BitmapDescriptorFactory
+                            .fromResource(R.drawable.icon_marker_purple);
+                    break;
+                case MarkerIconCons.ColorName.RED:
+                    bitmapDescriptor = BitmapDescriptorFactory
+                            .fromResource(R.drawable.icon_marker_red);
+                    break;
+                default:
+                    bitmapDescriptor = BitmapDescriptorFactory
+                            .fromResource(R.drawable.icon_marker_blue);
+                    break;
+            }
+
+            OverlayOptions MarkerOverlay = new MarkerOptions()
                     .position(latLng)
-                    .icon(descriptorBlue)
+                    .icon(bitmapDescriptor)
                     .zIndex(16)
                     .draggable(false);
-            markerList.add((Marker) baiduMap.addOverlay(redOverlay));
+            markerOnMapList.add((Marker) baiduMap.addOverlay(MarkerOverlay));
             Timber.e("我添加了一个点:    " + latLng.latitude + ":" + latLng.longitude);
         }
-        if(markerItemList.size() >0) {
+        if(markerOnDbList.size() >0) {
             //动画移动过去
             MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(
-                    new LatLng(markerItemList.get(0).getLatitude(), markerItemList.get(0).getLongitude()));
+                    new LatLng(markerOnDbList.get(0).getLatitude(), markerOnDbList.get(0).getLongitude()));
             baiduMap.animateMapStatus(u);
         }
     }
@@ -105,13 +142,13 @@ public class MarkerHolder {
     }
 
     public void setAll2Blue() {
-        for (Marker marker : markerList) {
+        for (Marker marker : markerOnMapList) {
             marker.setIcon(descriptorBlue);
         }
     }
 
     public void setAll2Red() {
-        for (Marker marker : markerList) {
+        for (Marker marker : markerOnMapList) {
             marker.setIcon(descriptorRed);
         }
     }
@@ -123,22 +160,22 @@ public class MarkerHolder {
 
     public void setCurrentMarker(Marker currentMarker) {
         this.currentMarker = currentMarker;
-        this.currentMarkerItem = markerItemList.get(markerList.indexOf(currentMarker));
+        this.currentMarkerItem = markerOnDbList.get(markerOnMapList.indexOf(currentMarker));
     }
 
     public MarkerItem getCurrentMarkerItem() {
         return currentMarkerItem;
     }
 
-    public List<MarkerItem> getMarkerItemList() {
-        return markerItemList;
+    public List<MarkerItem> getMarkerOnDbList() {
+        return markerOnDbList;
     }
 
-    public List<Marker> getMarkerList() {
-        return markerList;
+    public List<Marker> getMarkerOnMapList() {
+        return markerOnMapList;
     }
 
-    public void setMarkerList(List<Marker> markerList) {
-        this.markerList = markerList;
+    public void setMarkerOnMapList(List<Marker> markerOnMapList) {
+        this.markerOnMapList = markerOnMapList;
     }
 }
