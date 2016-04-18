@@ -2,6 +2,8 @@ package com.xunce.gsmr.app;
 
 import android.app.Application;
 
+import com.baidu.mapapi.SDKInitializer;
+
 import im.fir.sdk.FIR;
 import timber.log.Timber;
 
@@ -17,6 +19,8 @@ public class MyApplication extends Application {
         FIR.init(this);
         //调试阶段---不提交数据
         //FIR.setDebug(true);
+        //百度地图初始化
+        SDKInitializer.initialize(getApplicationContext());
         super.onCreate();
         //初始化Timber日志
         Timber.plant(new Timber.DebugTree());

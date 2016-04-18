@@ -5,10 +5,10 @@ import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 /**
  * Created by Xingw on 2016/4/17.
  */
-public class BaiDuDrawMapDataEvent {
+public class BaiduDrawMapDataEvent {
     private BaiduRailWayHolder baiduRailWayHolder;
 
-    public BaiDuDrawMapDataEvent(BaiduRailWayHolder baiduRailWayHolder) {
+    public BaiduDrawMapDataEvent(BaiduRailWayHolder baiduRailWayHolder) {
         this.baiduRailWayHolder = baiduRailWayHolder;
     }
 

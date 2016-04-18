@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -9,72 +10,103 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- 地图 -->
         <com.baidu.mapapi.map.MapView
             android:id="@+id/id_map_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:clickable="true" />
 
+        <!--上方的输入框-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="@color/trans_gray"
+            android:layout_height="80dp"
+            android:background="@drawable/background_whit_shadow"
+            android:showDividers="none"
             android:orientation="horizontal">
-
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/id_et_latitude"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="8"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_marginTop="2dp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:hint="纬度" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="经度："
+                        android:textSize="@dimen/text_size_normal"/>
+                    <EditText
+                        android:id="@+id/id_et_latitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="14dp"
+                        android:inputType="number"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="纬度："
+                        android:textSize="@dimen/text_size_normal"/>
+                    <EditText
+                        android:id="@+id/id_et_longitude"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginRight="14dp"
+                        android:inputType="number"/>
+                </LinearLayout>
+            </LinearLayout>
+            <!--分割线-->
+            <View
+                android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_margin="3dp"
+                android:background="@color/gray" />
 
-                <EditText
-                    android:inputType="number"
-                    android:id="@+id/id_et_longitude"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:hint="经度" />
-
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
+            <TextView
                 android:id="@+id/id_btn_submit"
-                android:layout_width="80dp"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
+                android:layout_weight="3"
+                android:gravity="center"
                 android:background="@drawable/selector_btn_blue_2_white"
                 android:text="确认"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_normal" />
+                android:textColor="@color/btn_marker_txcolor"
+                android:textSize="@dimen/text_size_normal"/>
         </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/id_ib_locate"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="bottom|left"
-            android:layout_margin="8dp"
-            android:background="@color/white"
-            android:src="@drawable/location_mode_1" />
+        <!--定位按钮-->
+        <include layout="@layout/widget_zoom_control"/>
 
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/id_ib_locate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="@dimen/floating_action_menu_right"
+            android:layout_marginBottom="@dimen/floating_action_menu_bottom"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_icon="@drawable/ic_map_action_location_big"/>
+
+        <!--中心图标-->
         <ImageView
             android:id="@+id/id_iv_mark_icon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
-            android:src="@drawable/mark_icon" />
+            android:src="@drawable/mark_icon"/>
     </FrameLayout>
 </LinearLayout>
 

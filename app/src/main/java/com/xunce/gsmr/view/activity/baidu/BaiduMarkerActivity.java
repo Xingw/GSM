@@ -2,6 +2,7 @@ package com.xunce.gsmr.view.activity.baidu;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -100,10 +101,13 @@ public class BaiduMarkerActivity extends AppCompatActivity {
      * @param markerItem
      * @param requestCode
      */
-    public static void start(Activity activity, MarkerItem markerItem, String dbPath, int requestCode) {
+    public static void start(Activity activity, MarkerItem markerItem, String dbPath,LatLng latLng, int requestCode) {
         Intent intent = new Intent(activity, BaiduMarkerActivity.class);
         intent.putExtra(Constant.EXTRA_KEY_MARKER_ITEM, markerItem);
         intent.putExtra(Constant.EXTRA_KEY_REQUEST_CODE, requestCode);
+        //之前在prjEditAc的界面中心坐标
+        intent.putExtra(Constant.EXTRA_KEY_LATITUDE, latLng.latitude);
+        intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, latLng.longitude);
         intent.putExtra(Constant.EXTRA_KEY_DBPATH,dbPath);
         activity.startActivityForResult(intent, requestCode);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
@@ -154,9 +158,18 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                 MyLocationConfiguration.LocationMode.NORMAL, true, null));
 
         //如果是编辑---定位到编辑的点
-        if (markerItem.getLatitude() != 0 && markerItem.getLongitude() != 0) {
+        if (markerItem != null && markerItem.getLatitude() != 0 && markerItem.getLongitude() != 0) {
             MapHelper.animateToPoint(mBaiduMap,
                     new LatLng(markerItem.getLatitude(), markerItem.getLongitude()));
+        }else {
+            markerItem = new MarkerItem();
+            SQLiteDatabase db = DBHelper.openDatabase(dbPath);
+            DBHelper.insertMarkerItem(db,markerItem);
+//            animateToMyLocation();
+            Intent intent = getIntent();
+            LatLng latLng = new LatLng(intent.getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, 0),
+                    intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
+            MapHelper.animateToPoint(mBaiduMap,latLng);
         }
 
         //地图状态变化监听---用于监听选取的Marker位置
@@ -183,8 +196,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         etLongitude = (EditText) findViewById(R.id.id_et_longitude);
 
         //确认按钮---设置GCJ的坐标
-        Button btnSubmit = (Button) findViewById(R.id.id_btn_submit);
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (MarkerHelper.isDataValid(etLatitude, etLongitude)) {

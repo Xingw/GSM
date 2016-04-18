@@ -32,14 +32,12 @@ import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.BaiduMapCons;
 import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
-import com.xunce.gsmr.model.event.BaiDuDrawMapDataEvent;
+import com.xunce.gsmr.model.event.BaiduDrawMapDataEvent;
+import com.xunce.gsmr.model.event.BaiduFragmentInitFinishEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
-import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
-import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
-import com.xunce.gsmr.model.gaodemap.MarkerHolder;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -110,7 +108,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == 0) {
-                EventBus.getDefault().post(new BaiDuDrawMapDataEvent(railWayHolder));
+                EventBus.getDefault().post(new BaiduDrawMapDataEvent(railWayHolder));
             }
         }
     };
@@ -143,8 +141,6 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
         //初始化View
         initView();
-
-        initdata();
 
         //检查版本更新
         if(Constant.firstOpen) {
@@ -222,7 +218,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
                 MarkerItem markerItem = new MarkerItem();
                 BaiduMarkerActivity.start(BaiduPrjEditActivity.this,
-                        markerItem, prjItem.getDbLocation(), REQUEST_CODE_MARKER_ACTIVITY);
+                        markerItem, prjItem.getDbLocation(),baiduMapFragment.getTarget(), REQUEST_CODE_MARKER_ACTIVITY);
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         });
@@ -372,7 +368,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                         ModeValue = Constant.MODE_MAP_3D;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_NORMAL);
-                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).rotate(45).build();
+                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(45).build();
                         MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
                         baiduMapFragment.getBaiduMap().animateMapStatus(msu);
                         break;
@@ -381,7 +377,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                         ModeValue = Constant.MODE_MAP_SATELLITE;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_SATELLITE);
-                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).rotate(0).build();
+                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(0).build();
                         MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
                         baiduMapFragment.getBaiduMap().animateMapStatus(msu);
                         break;
@@ -407,7 +403,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         baiduMapFragment.hideInfoWindow();
         //生成MarkerItem--跳转到MarkerEditActivity
         BaiduMarkerActivity.start(this, baiduMapFragment.getMarkerHolder().getCurrentMarkerItem()
-                ,prjItem.getDbLocation(), BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY);
+                ,prjItem.getDbLocation(),baiduMapFragment.getTarget(),BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY);
     }
 
     /**
@@ -529,6 +525,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         baiduMapFragment.initLocationClient();
     }
 
+    public void onEventMainThread(BaiduFragmentInitFinishEvent event) {
+        initdata();
+    }
     /**
      * prjEditActivity的回调方法
      */

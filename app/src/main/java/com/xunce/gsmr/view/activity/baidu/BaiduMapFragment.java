@@ -29,8 +29,11 @@ import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 import com.xunce.gsmr.model.baidumap.MarkerHolder;
+import com.xunce.gsmr.model.event.BaiduFragmentInitFinishEvent;
 import com.xunce.gsmr.util.gps.MapHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 包含百度地图的一些组件
@@ -142,7 +145,8 @@ public class BaiduMapFragment extends Fragment {
         MapHelper.animateZoom(baiduMap, 15);
         baiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
                 MyLocationConfiguration.LocationMode.NORMAL, true, null));
-
+        //隐藏缩放控件
+        mapView.showZoomControls(false);
         //初始化InfoWindow内容
         llInfoWindow = (LinearLayout) LayoutInflater.from(context)
                 .inflate(R.layout.view_info_window, null);
@@ -166,6 +170,9 @@ public class BaiduMapFragment extends Fragment {
                 return true;
             }
         });
+
+        //Fragment初始化完成事件
+        EventBus.getDefault().post(new BaiduFragmentInitFinishEvent());
     }
 
     /**
