@@ -15,7 +15,7 @@ public class Text extends Graph {
     //文字的参数
     private static int textColor = 0xFFFF00FF;
     private static int textBgColor = 0x00FF00FF;
-    private static int textSize = 24;
+    private static int textSize = 18;
 
     private LatLng latLng;
     private float rotate;
@@ -46,13 +46,11 @@ public class Text extends Graph {
                     .rotate(-rotate)
                     .position(latLng);
             baiduMap.addOverlay(ooText);
-        }else{
-            ooText.visible(true);
         }
     }
 
     public void hide(){
-        ooText.visible(false);
+        ooText=null;
     }
 
 

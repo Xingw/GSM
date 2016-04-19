@@ -8,5 +8,5 @@ public class BaiduMapCons {
     /**
      * 数字地图是否显示文字的___地图大小的阈值
      */
-    public static final int zoomLevel = 14;
+    public static final int zoomLevel = 15;
 }

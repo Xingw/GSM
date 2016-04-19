@@ -24,6 +24,7 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -100,6 +101,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     public boolean isMapTextShowed = false;
     //公里标显示标志位
     private View llPosition;
+    BaiduMap.OnMapStatusChangeListener listener;
     /**
      * 用于延时发送数据
      */
@@ -258,16 +260,17 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                         railWayHolder.drawLine(baiduMapFragment.getBaiduMap());
                     }
                 } else if (isChecked) {
+                    Logger.d("更新了");
                     isChecked = false;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_close);
+                    baiduMapFragment.hideText();
                     railWayHolder.hide();
                 }
             }
         });
 
         //监测---地图的大小变化---画出/隐藏---文字
-        BaiduMap.OnMapStatusChangeListener listener = new BaiduMap.OnMapStatusChangeListener() {
-
+        listener = new BaiduMap.OnMapStatusChangeListener() {
             /**
              * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
              * @param status 地图状态改变开始时的地图状态
@@ -293,7 +296,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                         railWayHolder.drawText(baiduMapFragment.getBaiduMap());
                         isMapTextShowed = true;
                     } else if (zoom < BaiduMapCons.zoomLevel && isMapTextShowed) {
-                        railWayHolder.hideText();
+                        baiduMapFragment.hideText();
+                        railWayHolder.hide();
+                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap());
                         isMapTextShowed = false;
                     }
                 }
@@ -370,7 +375,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                         ModeValue = Constant.MODE_MAP_3D;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_NORMAL);
-                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(45).build();
+                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(-45).build();
                         MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
                         baiduMapFragment.getBaiduMap().animateMapStatus(msu);
                         break;
@@ -529,6 +534,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
     public void onEventMainThread(BaiduFragmentInitFinishEvent event) {
         initdata();
+        baiduMapFragment.getBaiduMap().setOnMapStatusChangeListener(listener);
     }
     /**
      * prjEditActivity的回调方法

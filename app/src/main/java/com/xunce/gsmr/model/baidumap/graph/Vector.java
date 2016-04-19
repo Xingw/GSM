@@ -7,6 +7,7 @@ import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.xunce.gsmr.model.baidumap.graph.Point;
+import com.xunce.gsmr.model.baidumap.openGLLatLng;
 import com.xunce.gsmr.util.gps.PositionUtil;
 
 import java.util.ArrayList;
@@ -33,6 +34,7 @@ public class Vector extends Graph{
      */
     private PolylineOptions polylineOptions;
 
+    List<LatLng> openGLlatLng;
     /**
      * 传入name的构造方法
      *
@@ -66,13 +68,20 @@ public class Vector extends Graph{
         }
     }
 
+    public void initOpenGL(){
+        openGLlatLng = new ArrayList<>();
+        //添加点
+        for (int i = 0; i < pointList.size(); i++) {
+            Point point = pointList.get(i);
+            openGLlatLng.add(point.getLatLng());
+        }
+    }
+
     /**
      * 隐藏
      */
     public void hide() {
-        if (polylineOptions != null) {
-            polylineOptions.visible(false);
-        }
+        polylineOptions = null;
     }
 
     public String getName() {
@@ -96,8 +105,18 @@ public class Vector extends Graph{
         if(polylineOptions == null){
             initPolylineOptions();
             baiduMap.addOverlay(polylineOptions);
+        }
+    }
+
+    public void draw(List<openGLLatLng> openglLatLng) {
+        if (openGLlatLng == null)
+        {
+            initOpenGL();
+        }
+        if (name != null && name.contains("Railway")) {
+            openglLatLng.add(new openGLLatLng(openGLlatLng, Color.RED));
         }else {
-            polylineOptions.visible(true);
+            openglLatLng.add(new openGLLatLng(openGLlatLng, Color.BLUE));
         }
     }
 

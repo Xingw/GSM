@@ -5,6 +5,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.xunce.gsmr.model.baidumap.openGLLatLng;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,13 +47,28 @@ public class Line extends Graph {
                     .color(lineColor)
                     .points(points);
             baiduMap.addOverlay(ooPolyline);
-        }else {
-            ooPolyline.visible(true);
         }
     }
 
+    /**
+     * openGL的方式绘制
+     * @param openglLatLng
+     */
+    public void draw(List<openGLLatLng> openglLatLng) {
+        // 添加折线
+        List<LatLng> points = new ArrayList<>();
+        points.add(latLngBegin);
+        points.add(latLngEnd);
+//            ooPolyline = new PolylineOptions()
+//                    .width(lineWidth)
+//                    .color(lineColor)
+//                    .points(points);
+//            openglLatLng.addOverlay(ooPolyline);
+        openglLatLng.add(new openGLLatLng(points,lineColor));
+    }
+
     public void hide(){
-        ooPolyline.visible(false);
+        ooPolyline=null;
     }
 
     public LatLng getLatLngBegin() {

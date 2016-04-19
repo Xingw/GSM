@@ -177,8 +177,18 @@ public class BaiduRailWayHolder {
     /**
      * 仅仅画出线段
      *
-     * @param baiduMap
+     * @param openGLLatLngs
      */
+    public void drawLine(List<openGLLatLng> openGLLatLngs) {
+        for (Line line : lineList) {
+            line.draw(openGLLatLngs);
+        }
+        for (Vector vector : vectorList) {
+            vector.draw(openGLLatLngs);
+            //Timber.e("我画了一条vector");
+        }
+    }
+
     public void drawLine(BaiduMap baiduMap) {
         for (Line line : lineList) {
             line.draw(baiduMap);
@@ -207,10 +217,9 @@ public class BaiduRailWayHolder {
         }
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
-            LatLng latLngStart = PositionUtil.Gps84_To_bd09(
-                    cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_start)),
+            LatLng latLngStart =PositionUtil.Gps84_To_bd09(cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_start)),
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_start)));
-            LatLng latLngEnd = PositionUtil.Gps84_To_bd09(
+            LatLng latLngEnd =PositionUtil.Gps84_To_bd09(
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_end)),
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_end)));
             line = new Line(latLngStart, latLngEnd);

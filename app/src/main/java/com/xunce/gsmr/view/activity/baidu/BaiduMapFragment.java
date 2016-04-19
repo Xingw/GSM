@@ -3,8 +3,12 @@ package com.xunce.gsmr.view.activity.baidu;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.PointF;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.InfoWindow;
+import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
@@ -29,9 +34,19 @@ import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 import com.xunce.gsmr.model.baidumap.MarkerHolder;
+import com.xunce.gsmr.model.baidumap.openGLLatLng;
 import com.xunce.gsmr.model.event.BaiduFragmentInitFinishEvent;
 import com.xunce.gsmr.util.gps.MapHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
+import com.xunce.gsmr.util.view.ToastHelper;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.microedition.khronos.opengles.GL10;
 
 import de.greenrobot.event.EventBus;
 
@@ -40,7 +55,7 @@ import de.greenrobot.event.EventBus;
  * 简化Activity代码
  * Created by ssthouse on 2015/9/13.
  */
-public class BaiduMapFragment extends Fragment {
+public class BaiduMapFragment extends Fragment implements BaiduMap.OnMapDrawFrameCallback {
     private static final String TAG = "BaiduMapFragment";
 
     /**
@@ -73,11 +88,6 @@ public class BaiduMapFragment extends Fragment {
     private MarkerHolder markerHolder;
 
     /**
-     * 地图Graph的控制器
-     */
-    private BaiduRailWayHolder baiduRailWayHolder;
-
-    /**
      * 控制定位
      */
     private LocationClient locationClient;
@@ -96,6 +106,11 @@ public class BaiduMapFragment extends Fragment {
     private EditText etPosition;
     private boolean isPositionShowed = false;
 
+    /**
+     * 用于绘制openGL图像
+     */
+    private List<openGLLatLng> latLngPolygon = new ArrayList<>();
+    private boolean cleanlatLng = false;
 
     /**
      * 获取Instance
@@ -120,7 +135,15 @@ public class BaiduMapFragment extends Fragment {
 
         //正式初始化
         init();
+        initOpenGLDraw();
         return layout;
+    }
+
+    /**
+     * 初始化OpenGL绘制
+     */
+    private void initOpenGLDraw() {
+        baiduMap.setOnMapDrawFrameCallback(this);
     }
 
     /**
@@ -132,7 +155,7 @@ public class BaiduMapFragment extends Fragment {
         //初始化BaiduMap
         initBaiduMap();
         //初始化marker控制器
-        markerHolder = new MarkerHolder(getActivity(),prjItem, baiduMap);
+        markerHolder = new MarkerHolder(getActivity(), prjItem, baiduMap);
         //初始化定位控制器
         initLocationClient();
     }
@@ -269,6 +292,8 @@ public class BaiduMapFragment extends Fragment {
             LatLng ll = new LatLng(currentBDLocation.getLatitude(),
                     currentBDLocation.getLongitude());
             MapHelper.animateToPoint(baiduMap, ll);
+        }else {
+            ToastHelper.show(getActivity(),"未获取到定位数据");
         }
     }
 
@@ -315,13 +340,6 @@ public class BaiduMapFragment extends Fragment {
         return baiduMap.getMapStatus().target;
     }
 
-    /**
-     * 加载Rail的图形数据
-     */
-    public void loadRail() {
-        baiduRailWayHolder.draw(baiduMap);
-    }
-
     //getter---and---setter--------------------------------------------
     public MapView getMapView() {
         return mapView;
@@ -347,6 +365,14 @@ public class BaiduMapFragment extends Fragment {
         this.baiduMap = baiduMap;
     }
 
+    public List<openGLLatLng> getLatLngPolygon() {
+        return latLngPolygon;
+    }
+
+    public void setLatLngPolygon(List<openGLLatLng> latLngPolygon) {
+        this.latLngPolygon = latLngPolygon;
+    }
+
     //--------------生命周期--------------------------------------------
     public void pause() {
         if (mapView != null) {
@@ -367,5 +393,81 @@ public class BaiduMapFragment extends Fragment {
         if (locationClient != null) {
             locationClient.stop();
         }
+    }
+
+    //OpenGL绘制部分******************************************************************
+    public void onMapDrawFrame(GL10 gl, MapStatus drawingMapStatus) {
+        if (baiduMap.getProjection() != null) {
+            if (latLngPolygon.size() > 0)
+                for (openGLLatLng openGLLatLng : latLngPolygon) {
+                    FloatBuffer vertexBuffer = calPolylinePoint(drawingMapStatus, openGLLatLng.getLatLngs());
+                    drawPolyline(gl, openGLLatLng.getColor(), vertexBuffer, 6, openGLLatLng.getLatLngs().size(),
+                            drawingMapStatus);
+                }
+        }
+        if (cleanlatLng){
+            latLngPolygon.clear();
+            cleanlatLng = false;
+        }
+    }
+
+    private void drawPolyline(GL10 gl, int color, FloatBuffer lineVertexBuffer,
+                              float lineWidth, int pointSize, MapStatus drawingMapStatus) {
+        gl.glEnable(GL10.GL_BLEND);
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+
+        float colorA = Color.alpha(color) / 255f;
+        float colorR = Color.red(color) / 255f;
+        float colorG = Color.green(color) / 255f;
+        float colorB = Color.blue(color) / 255f;
+
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, lineVertexBuffer);
+        gl.glColor4f(colorR, colorG, colorB, colorA);
+        gl.glLineWidth(lineWidth);
+        gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, pointSize);
+
+        gl.glDisable(GL10.GL_BLEND);
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+    }
+
+    public FloatBuffer calPolylinePoint(MapStatus mspStatus, List<LatLng> latLng) {
+        FloatBuffer vertexBuffer;
+        float[] vertexs;
+        PointF[] polyPoints = new PointF[latLng.size()];
+        vertexs = new float[3 * latLng.size()];
+        int i = 0;
+        for (LatLng xy : latLng) {
+            polyPoints[i] = baiduMap.getProjection().toOpenGLLocation(xy,
+                    mspStatus);
+            vertexs[i * 3] = polyPoints[i].x;
+            vertexs[i * 3 + 1] = polyPoints[i].y;
+            vertexs[i * 3 + 2] = 0.0f;
+            i++;
+        }
+        vertexBuffer = makeFloatBuffer(vertexs);
+        return vertexBuffer;
+    }
+
+    private FloatBuffer makeFloatBuffer(float[] fs) {
+        ByteBuffer bb = ByteBuffer.allocateDirect(fs.length * 4);
+        bb.order(ByteOrder.nativeOrder());
+        FloatBuffer fb = bb.asFloatBuffer();
+        fb.put(fs);
+        fb.position(0);
+        return fb;
+    }
+    //OpenGL绘制部分结束***************************************************************************
+
+    public void hideAll() {
+        cleanlatLng = true;
+        baiduMap.clear();
+        loadMarker(prjItem);
+    }
+
+    public void  hideText(){
+        baiduMap.clear();
+        loadMarker(prjItem);
     }
 }

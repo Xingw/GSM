@@ -124,12 +124,12 @@ public class MarkerHolder {
             markerOnMapList.add((Marker) baiduMap.addOverlay(MarkerOverlay));
             Timber.e("我添加了一个点:    " + latLng.latitude + ":" + latLng.longitude);
         }
-        if(markerOnDbList.size() >0) {
-            //动画移动过去
-            MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(
-                    new LatLng(markerOnDbList.get(0).getLatitude(), markerOnDbList.get(0).getLongitude()));
-            baiduMap.animateMapStatus(u);
-        }
+//        if(markerOnDbList.size() >0) {
+//            //动画移动过去
+//            MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(
+//                    new LatLng(markerOnDbList.get(0).getLatitude(), markerOnDbList.get(0).getLongitude()));
+//            baiduMap.animateMapStatus(u);
+//        }
     }
 
     /**
