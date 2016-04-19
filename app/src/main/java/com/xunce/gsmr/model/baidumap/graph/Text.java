@@ -38,7 +38,7 @@ public class Text extends Graph {
     public void draw(BaiduMap baiduMap) {
         if(ooText == null){
             // 添加文字
-            OverlayOptions ooText = new TextOptions()
+            ooText = new TextOptions()
                     .bgColor(textBgColor)
                     .fontSize(textSize)
                     .fontColor(textColor)

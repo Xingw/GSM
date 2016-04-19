@@ -160,14 +160,17 @@ public class BaiduRailWayHolder {
      * 画出自己
      */
     public void draw(BaiduMap baiduMap){
-        for(Circle circle : circles){
-            circle.draw(baiduMap);
-        }
+//        for(Circle circle : circles){
+//            circle.draw(baiduMap);
+//        }
         for(Line line : lineList){
             line.draw(baiduMap);
         }
         for(Text text : textList){
             text.draw(baiduMap);
+        }
+        for (Vector vector : vectorList) {
+            vector.draw(baiduMap);
         }
     }
 

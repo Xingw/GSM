@@ -32,6 +32,7 @@ import com.xunce.gsmr.util.gps.MarkerHelper;
 import com.xunce.gsmr.util.gps.PositionUtil;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
+import com.xunce.gsmr.view.activity.gaode.MarkerInfoEditActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 /**
@@ -248,6 +249,10 @@ public class BaiduMarkerActivity extends AppCompatActivity {
 //                break;
 //            case R.id.id_action_load_marker:
 //                break;
+            //编辑文本信息
+            case R.id.id_action_edit_info:
+                MarkerInfoEditActivity.start(this, markerItem);
+                break;
             case android.R.id.home:
                 if (requestCode == BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY) {
                     finish();
@@ -267,7 +272,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
             return;
         }
         //如果直接想返回---需要删除提前在数据库中保存的数据
-//        markerItem.delete();
+        markerItem.delete(dbPath);
         setResult(Constant.RESULT_CODE_OK);
         super.onBackPressed();
     }

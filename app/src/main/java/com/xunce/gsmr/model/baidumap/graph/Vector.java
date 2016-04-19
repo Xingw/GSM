@@ -56,11 +56,13 @@ public class Vector extends Graph{
 
         //判断需不需要改变颜色
         //L.log(TAG, "name:\t" + name);
-        if (name != null && name.contains("Railway")) {
-            //L.log(TAG, "我改变了颜色");\
-            polylineOptions = new PolylineOptions().width(POLYLINE_WIDTH * 2).color(Color.RED).points(latLngs);
-        }else{
-            polylineOptions = new PolylineOptions().width(POLYLINE_WIDTH).color(Color.BLUE).points(latLngs);
+        if (latLngs.size()>=2) {
+            if (name != null && name.contains("Railway")) {
+                //L.log(TAG, "我改变了颜色");\
+                polylineOptions = new PolylineOptions().width(POLYLINE_WIDTH * 2).color(Color.RED).points(latLngs);
+            } else {
+                polylineOptions = new PolylineOptions().width(POLYLINE_WIDTH).color(Color.BLUE).points(latLngs);
+            }
         }
     }
 

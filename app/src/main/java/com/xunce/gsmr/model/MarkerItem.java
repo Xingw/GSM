@@ -226,12 +226,13 @@ public class MarkerItem implements Serializable {
      * @return 百度地图LatLng
      */
     public LatLng getBaiduLatLng() {
-        // 将google地图、soso地图、aliyun地图、mapabc地图和amap地图// 所用坐标转换成百度坐标
-        CoordinateConverter converter = new CoordinateConverter();
-        converter.from(CoordinateConverter.CoordType.COMMON);
-        // sourceLatLng待转换坐标
-        converter.coord(new LatLng(latitude, longitude));
-        return converter.convert();
+//        // 将google地图、soso地图、aliyun地图、mapabc地图和amap地图// 所用坐标转换成百度坐标
+//        CoordinateConverter converter = new CoordinateConverter();
+//        converter.from(CoordinateConverter.CoordType.COMMON);
+//        // sourceLatLng待转换坐标
+//        converter.coord(new LatLng(latitude, longitude));
+//        return converter.convert();
+        return PositionUtil.Gps84_To_bd09(latitude,longitude);
     }
 
     /**

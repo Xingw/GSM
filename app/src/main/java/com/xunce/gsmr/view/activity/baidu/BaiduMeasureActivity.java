@@ -150,7 +150,7 @@ public class BaiduMeasureActivity extends AppCompatActivity {
             public void onTouch(MotionEvent motionEvent) {
                 if (motionEvent.getAction() == MotionEvent.ACTION_DOWN) {
                     isLocated = false;
-                    ibLocate.setImageResource(R.drawable.locate2);
+                    //ibLocate.setImageResource(R.drawable.locate2);
                 }
             }
         });
@@ -186,7 +186,7 @@ public class BaiduMeasureActivity extends AppCompatActivity {
                     }
                     locate(mLocationClient.getLastKnownLocation());
                     isLocated = true;
-                    ibLocate.setImageResource(R.drawable.locate1);
+                    //ibLocate.setImageResource(R.drawable.locate1);
                 }
             }
         });

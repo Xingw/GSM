@@ -132,6 +132,8 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_baidu_prj_edit);
+        //注册eventbus
+        EventBus.getDefault().register(this);
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
 
         //对sharedpreference进行初始化

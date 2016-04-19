@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
 
@@ -16,48 +17,44 @@
             android:clickable="true" />
 
         <LinearLayout
-            android:background="@color/trans_gray"
+            android:background="@drawable/background_whit_shadow"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_gravity="top|center_horizontal"
             android:orientation="horizontal">
 
             <TextView
+                android:layout_marginLeft="30dp"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="总长"
-                android:textColor="@color/white"
+                android:gravity="center|right"
+                android:text="总距离："
+                android:textColor="@color/black"
                 android:textSize="@dimen/text_size_normal" />
 
             <TextView
-                android:text="0米"
+                android:text="0m"
                 android:id="@+id/id_tv_length"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="@dimen/text_size_normal" />
         </LinearLayout>
 
-        <ImageButton
+        <include layout="@layout/widget_zoom_control"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/id_ib_locate"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_gravity="bottom|left"
-            android:layout_margin="8dp"
-            android:background="@color/white"
-            android:src="@drawable/location_mode_1" />
-
-        <com.xunce.gsmr.view.widget.ZoomControlView
-            android:id="@+id/id_zoom_control"
-            android:layout_marginBottom="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_gravity="bottom|right"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="@dimen/floating_action_menu_bottom"
+            android:layout_marginRight="@dimen/floating_action_menu_right"
+            fab:fab_colorNormal="@color/white"
+            fab:fab_colorPressed="@color/white_pressed"
+            fab:fab_icon="@drawable/ic_map_action_location_big" />
     </FrameLayout>
 </LinearLayout>
