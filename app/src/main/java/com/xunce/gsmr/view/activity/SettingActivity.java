@@ -1,13 +1,19 @@
 package com.xunce.gsmr.view.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -115,6 +121,42 @@ public class SettingActivity extends AppCompatActivity {
                 showAppVersionDialog();
             }
         });
+
+        findViewById(R.id.id_tv_cors_setting).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCORSSetting();
+            }
+        });
+    }
+
+    /**
+     * 显示CORS设置对话框
+     */
+    private void showCORSSetting() {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(this).
+                inflate(R.layout.dialog_cors_setting, null);
+        final EditText ip = (EditText) llPrjName.findViewById(R.id.et_cors_ip);
+        final EditText port = (EditText) llPrjName.findViewById(R.id.et_cors_port);
+        final EditText username = (EditText) llPrjName.findViewById(R.id.et_cors_username);
+        final EditText password = (EditText) llPrjName.findViewById(R.id.et_cors_password);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setTitle("CORS设置")
+                .setView(llPrjName)
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToastHelper.show(SettingActivity.this, "功能正在开发中……");
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create();
+        dialog.show();
     }
 
     /**

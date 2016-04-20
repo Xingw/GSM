@@ -7,7 +7,7 @@
     <TextView
         android:layout_marginTop="0dp"
         android:padding="8dp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -15,7 +15,7 @@
         android:content="@string/str_app_usage" />
 
     <TextView
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
