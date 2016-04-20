@@ -148,6 +148,12 @@ public class GaodeRailWayHolder {
 
     }
 
+    public GaodeRailWayHolder(GaodeRailWayHolder railWayHolder) {
+        lineList = railWayHolder.getLineList();
+        textList = railWayHolder.getTextList();
+        vectorList = railWayHolder.getVectorList();
+    }
+
     /**
      * 画出自己
      */
@@ -160,6 +166,36 @@ public class GaodeRailWayHolder {
         }
         for (Vector vector : vectorList) {
             vector.draw(aMap);
+        }
+    }
+
+    /**
+     * 强制画出自己
+     */
+    public void forcedrawLine(AMap aMap) {
+        for (Line line : lineList) {
+            line.forceDraw(aMap);
+        }
+        for (Vector vector : vectorList) {
+            vector.forceDraw(aMap);
+        }
+    }
+
+    public void forcehideText(){
+        for (Text text : textList) {
+            text.forcehide();
+        }
+    }
+
+
+    /**
+     * 仅仅画出文字
+     *
+     * @param aMap
+     */
+    public void forcedrawText(AMap aMap) {
+        for (Text text : textList) {
+            text.forceDraw(aMap);
         }
     }
 

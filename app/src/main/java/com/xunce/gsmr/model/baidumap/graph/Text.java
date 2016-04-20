@@ -1,6 +1,7 @@
 package com.xunce.gsmr.model.baidumap.graph;
 
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
@@ -20,7 +21,7 @@ public class Text extends Graph {
     private LatLng latLng;
     private float rotate;
     private String content;
-    private TextOptions ooText;
+    private Overlay text;
 
     public Text(LatLng latLng, float rotate, String content) {
         this.latLng = latLng;
@@ -36,21 +37,24 @@ public class Text extends Graph {
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        if(ooText == null){
+        if(text == null){
             // 添加文字
-            ooText = new TextOptions()
+            TextOptions ooText = new TextOptions()
                     .bgColor(textBgColor)
                     .fontSize(textSize)
                     .fontColor(textColor)
                     .text(content)
                     .rotate(-rotate)
                     .position(latLng);
-            baiduMap.addOverlay(ooText);
+            text =baiduMap.addOverlay(ooText);
+        }else {
+            text.setVisible(true);
         }
     }
 
     public void hide(){
-        ooText=null;
+        if (text !=null)
+        text.setVisible(false);
     }
 
 
@@ -78,11 +82,4 @@ public class Text extends Graph {
         this.rotate = rotate;
     }
 
-    public TextOptions getOoText() {
-        return ooText;
-    }
-
-    public void setOoText(TextOptions ooText) {
-        this.ooText = ooText;
-    }
 }

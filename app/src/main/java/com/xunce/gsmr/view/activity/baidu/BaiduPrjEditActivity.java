@@ -222,7 +222,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
                 MarkerItem markerItem = new MarkerItem();
                 BaiduMarkerActivity.start(BaiduPrjEditActivity.this,
-                        markerItem, prjItem.getDbLocation(),baiduMapFragment.getTarget(), REQUEST_CODE_MARKER_ACTIVITY);
+                        markerItem, prjItem.getDbLocation(),baiduMapFragment.getTarget(),baiduMapFragment.getBaiduMap().getMapStatus().zoom, REQUEST_CODE_MARKER_ACTIVITY);
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         });
@@ -263,7 +263,6 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     Logger.d("更新了");
                     isChecked = false;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_close);
-                    baiduMapFragment.hideText();
                     railWayHolder.hide();
                 }
             }
@@ -296,9 +295,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                         railWayHolder.drawText(baiduMapFragment.getBaiduMap());
                         isMapTextShowed = true;
                     } else if (zoom < BaiduMapCons.zoomLevel && isMapTextShowed) {
-                        baiduMapFragment.hideText();
-                        railWayHolder.hide();
-                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap());
+                        railWayHolder.hideText();
                         isMapTextShowed = false;
                     }
                 }
@@ -318,7 +315,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //开启测量Activity
-                BaiduMeasureActivity.start(BaiduPrjEditActivity.this, baiduMapFragment.getBaiduMap().getMapStatus().target);
+                BaiduMeasureActivity.start(BaiduPrjEditActivity.this,
+                        baiduMapFragment.getBaiduMap().getMapStatus().target,
+                        baiduMapFragment.getBaiduMap().getMapStatus().zoom);
             }
         });
         //公里标
@@ -410,7 +409,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         baiduMapFragment.hideInfoWindow();
         //生成MarkerItem--跳转到MarkerEditActivity
         BaiduMarkerActivity.start(this, baiduMapFragment.getMarkerHolder().getCurrentMarkerItem()
-                ,prjItem.getDbLocation(),baiduMapFragment.getTarget(),BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY);
+                ,prjItem.getDbLocation(),baiduMapFragment.getTarget(),
+                baiduMapFragment.getBaiduMap().getMapStatus().zoom,
+                BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY);
     }
 
     /**

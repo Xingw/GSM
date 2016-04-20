@@ -323,20 +323,6 @@ public class BaiduRailWayHolder {
     }
 
 
-    /**
-     * 清除数据
-     */
-    public void clearData() {
-        for (Line line : lineList) {
-            line.setOoPolyline(null);
-        }
-        for (Text text : textList) {
-            text.setOoText(null);
-        }
-        for (Vector vector : vectorList) {
-            vector.setPolylineOptions(null);
-        }
-    }
 
     public List<Line> getLineList() {
         return lineList;

@@ -295,6 +295,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 MarkerItem markerItem = new MarkerItem();
                 GaodeMarkerActivity.start(GaodePrjEditActivity.this,
                         markerItem, prjItem.getDbLocation(), getaMap().getCameraPosition().target,
+                        getaMap().getCameraPosition().zoom,
                         REQUEST_CODE_MARKER_ACTIVITY);
                 handler.sendEmptyMessageDelayed(0, 300);
             }
@@ -310,7 +311,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         findViewById(R.id.fb_action_measure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GaodeMeasureActivity.start(GaodePrjEditActivity.this, getaMap().getCameraPosition().target);
+                GaodeMeasureActivity.start(GaodePrjEditActivity.this,
+                        getaMap().getCameraPosition().target,
+                        getaMap().getCameraPosition().zoom);
             }
         });
         //公里标
@@ -415,6 +418,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         //生成MarkerItem--跳转到MarkerEditActivity
         GaodeMarkerActivity.start(this, getMarkerHolder().getCurrentMarkerItem(), prjItem
                         .getDbLocation(), getaMap().getCameraPosition().target,
+                getaMap().getCameraPosition().zoom,
                 REQUEST_CODE_MARKER_EDIT_ACTIVITY);
     }
 

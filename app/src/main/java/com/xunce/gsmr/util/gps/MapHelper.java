@@ -34,7 +34,7 @@ public class MapHelper {
      * @param baiduMap
      * @param zoomLevel
      */
-    public static void animateZoom(BaiduMap baiduMap, int zoomLevel) {
+    public static void animateZoom(BaiduMap baiduMap, float zoomLevel) {
         MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(zoomLevel);
         baiduMap.animateMapStatus(u);
     }

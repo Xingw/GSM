@@ -32,6 +32,7 @@ public class Text extends BaseGraph {
     private TextOptions textOptions;
     //用于保存画在地图上的文字
     private com.amap.api.maps.model.Text text;
+    private com.amap.api.maps.model.Text texttemp;
 
     private void initTextOptions() {
         textOptions = new TextOptions()
@@ -93,6 +94,20 @@ public class Text extends BaseGraph {
         }else{
             text.setVisible(true);
         }
+    }
+
+    /**
+     * 强制重画
+     */
+    public void forceDraw(AMap aMap){
+        texttemp = aMap.addText(textOptions);
+    }
+    /**
+     * 强制隐藏
+     */
+    public void forcehide(){
+        if (texttemp !=null)
+        texttemp.setVisible(false);
     }
 
     /**

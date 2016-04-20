@@ -72,8 +72,7 @@ public class Vector extends BaseGraph {
         if (polyline == null) {
             polyline = aMap.addPolyline(polylineOptions);
         } else {
-//            polyline.setVisible(true);
-            polyline = aMap.addPolyline(polylineOptions);
+            polyline.setVisible(true);
         }
     }
 
@@ -81,8 +80,11 @@ public class Vector extends BaseGraph {
      * 强制重画
      */
     public void forceDraw(AMap aMap){
-        initPolylineOptions();
-        polyline = aMap.addPolyline(polylineOptions);
+        if (polylineOptions == null) {
+            initPolylineOptions();
+        }
+        aMap.addPolyline(polylineOptions);
+
     }
 
     /**

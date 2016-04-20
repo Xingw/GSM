@@ -34,12 +34,30 @@ public class Line extends BaseGraph {
 
     @Override
     public void draw(AMap aMap) {
+        if (polyline == null) {
+            PolylineOptions options = new PolylineOptions();
+            options.add(latLngBegin)
+                    .add(latLngEnd)
+                    .width(lineWidth)
+                    .color(lineColor);
+            polyline = aMap.addPolyline(options);
+        } else {
+            polyline.setVisible(true);
+        }
+
+    }
+
+    /**
+     * 强制重画
+     */
+    public void forceDraw(AMap aMap) {
         PolylineOptions options = new PolylineOptions();
         options.add(latLngBegin)
                 .add(latLngEnd)
                 .width(lineWidth)
                 .color(lineColor);
-        polyline = aMap.addPolyline(options);
+        aMap.addPolyline(options);
+
     }
 
     /**

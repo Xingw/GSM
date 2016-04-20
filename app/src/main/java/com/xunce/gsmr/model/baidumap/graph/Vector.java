@@ -2,6 +2,7 @@ package com.xunce.gsmr.model.baidumap.graph;
 
 import android.graphics.Color;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
@@ -33,6 +34,7 @@ public class Vector extends Graph{
      * 画在地图上的数据
      */
     private PolylineOptions polylineOptions;
+    private Overlay polyline;
 
     List<LatLng> openGLlatLng;
     /**
@@ -81,7 +83,8 @@ public class Vector extends Graph{
      * 隐藏
      */
     public void hide() {
-        polylineOptions = null;
+        if (polyline !=null)
+        polyline.setVisible(false);
     }
 
     public String getName() {
@@ -102,9 +105,11 @@ public class Vector extends Graph{
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        if(polylineOptions == null){
+        if(polyline == null){
             initPolylineOptions();
-            baiduMap.addOverlay(polylineOptions);
+            polyline =baiduMap.addOverlay(polylineOptions);
+        }else {
+            polyline.setVisible(true);
         }
     }
 

@@ -91,6 +91,11 @@ public class GaodeBaseActivity extends AppCompatActivity {
         aMap.animateCamera(cameraUpdate);
     }
 
+    public void animateToPoint(LatLng latLng,float zoom) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.changeLatLng(latLng);
+        aMap.animateCamera(cameraUpdate);
+        aMap.moveCamera(CameraUpdateFactory.zoomTo(zoom));
+    }
     /**
      * 定位到我的位置
      */

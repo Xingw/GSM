@@ -49,20 +49,21 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
      * View
      */
     private TextView tvLength;
-
+    private float zoomlevel;
     /**
      * 启动当前Activity
      *
      * @param activity
      * @param latLng
      */
-    public static void start(Activity activity, LatLng latLng) {
+    public static void start(Activity activity, LatLng latLng,float zoom) {
         Intent intent = new Intent(activity, GaodeMeasureActivity.class);
         if (latLng == null) {
             return;
         }
         intent.putExtra(Constant.EXTRA_KEY_LATITUDE, latLng.latitude);
         intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, latLng.longitude);
+        intent.putExtra(Constant.EXTRA_KEY_ZOOM,zoom);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
     }
@@ -77,7 +78,7 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         Intent intent = getIntent();
         latLng = new LatLng(intent.getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, 0),
                 intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
-
+        zoomlevel = intent.getFloatExtra(Constant.EXTRA_KEY_ZOOM,0);
         //初始化View
         initView();
     }
@@ -92,7 +93,8 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         //开启定位
         super.initLocate();
         //将地图移动到目标点
-        animateToPoint(latLng);
+        getaMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
+        getaMap().moveCamera(CameraUpdateFactory.zoomTo(zoomlevel));
 
         //view---和点击事件
         tvLength = (TextView) findViewById(R.id.id_tv_length);

@@ -1,6 +1,7 @@
 package com.xunce.gsmr.model.baidumap.graph;
 
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
@@ -25,7 +26,7 @@ public class Line extends Graph {
 
     private LatLng latLngEnd;
 
-    private PolylineOptions ooPolyline;
+    private Overlay polyline;
 
     public Line(LatLng latLngBegin, LatLng latLngEnd) {
         this.latLngBegin = latLngBegin;
@@ -36,17 +37,19 @@ public class Line extends Graph {
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        if(ooPolyline == null)
+        if(polyline == null)
         {
             // 添加折线
             List<LatLng> points = new ArrayList<>();
             points.add(latLngBegin);
             points.add(latLngEnd);
-            ooPolyline = new PolylineOptions()
+            PolylineOptions ooPolyline = new PolylineOptions()
                     .width(lineWidth)
                     .color(lineColor)
                     .points(points);
-            baiduMap.addOverlay(ooPolyline);
+            polyline = baiduMap.addOverlay(ooPolyline);
+        }else {
+            polyline.setVisible(true);
         }
     }
 
@@ -68,7 +71,8 @@ public class Line extends Graph {
     }
 
     public void hide(){
-        ooPolyline=null;
+        if (polyline !=null)
+        polyline.setVisible(false);
     }
 
     public LatLng getLatLngBegin() {
@@ -87,11 +91,4 @@ public class Line extends Graph {
         this.latLngEnd = latLngEnd;
     }
 
-    public PolylineOptions getOoPolyline() {
-        return ooPolyline;
-    }
-
-    public void setOoPolyline(PolylineOptions ooPolyline) {
-        this.ooPolyline = ooPolyline;
-    }
 }

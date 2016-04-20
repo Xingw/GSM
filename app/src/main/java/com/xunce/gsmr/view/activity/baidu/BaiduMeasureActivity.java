@@ -75,12 +75,13 @@ public class BaiduMeasureActivity extends AppCompatActivity {
 
     private boolean isFistIn = true;
 
-    public static void start(Activity activity, LatLng latLng) {
+    public static void start(Activity activity, LatLng latLng,float zoom) {
         Intent intent = new Intent(activity, BaiduMeasureActivity.class);
         if (latLng != null) {
             intent.putExtra(Constant.EXTRA_KEY_LATITUDE, latLng.latitude);
             intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, latLng.longitude);
         }
+        intent.putExtra(Constant.EXTRA_KEY_ZOOM,zoom);
         L.log(TAG, latLng.latitude + " : " + latLng.longitude);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
@@ -93,7 +94,7 @@ public class BaiduMeasureActivity extends AppCompatActivity {
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
 
         //接收intent中的数据
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         latLng = new LatLng(intent.getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, 0),
                 intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
 
@@ -108,11 +109,11 @@ public class BaiduMeasureActivity extends AppCompatActivity {
                 if (isFistIn) {
                     MapHelper.animateToPoint(mBaiduMap, new LatLng(
                             bdLocation.getLatitude(), bdLocation.getLongitude()));
-                    MapHelper.animateZoom(mBaiduMap, 15);
                     isFistIn = false;
                 }
             }
         });
+        MapHelper.animateZoom(mBaiduMap, intent.getFloatExtra(Constant.EXTRA_KEY_ZOOM,15));
         mLocationClient.start();
     }
 

@@ -17,6 +17,7 @@ import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
@@ -70,6 +71,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
     private ImageButton ibLocate;
     //数据库地址
     private String dbPath;
+    private float zoomlevel;
 
     //定位监听器---每秒触发
     public BDLocationListener myListener = new BDLocationListener() {
@@ -102,10 +104,11 @@ public class BaiduMarkerActivity extends AppCompatActivity {
      * @param markerItem
      * @param requestCode
      */
-    public static void start(Activity activity, MarkerItem markerItem, String dbPath,LatLng latLng, int requestCode) {
+    public static void start(Activity activity, MarkerItem markerItem, String dbPath,LatLng latLng,float zoom, int requestCode) {
         Intent intent = new Intent(activity, BaiduMarkerActivity.class);
         intent.putExtra(Constant.EXTRA_KEY_MARKER_ITEM, markerItem);
         intent.putExtra(Constant.EXTRA_KEY_REQUEST_CODE, requestCode);
+        intent.putExtra(Constant.EXTRA_KEY_ZOOM, zoom);
         //之前在prjEditAc的界面中心坐标
         intent.putExtra(Constant.EXTRA_KEY_LATITUDE, latLng.latitude);
         intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, latLng.longitude);
@@ -127,6 +130,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         markerItem = DBHelper.getMarkerItemInDB(dbPath,wrongItem.getMarkerId());
         requestCode = getIntent().getIntExtra(Constant.EXTRA_KEY_REQUEST_CODE,
                 BaiduPrjEditActivity.REQUEST_CODE_MARKER_ACTIVITY);
+        zoomlevel = getIntent().getFloatExtra(Constant.EXTRA_KEY_ZOOM,15);
 
         // 定位初始化
         mLocClient = new LocationClient(this);
@@ -160,8 +164,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
 
         //如果是编辑---定位到编辑的点
         if (markerItem != null && markerItem.getLatitude() != 0 && markerItem.getLongitude() != 0) {
-            MapHelper.animateToPoint(mBaiduMap,
-                    new LatLng(markerItem.getLatitude(), markerItem.getLongitude()));
+            MapHelper.animateToPoint(mBaiduMap,markerItem.getBaiduLatLng());
         }else {
             markerItem = new MarkerItem();
             SQLiteDatabase db = DBHelper.openDatabase(dbPath);
@@ -172,7 +175,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                     intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
             MapHelper.animateToPoint(mBaiduMap,latLng);
         }
-
+        mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(zoomlevel));
         //地图状态变化监听---用于监听选取的Marker位置
         mBaiduMap.setOnMapStatusChangeListener(new BaiduMap.OnMapStatusChangeListener() {
             @Override
