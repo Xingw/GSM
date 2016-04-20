@@ -20,13 +20,14 @@ public class Text extends BaseGraph {
     private static int textColor = 0xFFFF00FF;
     private static int textBgColor = 0x00FFFFFF;
     private static int textSize = 14;
-
+    private boolean show = true;
     /**
      * 文字参数
      */
     private LatLng latLng;
     private float rotate;
     private String content;
+    private String layerName;
 
     //保存options
     private TextOptions textOptions;
@@ -65,12 +66,27 @@ public class Text extends BaseGraph {
 
     /**
      * 传入经纬度的
+     *
      * @param latitude
      * @param longitude
      */
-    public Text(double latitude, double longitude, String text){
+    public Text(double latitude, double longitude, String text) {
         this.latLng = PositionUtil.gps84_To_Gcj02(latitude, longitude);
         this.content = text;
+    }
+
+    /**
+     * 构造方法
+     *
+     * @param latLng
+     * @param text
+     */
+    public Text(LatLng latLng, String text,String layerName) {
+        this.latLng = latLng;
+        this.content = text;
+        this.layerName = layerName;
+        //初始化
+        initTextOptions();
     }
 
     /**
@@ -82,39 +98,40 @@ public class Text extends BaseGraph {
     public Text(LatLng latLng, String text) {
         this.latLng = latLng;
         this.content = text;
-
         //初始化
         initTextOptions();
     }
-
     @Override
     public void draw(AMap aMap) {
-        if (text == null) {
-            text = aMap.addText(textOptions);
-        }else{
-            text.setVisible(true);
+        if (show) {
+            if (text == null) {
+                text = aMap.addText(textOptions);
+            } else {
+                text.setVisible(true);
+            }
         }
     }
 
     /**
      * 强制重画
      */
-    public void forceDraw(AMap aMap){
+    public void forceDraw(AMap aMap) {
         texttemp = aMap.addText(textOptions);
     }
+
     /**
      * 强制隐藏
      */
-    public void forcehide(){
-        if (texttemp !=null)
-        texttemp.setVisible(false);
+    public void forcehide() {
+        if (texttemp != null)
+            texttemp.setVisible(false);
     }
 
     /**
      * 隐藏
      */
     public void hide() {
-        if(text != null){
+        if (text != null) {
             text.setVisible(false);
         }
     }
@@ -122,8 +139,8 @@ public class Text extends BaseGraph {
     /**
      * 销毁
      */
-    public void destory(){
-        if(text != null){
+    public void destory() {
+        if (text != null) {
             text.remove();
             text.destroy();
         }
@@ -131,9 +148,9 @@ public class Text extends BaseGraph {
 
     @Override
     public String toString() {
-        return "latitude:"+latLng.latitude+"\t"
-                +"longitude:"+latLng.longitude+"\t"
-                +"content:"+content;
+        return "latitude:" + latLng.latitude + "\t"
+                + "longitude:" + latLng.longitude + "\t"
+                + "content:" + content;
     }
 
     //getter----and---setter------------------------------------------------
@@ -167,5 +184,24 @@ public class Text extends BaseGraph {
 
     public void setText(com.amap.api.maps.model.Text text) {
         this.text = text;
+    }
+
+    public String getLayerName() {
+        return layerName;
+    }
+
+    public void setLayerName(String layerName) {
+        this.layerName = layerName;
+    }
+
+    public boolean isShow() {
+        return show;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+        if (show ==false){
+            hide();
+        }
     }
 }

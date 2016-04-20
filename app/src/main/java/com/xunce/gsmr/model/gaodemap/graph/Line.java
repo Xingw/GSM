@@ -12,15 +12,26 @@ public class Line extends BaseGraph {
     //直线的参数
     private static int lineColor = 0xAAFF0000;
     private static int lineWidth = 10;
-
+    private boolean show = true;
     /**
      * 坐标点
      */
     private LatLng latLngBegin;
     private LatLng latLngEnd;
-
+    private String layerName;
     private Polyline polyline;
 
+    /**
+     * 构造方法
+     *
+     * @param latLngBegin
+     * @param latLngEnd
+     */
+    public Line(LatLng latLngBegin, LatLng latLngEnd,String layerName) {
+        this.latLngBegin = latLngBegin;
+        this.latLngEnd = latLngEnd;
+        this.layerName = layerName;
+    }
     /**
      * 构造方法
      *
@@ -31,20 +42,20 @@ public class Line extends BaseGraph {
         this.latLngBegin = latLngBegin;
         this.latLngEnd = latLngEnd;
     }
-
     @Override
     public void draw(AMap aMap) {
-        if (polyline == null) {
-            PolylineOptions options = new PolylineOptions();
-            options.add(latLngBegin)
-                    .add(latLngEnd)
-                    .width(lineWidth)
-                    .color(lineColor);
-            polyline = aMap.addPolyline(options);
-        } else {
-            polyline.setVisible(true);
+        if (show) {
+            if (polyline == null) {
+                PolylineOptions options = new PolylineOptions();
+                options.add(latLngBegin)
+                        .add(latLngEnd)
+                        .width(lineWidth)
+                        .color(lineColor);
+                polyline = aMap.addPolyline(options);
+            } else {
+                polyline.setVisible(true);
+            }
         }
-
     }
 
     /**
@@ -109,5 +120,16 @@ public class Line extends BaseGraph {
 
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
+    }
+
+    public String getLayerName() {
+        return layerName;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+        if (show ==false){
+            hide();
+        }
     }
 }

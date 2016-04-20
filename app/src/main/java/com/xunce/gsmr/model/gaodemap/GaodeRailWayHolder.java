@@ -46,7 +46,7 @@ public class GaodeRailWayHolder {
     private List<Line> lineList = new ArrayList<>();
     private List<Text> textList = new ArrayList<>();
     private List<Vector> vectorList = new ArrayList<>();
-
+    private List<String> layerList = new ArrayList<>();
     /**
      * 公里标管理器
      */
@@ -79,6 +79,7 @@ public class GaodeRailWayHolder {
                 db.setTransactionSuccessful();
                 db.endTransaction();
                 db.close();
+                initLayerList();
                 return null;
             }
 
@@ -92,6 +93,24 @@ public class GaodeRailWayHolder {
                 ToastHelper.show(context, "地图数据加载成功!");
             }
         }.execute();
+    }
+
+    private void initLayerList() {
+        for (Text text1 : textList) {
+            if (!layerList.contains(text1.getLayerName())) {
+                layerList.add(text1.getLayerName());
+            }
+        }
+        for (Line line1 : lineList) {
+            if (!layerList.contains(line1.getLayerName())) {
+                layerList.add(line1.getLayerName());
+            }
+        }
+        for (Vector vector1 : vectorList) {
+            if (!layerList.contains(vector1.getLayerName())) {
+                layerList.add(vector1.getLayerName());
+            }
+        }
     }
 
     /**
@@ -120,7 +139,6 @@ public class GaodeRailWayHolder {
                     text1.getLatLng().latitude, text1.getContent());
             kilometerMarkHolder.addKilometerMark(kilometerMark);
         }
-
     }
 
     /**
@@ -181,7 +199,7 @@ public class GaodeRailWayHolder {
         }
     }
 
-    public void forcehideText(){
+    public void forcehideText() {
         for (Text text : textList) {
             text.forcehide();
         }
@@ -218,7 +236,7 @@ public class GaodeRailWayHolder {
             LatLng latLngEnd = PositionUtil.gps84_To_Gcj02(
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_end)),
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_end)));
-            line = new Line(latLngStart, latLngEnd);
+            line = new Line(latLngStart, latLngEnd, cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
             lineList.add(line);
             cursor.moveToNext();
         }
@@ -267,7 +285,7 @@ public class GaodeRailWayHolder {
             double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
             LatLng latLng = PositionUtil.gps84_To_Gcj02(latitude, longitude);
             String content = cursor.getString(cursor.getColumnIndex(DBConstant.content));
-            text = new Text(latLng, content);
+            text = new Text(latLng, content, cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
             textList.add(text);
             //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)
             KilometerMark kilometerMark = KilometerMark.getKilometerMark(longitude, latitude, content);
@@ -293,16 +311,15 @@ public class GaodeRailWayHolder {
             int order = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBConstant
                     .orderId)));
             if (order == 0) {
-                if (vector != null && vector.getPointList().size() != 0) {
+                if (vector != null && vector.getPointList().size() > 1) {
                     vectorList.add(vector);
                 }
                 //存入Vector的图层名
                 vector = new Vector(cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
-            } else {
-                double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
-                double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
-                vector.getPointList().add(new Point(longitude, latitude));
             }
+            double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+            vector.getPointList().add(new Point(longitude, latitude));
         } while (cursor.moveToNext());
         vectorList.add(vector);
         return;
@@ -324,15 +341,14 @@ public class GaodeRailWayHolder {
             int order = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBConstant
                     .orderId)));
             if (order == 0) {
-                if (vector != null && vector.getPointList().size() != 0) {
+                if (vector != null && vector.getPointList().size() > 1) {
                     vectorList.add(vector);
                 }
-                vector = new Vector("");
-            } else {
-                double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
-                double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
-                vector.getPointList().add(new Point(longitude, latitude));
+                vector = new Vector(cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
             }
+            double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+            vector.getPointList().add(new Point(longitude, latitude));
         } while (cursor.moveToNext());
         vectorList.add(vector);
         return;
@@ -406,6 +422,7 @@ public class GaodeRailWayHolder {
 
     /**
      * 判断是否为空
+     *
      * @return
      */
     public boolean isempty() {
@@ -454,6 +471,38 @@ public class GaodeRailWayHolder {
 
     public void setVectorList(List<Vector> vectorList) {
         this.vectorList = vectorList;
+    }
+
+    public List<String> getLayerList() {
+        return layerList;
+    }
+
+    public void setLayerList(List<String> layerList) {
+        this.layerList = layerList;
+    }
+
+    public void initshow(List<String> showList) {
+        for (Text text1 : textList) {
+            if (showList.contains(text1.getLayerName())) {
+                text1.setShow(true);
+            }else {
+                text1.setShow(false);
+            }
+        }
+        for (Vector vector1 : vectorList) {
+            if (showList.contains(vector1.getLayerName())) {
+                vector1.setShow(true);
+            }else {
+                vector1.setShow(false);
+            }
+        }
+        for (Line line1 : lineList) {
+            if (showList.contains(line1.getLayerName())) {
+                line1.setShow(true);
+            }else {
+                line1.setShow(false);
+            }
+        }
     }
 }
 

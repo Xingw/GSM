@@ -28,28 +28,35 @@ public class Line extends Graph {
 
     private Overlay polyline;
 
+
     public Line(LatLng latLngBegin, LatLng latLngEnd) {
         this.latLngBegin = latLngBegin;
         this.latLngEnd = latLngEnd;
-
-
     }
+
+    public Line(LatLng latLngBegin, LatLng latLngEnd,String layerName) {
+        this.latLngBegin = latLngBegin;
+        this.latLngEnd = latLngEnd;
+        this.layerName = layerName;
+    }
+
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        if(polyline == null)
-        {
-            // 添加折线
-            List<LatLng> points = new ArrayList<>();
-            points.add(latLngBegin);
-            points.add(latLngEnd);
-            PolylineOptions ooPolyline = new PolylineOptions()
-                    .width(lineWidth)
-                    .color(lineColor)
-                    .points(points);
-            polyline = baiduMap.addOverlay(ooPolyline);
-        }else {
-            polyline.setVisible(true);
+        if (show) {
+            if (polyline == null) {
+                // 添加折线
+                List<LatLng> points = new ArrayList<>();
+                points.add(latLngBegin);
+                points.add(latLngEnd);
+                PolylineOptions ooPolyline = new PolylineOptions()
+                        .width(lineWidth)
+                        .color(lineColor)
+                        .points(points);
+                polyline = baiduMap.addOverlay(ooPolyline);
+            } else {
+                polyline.setVisible(true);
+            }
         }
     }
 
@@ -89,6 +96,12 @@ public class Line extends Graph {
 
     public void setLatLngEnd(LatLng latLngEnd) {
         this.latLngEnd = latLngEnd;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+        if (!show)
+            hide();
     }
 
 }

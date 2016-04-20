@@ -2,6 +2,7 @@ package com.xunce.gsmr.view.activity.gaode;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -56,6 +58,8 @@ import com.xunce.gsmr.view.activity.SettingActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 import timber.log.Timber;
@@ -116,7 +120,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private static boolean isChecked = false;
     //地图模式选择
     private FloatingActionButton mapModeBtn;
-    private static int ModeValue=Constant.MODE_MAP_2D;
+    private static int ModeValue = Constant.MODE_MAP_2D;
 
     //菜单按钮展开
     private FloatingActionsMenu floatingActionsMenu_hide_left;
@@ -125,6 +129,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private boolean expand = false;
 
     private LinearLayout zoomlayout;
+    private static String[] layername;
+    private static boolean[] layerboolean;
     /**
      * 用于延时发送数据
      */
@@ -165,7 +171,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         PreferenceHelper.getInstance(this).initMarkerIconPreference();
 
         //接收数据
-        prjItem =(PrjItem)getIntent().getParcelableExtra(Constant.EXTRA_KEY_PRJ_ITEM);
+        prjItem = (PrjItem) getIntent().getParcelableExtra(Constant.EXTRA_KEY_PRJ_ITEM);
 
         //启动定位
         super.initLocate();
@@ -177,7 +183,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         initdata();
 
         //检查版本更新
-        if(Constant.firstOpen) {
+        if (Constant.firstOpen) {
             Update.checkversion(this);
             Constant.firstOpen = false;
         }
@@ -201,14 +207,14 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         floatingActionButton_expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!expand) {
-                    expand=true;
+                if (!expand) {
+                    expand = true;
                     zoomlayout.setVisibility(View.GONE);
                     floatingActionsMenu_hide_left.expand();
                     floatingActionsMenu_hide_up.expand();
                     floatingActionButton_expand.setIcon(R.drawable.ic_close);
-                }else {
-                    expand=false;
+                } else {
+                    expand = false;
                     zoomlayout.setVisibility(View.VISIBLE);
                     floatingActionsMenu_hide_left.collapse();
                     floatingActionsMenu_hide_up.collapse();
@@ -247,7 +253,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 } else if (!isChecked && railWayHolder != null) {
                     isChecked = true;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_open);
-                    if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
+                    if (railWayHolder.getTextList() != null && railWayHolder.getTextList().size() != 0) {
                         getaMap().moveCamera(CameraUpdateFactory.changeLatLng(railWayHolder.getTextList().get(0).getLatLng()));
                     }
                     CameraPosition cameraPosition = getaMap().getCameraPosition();
@@ -330,11 +336,12 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     /**
      * 初始化数据
      */
-    private void initdata(){
+    private void initdata() {
         railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
         KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
         kmlParser.draw(getaMap());
     }
+
     /**
      * 初始化Marker的点击事件--以及InfoWindow的填充
      */
@@ -378,7 +385,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         mapModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (ModeValue){
+                switch (ModeValue) {
                     case Constant.MODE_MAP_2D: {//2D地图切换至3D地图
                         ModeValue = Constant.MODE_MAP_3D;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
@@ -488,6 +495,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 //FileHelper.sendDbFile(this);
                 FileHelper.sendDbFile(this, prjItem.getDbLocation());
                 break;
+            case R.id.id_action_layer_choice:
+                showChoiceLayerDialog();
+                break;
             //开启离线地图
             case R.id.id_action_offline_map:
                 GaodeOfflineActivity.start(this);
@@ -503,6 +513,47 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChoiceLayerDialog() {
+        if (layername == null) {
+            layername = new String[railWayHolder.getLayerList().size()];
+            layerboolean = new boolean[railWayHolder.getLayerList().size()];
+            for (int i = 0; i < railWayHolder.getLayerList().size(); i++) {
+                layername[i] = railWayHolder.getLayerList().get(i);
+            }
+            for (int i = 0; i < layerboolean.length; i++) {
+                layerboolean[i] = true;
+            }
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("图层选择")
+                .setMultiChoiceItems(layername, layerboolean, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        layerboolean[which] =isChecked;
+                    }
+                })
+                .setCancelable(false)
+                .setPositiveButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        List<String> showList = new ArrayList<String>();
+                        for (int i = 0; i < layerboolean.length; i++) {
+                            if (layerboolean[i]){
+                                showList.add(layername[i]);
+                            }
+                        }
+                        railWayHolder.initshow(showList);
+                        if (isChecked){
+                            if (getaMap().getCameraPosition().zoom > GaodeMapCons.zoomLevel) {
+                                railWayHolder.draw(getaMap());
+                            } else {
+                                railWayHolder.drawLine(getaMap());
+                            }
+                        }
+                    }
+                }).show();
     }
 
     /**
@@ -529,6 +580,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
 
     /**
      * Marker对话框
+     *
      * @param context
      */
     public void showFindMarkerDialog(final Context context) {
@@ -551,7 +603,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         View.OnClickListener confirmListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastHelper.show(context,"功能正在开发中……");
+                ToastHelper.show(context, "功能正在开发中……");
             }
         };
         confirmButton.setOnClickListener(confirmListener);
@@ -662,12 +714,12 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         return;
                     }
                     //如果获取路径成功就----加载digitalMapHolder
-                    digitalMapHolder = new  DigitalMapHolder(this, path, prjItem.getDbLocation());
+                    digitalMapHolder = new DigitalMapHolder(this, path, prjItem.getDbLocation());
                     //保存数字地图数据
                     railWayHolder.hide();
                     railWayHolder.clearData();
                     railWayHolder = new GaodeRailWayHolder(digitalMapHolder
-                            .getTextList(),digitalMapHolder.getVectorList());
+                            .getTextList(), digitalMapHolder.getVectorList());
                 }
                 break;
             //加载xml文件

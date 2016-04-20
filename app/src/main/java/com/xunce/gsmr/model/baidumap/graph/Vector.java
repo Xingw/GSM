@@ -20,10 +20,6 @@ import java.util.List;
 public class Vector extends Graph{
     private static final int POLYLINE_WIDTH = 6;
 
-    /**
-     * 当前矢量的名称
-     */
-    private String name;
 
     /**
      * 一个矢量的所有点
@@ -40,10 +36,10 @@ public class Vector extends Graph{
     /**
      * 传入name的构造方法
      *
-     * @param name
+     * @param layerName
      */
-    public Vector(String name) {
-        this.name = name;
+    public Vector(String layerName) {
+        this.layerName = layerName;
     }
 
     /**
@@ -61,7 +57,7 @@ public class Vector extends Graph{
         //判断需不需要改变颜色
         //L.log(TAG, "name:\t" + name);
         if (latLngs.size()>=2) {
-            if (name != null && name.contains("Railway")) {
+            if (layerName != null && layerName.contains("Railway")) {
                 //L.log(TAG, "我改变了颜色");\
                 polylineOptions = new PolylineOptions().width(POLYLINE_WIDTH * 2).color(Color.RED).points(latLngs);
             } else {
@@ -87,14 +83,6 @@ public class Vector extends Graph{
         polyline.setVisible(false);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<Point> getPointList() {
         return pointList;
     }
@@ -105,11 +93,13 @@ public class Vector extends Graph{
 
     @Override
     public void draw(BaiduMap baiduMap) {
-        if(polyline == null){
-            initPolylineOptions();
-            polyline =baiduMap.addOverlay(polylineOptions);
-        }else {
-            polyline.setVisible(true);
+        if (show) {
+            if (polyline == null) {
+                initPolylineOptions();
+                polyline = baiduMap.addOverlay(polylineOptions);
+            } else {
+                polyline.setVisible(true);
+            }
         }
     }
 
@@ -118,7 +108,7 @@ public class Vector extends Graph{
         {
             initOpenGL();
         }
-        if (name != null && name.contains("Railway")) {
+        if (layerName != null && layerName.contains("Railway")) {
             openglLatLng.add(new openGLLatLng(openGLlatLng, Color.RED));
         }else {
             openglLatLng.add(new openGLLatLng(openGLlatLng, Color.BLUE));
@@ -131,5 +121,11 @@ public class Vector extends Graph{
 
     public void setPolylineOptions(PolylineOptions polylineOptions) {
         this.polylineOptions = polylineOptions;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+        if (!show)
+            hide();
     }
 }

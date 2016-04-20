@@ -35,20 +35,29 @@ public class Text extends Graph {
         this.rotate = 0;
     }
 
+    public Text(LatLng latLng, String string,String layerName) {
+        this.latLng = latLng;
+        this.content = string;
+        this.rotate = 0;
+        this.layerName = layerName;
+    }
+
     @Override
     public void draw(BaiduMap baiduMap) {
-        if(text == null){
-            // 添加文字
-            TextOptions ooText = new TextOptions()
-                    .bgColor(textBgColor)
-                    .fontSize(textSize)
-                    .fontColor(textColor)
-                    .text(content)
-                    .rotate(-rotate)
-                    .position(latLng);
-            text =baiduMap.addOverlay(ooText);
-        }else {
-            text.setVisible(true);
+        if (show) {
+            if (text == null) {
+                // 添加文字
+                TextOptions ooText = new TextOptions()
+                        .bgColor(textBgColor)
+                        .fontSize(textSize)
+                        .fontColor(textColor)
+                        .text(content)
+                        .rotate(-rotate)
+                        .position(latLng);
+                text = baiduMap.addOverlay(ooText);
+            } else {
+                text.setVisible(true);
+            }
         }
     }
 
@@ -81,5 +90,9 @@ public class Text extends Graph {
     public void setRotate(float rotate) {
         this.rotate = rotate;
     }
-
+    public void setShow(boolean show) {
+        this.show = show;
+        if (!show)
+            hide();
+    }
 }

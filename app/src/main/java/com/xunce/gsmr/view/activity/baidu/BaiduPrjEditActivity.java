@@ -2,6 +2,7 @@ package com.xunce.gsmr.view.activity.baidu;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -39,6 +40,7 @@ import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
+import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -49,6 +51,9 @@ import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.greenrobot.event.EventBus;
 
@@ -114,7 +119,11 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             }
         }
     };
-
+    /**
+     * 用于图层选择
+     */
+    private static String[] layername;
+    private static boolean[] layerboolean;
 
 
     /**
@@ -448,6 +457,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             case R.id.id_action_export_data:
                 FileHelper.sendDbFile(this,prjItem.getDbLocation());
                 break;
+            case R.id.id_action_layer_choice:
+                showChoiceLayerDialog();
+                break;
             case R.id.id_action_offline_map:
                 //开启离线地图管理Activity
                 BaiduOfflineActivity.start(this);
@@ -463,6 +475,47 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showChoiceLayerDialog() {
+        if (layername == null) {
+            layername = new String[railWayHolder.getLayerList().size()];
+            layerboolean = new boolean[railWayHolder.getLayerList().size()];
+            for (int i = 0; i < railWayHolder.getLayerList().size(); i++) {
+                layername[i] = railWayHolder.getLayerList().get(i);
+            }
+            for (int i = 0; i < layerboolean.length; i++) {
+                layerboolean[i] = true;
+            }
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("图层选择")
+                .setMultiChoiceItems(layername, layerboolean, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                        layerboolean[which] =isChecked;
+                    }
+                })
+                .setCancelable(false)
+                .setPositiveButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        List<String> showList = new ArrayList<String>();
+                        for (int i = 0; i < layerboolean.length; i++) {
+                            if (layerboolean[i]){
+                                showList.add(layername[i]);
+                            }
+                        }
+                        railWayHolder.initshow(showList);
+//                        if (isChecked){
+//                            if (baiduMapFragment.getBaiduMap().getMapStatus().zoom > BaiduMapCons.zoomLevel) {
+//                                railWayHolder.draw(baiduMapFragment.getBaiduMap());
+//                            } else {
+//                                railWayHolder.drawLine(baiduMapFragment.getBaiduMap());
+//                            }
+//                        }
+                    }
+                }).show();
     }
 
     @Override

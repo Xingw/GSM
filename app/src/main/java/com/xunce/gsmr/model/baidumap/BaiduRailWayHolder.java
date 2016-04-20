@@ -51,13 +51,13 @@ public class BaiduRailWayHolder {
     private List<Line> lineList = new ArrayList<>();
     private List<Text> textList = new ArrayList<>();
     private List<Vector> vectorList = new ArrayList<>();
-
+    private List<String> layerList = new ArrayList<>();
     /**
      * 公里标管理器
      */
     private KilometerMarkHolder kilometerMarkHolder = new KilometerMarkHolder();
 
-    public BaiduRailWayHolder(final Context context, final String dbPath){
+    public BaiduRailWayHolder(final Context context, final String dbPath) {
         lineList = new ArrayList<>();
         textList = new ArrayList<>();
         vectorList = new ArrayList<>();
@@ -78,6 +78,7 @@ public class BaiduRailWayHolder {
                 db.setTransactionSuccessful();
                 db.endTransaction();
                 db.close();
+                initLayerList();
                 return null;
             }
 
@@ -103,15 +104,14 @@ public class BaiduRailWayHolder {
             int order = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBConstant
                     .orderId)));
             if (order == 0) {
-                if (vector != null && vector.getPointList().size() != 0) {
+                if (vector != null && vector.getPointList().size() > 1) {
                     vectorList.add(vector);
                 }
                 vector = new Vector("");
-            } else {
-                double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
-                double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
-                vector.getPointList().add(new Point(longitude, latitude));
             }
+            double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+            vector.getPointList().add(new Point(longitude, latitude));
         } while (cursor.moveToNext());
         vectorList.add(vector);
         return;
@@ -156,17 +156,18 @@ public class BaiduRailWayHolder {
             return true;
         return false;
     }
+
     /**
      * 画出自己
      */
-    public void draw(BaiduMap baiduMap){
+    public void draw(BaiduMap baiduMap) {
 //        for(Circle circle : circles){
 //            circle.draw(baiduMap);
 //        }
-        for(Line line : lineList){
+        for (Line line : lineList) {
             line.draw(baiduMap);
         }
-        for(Text text : textList){
+        for (Text text : textList) {
             text.draw(baiduMap);
         }
         for (Vector vector : vectorList) {
@@ -217,19 +218,19 @@ public class BaiduRailWayHolder {
         }
         cursor.moveToFirst();
         for (int i = 0; i < cursor.getCount(); i++) {
-            LatLng latLngStart =PositionUtil.Gps84_To_bd09(cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_start)),
+            LatLng latLngStart = PositionUtil.Gps84_To_bd09(cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_start)),
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_start)));
-            LatLng latLngEnd =PositionUtil.Gps84_To_bd09(
+            LatLng latLngEnd = PositionUtil.Gps84_To_bd09(
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude_end)),
                     cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude_end)));
-            line = new Line(latLngStart, latLngEnd);
+            line = new Line(latLngStart, latLngEnd, cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
             lineList.add(line);
             cursor.moveToNext();
         }
         return;
     }
 
-    private void getCircleList(SQLiteDatabase database){
+    private void getCircleList(SQLiteDatabase database) {
         List<Circle> circleList = new ArrayList<>();
         Cursor cursor = database.query("Circle", null, null, null, null, null, null);
         if (cursor == null) {
@@ -246,7 +247,7 @@ public class BaiduRailWayHolder {
         return;
     }
 
-    private void getTextList(SQLiteDatabase database){
+    private void getTextList(SQLiteDatabase database) {
         Cursor cursor = database.query(Constant.TABLE_TEXT, null, null, null, null, null, null);
         if (cursor == null) {
             return;
@@ -257,7 +258,7 @@ public class BaiduRailWayHolder {
             double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
             LatLng latLng = PositionUtil.Gps84_To_bd09(latitude, longitude);
             String content = cursor.getString(cursor.getColumnIndex(DBConstant.content));
-            text = new Text(latLng, content);
+            text = new Text(latLng, content, cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
             textList.add(text);
             //文字需要判断是不是公里标(是的话需要加入KilometerMarkHolder中)
             KilometerMark kilometerMark = KilometerMark.getKilometerMark(longitude, latitude, content);
@@ -284,16 +285,15 @@ public class BaiduRailWayHolder {
             int order = Integer.parseInt(cursor.getString(cursor.getColumnIndex(DBConstant
                     .orderId)));
             if (order == 0) {
-                if (vector != null && vector.getPointList().size() != 0) {
+                if (vector != null && vector.getPointList().size() > 1) {
                     vectorList.add(vector);
                 }
                 //存入Vector的图层名
                 vector = new Vector(cursor.getString(cursor.getColumnIndex(DBConstant.layer)));
-            } else {
-                double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
-                double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
-                vector.getPointList().add(new Point(longitude, latitude));
             }
+            double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));
+            double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
+            vector.getPointList().add(new Point(longitude, latitude));
         } while (cursor.moveToNext());
         vectorList.add(vector);
         return;
@@ -313,6 +313,7 @@ public class BaiduRailWayHolder {
             vector.hide();
         }
     }
+
     /**
      * 隐藏文字
      */
@@ -322,7 +323,47 @@ public class BaiduRailWayHolder {
         }
     }
 
+    private void initLayerList() {
+        for (Text text1 : textList) {
+            if (!layerList.contains(text1.getLayerName())) {
+                layerList.add(text1.getLayerName());
+            }
+        }
+        for (Line line1 : lineList) {
+            if (!layerList.contains(line1.getLayerName())) {
+                layerList.add(line1.getLayerName());
+            }
+        }
+        for (Vector vector1 : vectorList) {
+            if (!layerList.contains(vector1.getLayerName())) {
+                layerList.add(vector1.getLayerName());
+            }
+        }
+    }
 
+    public void initshow(List<String> showList) {
+        for (Text text1 : textList) {
+            if (showList.contains(text1.getLayerName())) {
+                text1.setShow(true);
+            } else {
+                text1.setShow(false);
+            }
+        }
+        for (Vector vector1 : vectorList) {
+            if (showList.contains(vector1.getLayerName())) {
+                vector1.setShow(true);
+            } else {
+                vector1.setShow(false);
+            }
+        }
+        for (Line line1 : lineList) {
+            if (showList.contains(line1.getLayerName())) {
+                line1.setShow(true);
+            } else {
+                line1.setShow(false);
+            }
+        }
+    }
 
     public List<Line> getLineList() {
         return lineList;
@@ -354,5 +395,13 @@ public class BaiduRailWayHolder {
 
     public void setKilometerMarkHolder(KilometerMarkHolder kilometerMarkHolder) {
         this.kilometerMarkHolder = kilometerMarkHolder;
+    }
+
+    public List<String> getLayerList() {
+        return layerList;
+    }
+
+    public void setLayerList(List<String> layerList) {
+        this.layerList = layerList;
     }
 }

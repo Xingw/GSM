@@ -61,7 +61,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:support-v4:22.2.0'
     compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:cardview-v7:22.0.0+'
+    compile 'com.android.support:cardview-v7:22.2.0'
     //依赖注入
     //Material dialog
     compile 'com.nineoldandroids:library:2.4.0'

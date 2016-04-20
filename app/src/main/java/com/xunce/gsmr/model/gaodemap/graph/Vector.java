@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class Vector extends BaseGraph {
     private static final int POLYLINE_WIDTH = 6;
-
+    private boolean show = true;
     /**
      * 当前矢量的名称
      */
-    private String name;
+    private String layername;
 
     /**
      * 一个矢量的所有点
@@ -36,12 +36,11 @@ public class Vector extends BaseGraph {
     /**
      * 传入name的构造方法
      *
-     * @param name
+     * @param layername
      */
-    public Vector(String name) {
-        this.name = name;
+    public Vector(String layername) {
+        this.layername = layername;
     }
-
     /**
      * 初始化需要画在地图上的数据
      */
@@ -55,7 +54,7 @@ public class Vector extends BaseGraph {
         }
         //判断需不需要改变颜色
         //L.log(TAG, "name:\t" + name);
-        if (name != null && name.contains("Railway")) {
+        if (layername != null && layername.contains("Railway")) {
             //L.log(TAG, "我改变了颜色");
             polylineOptions.color(Color.RED);
             polylineOptions.width(POLYLINE_WIDTH * 2);
@@ -64,22 +63,24 @@ public class Vector extends BaseGraph {
 
     @Override
     public void draw(AMap aMap) {
-        if (polylineOptions == null) {
-            initPolylineOptions();
-            polyline = aMap.addPolyline(polylineOptions);
-            return;
-        }
-        if (polyline == null) {
-            polyline = aMap.addPolyline(polylineOptions);
-        } else {
-            polyline.setVisible(true);
+        if (show) {
+            if (polylineOptions == null) {
+                initPolylineOptions();
+                polyline = aMap.addPolyline(polylineOptions);
+                return;
+            }
+            if (polyline == null) {
+                polyline = aMap.addPolyline(polylineOptions);
+            } else {
+                polyline.setVisible(true);
+            }
         }
     }
 
     /**
      * 强制重画
      */
-    public void forceDraw(AMap aMap){
+    public void forceDraw(AMap aMap) {
         if (polylineOptions == null) {
             initPolylineOptions();
         }
@@ -106,11 +107,11 @@ public class Vector extends BaseGraph {
     }
 
     public String getName() {
-        return name;
+        return layername;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.layername = name;
     }
 
     public List<Point> getPointList() {
@@ -127,5 +128,16 @@ public class Vector extends BaseGraph {
 
     public void setPolyline(Polyline polyline) {
         this.polyline = polyline;
+    }
+
+    public String getLayerName() {
+        return layername;
+    }
+
+    public void setShow(boolean show) {
+        this.show = show;
+        if (show ==false){
+            hide();
+        }
     }
 }

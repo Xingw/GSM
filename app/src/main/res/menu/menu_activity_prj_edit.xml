@@ -45,7 +45,12 @@
                 android:orderInCategory="100"
                 android:title="数据导出"
                 app:showAsAction="never" />
-
+            <item
+                android:id="@+id/id_action_layer_choice"
+                android:orderInCategory="100"
+                android:title="图层选择"
+                app:showAsAction="never"
+                />
             <item
                 android:id="@+id/id_action_offline_map"
                 android:orderInCategory="100"
