@@ -10,10 +10,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Switch;
 
@@ -37,7 +39,7 @@ public class SettingActivity extends AppCompatActivity {
      * 是否使用wifi的switch
      */
     private Switch locateModeSwitch;
-
+    static boolean reconnect = true;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SettingActivity.class));
@@ -70,9 +72,9 @@ public class SettingActivity extends AppCompatActivity {
                 PreferenceHelper.getInstance(SettingActivity.this).setLocateMode(SettingActivity.this, isChecked);
                 //发送定位模式改变event
                 EventBus.getDefault().post(new LocateModeChangeEvent());
-                if(isChecked){
+                if (isChecked) {
                     ToastHelper.show(SettingActivity.this, "切换为使用Wifi定位");
-                }else{
+                } else {
                     ToastHelper.show(SettingActivity.this, "切换为GPS定位");
                 }
             }
@@ -136,10 +138,31 @@ public class SettingActivity extends AppCompatActivity {
     private void showCORSSetting() {
         LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(this).
                 inflate(R.layout.dialog_cors_setting, null);
-        final EditText ip = (EditText) llPrjName.findViewById(R.id.et_cors_ip);
-        final EditText port = (EditText) llPrjName.findViewById(R.id.et_cors_port);
-        final EditText username = (EditText) llPrjName.findViewById(R.id.et_cors_username);
-        final EditText password = (EditText) llPrjName.findViewById(R.id.et_cors_password);
+        final EditText ipET = (EditText) llPrjName.findViewById(R.id.et_cors_ip);
+        final EditText portET = (EditText) llPrjName.findViewById(R.id.et_cors_port);
+        final EditText usernameET = (EditText) llPrjName.findViewById(R.id.et_cors_username);
+        final EditText passwordET = (EditText) llPrjName.findViewById(R.id.et_cors_password);
+        Spinner sourceCodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
+        //sourceCodeSpinner.setAdapter();
+        RadioGroup reConnectRG = (RadioGroup) llPrjName.findViewById(R.id.rg_cors_choice);
+        if (reconnect){
+            reConnectRG.check(R.id.rb_cors_yes);
+        }else {
+            reConnectRG.check(R.id.rb_cors_no);
+        }
+        reConnectRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId){
+                    case R.id.rb_cors_yes:
+                        reconnect = true;
+                        break;
+                    case R.id.rb_cors_no:
+                        reconnect = false;
+                        break;
+                }
+            }
+        });
         final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         final AlertDialog dialog = dialogBuilder
                 .setTitle("CORS设置")
@@ -147,7 +170,11 @@ public class SettingActivity extends AppCompatActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ToastHelper.show(SettingActivity.this, "功能正在开发中……");
+                        String ip = ipET.getText().toString();
+                        String port = portET.getText().toString();
+                        String username = usernameET.getText().toString();
+                        String password = passwordET.getText().toString();
+//                        reconnect;
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -174,7 +201,7 @@ public class SettingActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
                 break;
