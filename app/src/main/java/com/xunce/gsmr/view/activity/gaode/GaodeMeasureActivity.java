@@ -16,6 +16,7 @@ import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
 import com.amap.api.maps.model.Marker;
 import com.amap.api.maps.model.MarkerOptions;
+import com.amap.api.maps.model.Polyline;
 import com.amap.api.maps.model.PolylineOptions;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
@@ -42,6 +43,7 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
      */
     private List<Marker> markerList = new ArrayList<>();
     private List<LatLng> pointList = new ArrayList<>();
+    private Polyline polyline;
     //折线对象
     private PolylineOptions polylineOptions = new PolylineOptions();
 
@@ -120,17 +122,35 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         getaMap().setOnMapClickListener(new AMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
-                //将点击位置存入List
-                MarkerOptions options = new MarkerOptions().icon(MarkerIconCons.descriptorRed).position(latLng);
-                markerList.add((getaMap().addMarker(options)));
                 //添加坐标点
                 pointList.add(latLng);
+                addMarker(latLng);
                 //重新计算总长
                 updateLength();
                 //重画
-                redraw();
+                //redraw();
             }
         });
+    }
+
+    private void addMarker(LatLng latLng) {
+        //将点击位置存入List
+        MarkerOptions options = new MarkerOptions().icon(MarkerIconCons.descriptorRed).position(latLng);
+        if (markerList.size()>1) {
+            //将最后一个改为蓝色
+            markerList.get(markerList.size() - 1).setIcon(MarkerIconCons.descriptorBlue);
+        }
+        //添加新的点
+        markerList.add((getaMap().addMarker(options)));
+        if (polyline ==null){
+            polylineOptions = new PolylineOptions()
+                    .width(15)
+                    .color(Color.BLUE)
+                    .addAll(pointList);
+            polyline=getaMap().addPolyline(polylineOptions);
+        }else {
+            polyline.getPoints().add(latLng);
+        }
     }
 
     /**
@@ -145,7 +165,7 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
                     .width(15)
                     .color(Color.BLUE)
                     .addAll(pointList);
-            getaMap().addPolyline(polylineOptions);
+            polyline = getaMap().addPolyline(polylineOptions);
         }
         //画出标记点
         for (int i = 0; i < pointList.size(); i++) {
@@ -194,20 +214,39 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         switch (item.getItemId()) {
             case R.id.id_action_back_one_point:
                 if (pointList.size() != 0) {
+                    removeLastMarker();
                     pointList.remove(pointList.size() - 1);
                     updateLength();
-                    redraw();
+                    //redraw();
                 }
                 break;
             case R.id.id_action_delete_all:
                 updateLength();
                 pointList.clear();
-                redraw();
+                //redraw();
+                removeAllMarker();
                 break;
             case android.R.id.home:
                 finish();
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void removeAllMarker() {
+        for (Marker marker : markerList) {
+            marker.remove();
+        }
+        markerList.clear();
+        polyline.remove();
+        polyline.getPoints().clear();
+    }
+
+    private void removeLastMarker() {
+        markerList.get(markerList.size() -1).remove();
+        markerList.remove(markerList.size() -1);
+        if (markerList.size() >0)
+        markerList.get(markerList.size() -1).setIcon(MarkerIconCons.descriptorRed);
+        polyline.getPoints().remove(polyline.getPoints().size() -1);
     }
 }
