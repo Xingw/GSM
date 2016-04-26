@@ -21,11 +21,15 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.MarkerIconCons;
+import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
+import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
 import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 高德地图测量Activity
@@ -52,6 +56,8 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
      */
     private TextView tvLength;
     private float zoomlevel;
+    private GaodeRailWayHolder railWayHolder;
+
     /**
      * 启动当前Activity
      *
@@ -98,6 +104,8 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         getaMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
         getaMap().moveCamera(CameraUpdateFactory.zoomTo(zoomlevel));
 
+        EventBus.getDefault().register(this);
+
         //view---和点击事件
         tvLength = (TextView) findViewById(R.id.id_tv_length);
         findViewById(R.id.id_ib_locate).setOnClickListener(new View.OnClickListener() {
@@ -142,6 +150,12 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
         }
         //添加新的点
         markerList.add((getaMap().addMarker(options)));
+
+        reDrawLine();
+
+    }
+
+    private void reDrawLine() {
         if (polyline ==null){
             polylineOptions = new PolylineOptions()
                     .width(15)
@@ -149,7 +163,12 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
                     .addAll(pointList);
             polyline=getaMap().addPolyline(polylineOptions);
         }else {
-            polyline.getPoints().add(latLng);
+            polyline.remove();
+            polylineOptions = new PolylineOptions()
+                    .width(15)
+                    .color(Color.BLUE)
+                    .addAll(pointList);
+            polyline = getaMap().addPolyline(polylineOptions);
         }
     }
 
@@ -186,6 +205,21 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
     }
 
     /**
+     * 画出PrjEditActivity上已有的地图数据
+     *
+     * @param gaoDeDrawMapDataEvent
+     */
+    public void onEventMainThread(GaoDeDrawMapDataEvent gaoDeDrawMapDataEvent) {
+        //复制一份holder到当前activity
+        if (gaoDeDrawMapDataEvent.getRailWayHolder() != null) {
+            railWayHolder = gaoDeDrawMapDataEvent.getRailWayHolder();
+        }
+        if (railWayHolder != null) {
+            railWayHolder.forcedrawLine(getaMap());
+        }
+    }
+
+    /**
      * 更新总长
      */
     private void updateLength() {
@@ -216,6 +250,7 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
                 if (pointList.size() != 0) {
                     removeLastMarker();
                     pointList.remove(pointList.size() - 1);
+                    reDrawLine();
                     updateLength();
                     //redraw();
                 }
@@ -223,6 +258,7 @@ public class GaodeMeasureActivity extends GaodeBaseActivity {
             case R.id.id_action_delete_all:
                 updateLength();
                 pointList.clear();
+                reDrawLine();
                 //redraw();
                 removeAllMarker();
                 break;

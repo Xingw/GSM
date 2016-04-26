@@ -320,6 +320,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 GaodeMeasureActivity.start(GaodePrjEditActivity.this,
                         getaMap().getCameraPosition().target,
                         getaMap().getCameraPosition().zoom);
+                handler.sendEmptyMessageDelayed(0, 300);
             }
         });
         //公里标
@@ -337,9 +338,14 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * 初始化数据
      */
     private void initdata() {
-        railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
-        KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
-        kmlParser.draw(getaMap());
+        try {
+            railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
+            KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
+            kmlParser.draw(getaMap());
+        }catch (Exception e){
+            ToastHelper.show(this,"数据读取失败,请重新打开项目，或确认数据加载无误");
+        }
+
     }
 
     /**
