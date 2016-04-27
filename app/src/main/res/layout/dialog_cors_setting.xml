@@ -111,6 +111,14 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             />
+            <Button
+                android:id="@+id/id_btn_get_cors_node"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/sp_cors_sourcecode"
+                android:background="@color/window_bar_background"
+                android:text="获取"
+                />
         </RelativeLayout>
     </LinearLayout>
 

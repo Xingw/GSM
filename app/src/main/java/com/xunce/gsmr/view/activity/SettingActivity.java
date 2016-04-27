@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -26,6 +27,15 @@ import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.style.TransparentStyle;
+import com.zhd.zhdcorsnet.CorsGprsService;
+import com.zhd.zhdcorsnet.NetHelper;
+import com.zhd.zhdcorsnet.SourceNode;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import de.greenrobot.event.EventBus;
 import timber.log.Timber;
@@ -40,6 +50,8 @@ public class SettingActivity extends AppCompatActivity {
      */
     private Switch locateModeSwitch;
     static boolean reconnect = true;
+    String currentNode = null;
+    List<SourceNode> sourceNodeList;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SettingActivity.class));
@@ -142,18 +154,48 @@ public class SettingActivity extends AppCompatActivity {
         final EditText portET = (EditText) llPrjName.findViewById(R.id.et_cors_port);
         final EditText usernameET = (EditText) llPrjName.findViewById(R.id.et_cors_username);
         final EditText passwordET = (EditText) llPrjName.findViewById(R.id.et_cors_password);
-        Spinner sourceCodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
-        //sourceCodeSpinner.setAdapter();
+        //Spinner初始化
+        Spinner sourceNodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
+        final List<String> sourceNodeArrayList = new ArrayList<>();
+        final ArrayAdapter NodeAdapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,sourceNodeArrayList);
+        sourceNodeSpinner.setAdapter(NodeAdapter);
+        sourceNodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentNode = sourceNodeArrayList.get(position);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        Button getNodeBtn = (Button) llPrjName.findViewById(R.id.id_btn_get_cors_node);
+        getNodeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String ip = ipET.getText().toString();
+                String port = portET.getText().toString();
+                if (ip.isEmpty() || port.isEmpty()){
+                    ToastHelper.show(SettingActivity.this,"请输入IP或PORT");
+                    return;
+                }
+                sourceNodeList = NetHelper.GetSourceNode(ip,port);
+                sourceNodeArrayList.clear();
+                for (SourceNode sourceNode : sourceNodeList) {
+                    sourceNodeArrayList.add(sourceNode.toString());
+                }
+            }
+        });
         RadioGroup reConnectRG = (RadioGroup) llPrjName.findViewById(R.id.rg_cors_choice);
-        if (reconnect){
+        if (reconnect) {
             reConnectRG.check(R.id.rb_cors_yes);
-        }else {
+        } else {
             reConnectRG.check(R.id.rb_cors_no);
         }
         reConnectRG.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId){
+                switch (checkedId) {
                     case R.id.rb_cors_yes:
                         reconnect = true;
                         break;
@@ -174,7 +216,14 @@ public class SettingActivity extends AppCompatActivity {
                         String port = portET.getText().toString();
                         String username = usernameET.getText().toString();
                         String password = passwordET.getText().toString();
-//                        reconnect;
+                        Intent intent = new Intent(getApplicationContext(), CorsGprsService.class);
+                        intent.putExtra("ip",ip);
+                        intent.putExtra("port",port);
+                        intent.putExtra("username",username);
+                        intent.putExtra("password",password);
+                        intent.putExtra("sourcenode",currentNode);
+                        intent.putExtra("reconnect",reconnect);
+                        getApplicationContext().startService(intent);
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {

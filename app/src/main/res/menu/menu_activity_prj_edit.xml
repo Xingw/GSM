@@ -10,34 +10,34 @@
         app:showAsAction="always">
         <menu>
             <!--<item-->
-                <!--android:id="@+id/id_action_change_project"-->
-                <!--android:orderInCategory="100"-->
-                <!--android:title="项目管理"-->
-                <!--app:showAsAction="never" />-->
+            <!--android:id="@+id/id_action_change_project"-->
+            <!--android:orderInCategory="100"-->
+            <!--android:title="项目管理"-->
+            <!--app:showAsAction="never" />-->
 
             <!--<item-->
-                <!--android:id="@+id/id_action_load_xml_marker"-->
-                <!--android:orderInCategory="100"-->
-                <!--android:title="初始标记点文件加载(.xml)"-->
-                <!--app:showAsAction="never" />-->
+            <!--android:id="@+id/id_action_load_xml_marker"-->
+            <!--android:orderInCategory="100"-->
+            <!--android:title="初始标记点文件加载(.xml)"-->
+            <!--app:showAsAction="never" />-->
 
             <!--<item-->
-                <!--android:id="@+id/id_action_load_digital_file"-->
-                <!--android:orderInCategory="100"-->
-                <!--android:title="数字地图文件加载(.db)"-->
-                <!--app:showAsAction="never" />-->
+            <!--android:id="@+id/id_action_load_digital_file"-->
+            <!--android:orderInCategory="100"-->
+            <!--android:title="数字地图文件加载(.db)"-->
+            <!--app:showAsAction="never" />-->
 
             <!--<item-->
-                <!--android:id="@+id/id_action_load_xml_file"-->
-                <!--android:orderInCategory="100"-->
-                <!--android:title="CAD文件加载(.xml)"-->
-                <!--app:showAsAction="never" />-->
+            <!--android:id="@+id/id_action_load_xml_file"-->
+            <!--android:orderInCategory="100"-->
+            <!--android:title="CAD文件加载(.xml)"-->
+            <!--app:showAsAction="never" />-->
 
             <!--<item-->
-                <!--android:id="@+id/id_action_load_kml_file"-->
-                <!--android:orderInCategory="100"-->
-                <!--android:title="kml文件加载(.kml)"-->
-                <!--app:showAsAction="never" />-->
+            <!--android:id="@+id/id_action_load_kml_file"-->
+            <!--android:orderInCategory="100"-->
+            <!--android:title="kml文件加载(.kml)"-->
+            <!--app:showAsAction="never" />-->
 
 
             <item
@@ -49,8 +49,12 @@
                 android:id="@+id/id_action_layer_choice"
                 android:orderInCategory="100"
                 android:title="图层选择"
-                app:showAsAction="never"
-                />
+                app:showAsAction="never" />
+            <item
+                android:id="@+id/id_action_navi_map"
+                android:orderInCategory="100"
+                android:title="导航"
+                app:showAsAction="never" />
             <item
                 android:id="@+id/id_action_offline_map"
                 android:orderInCategory="100"
@@ -62,6 +66,8 @@
                 android:orderInCategory="100"
                 android:title="设置"
                 app:showAsAction="never" />
+
+
         </menu>
     </item>
 </menu>

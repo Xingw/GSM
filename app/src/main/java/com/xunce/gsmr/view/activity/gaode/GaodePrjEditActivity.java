@@ -517,6 +517,10 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 finish();
                 PrjSelectActivity.start(this, true);
                 break;
+            case R.id.id_action_navi_map:
+                Intent intent = new Intent(this,GaodeNaviActivity.class);
+                startActivity(intent);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
