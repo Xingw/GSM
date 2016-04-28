@@ -11,7 +11,7 @@ import com.amap.api.maps.model.PolylineOptions;
 public class Line extends BaseGraph {
     //直线的参数
     private static int lineColor = 0xAAFF0000;
-    private static int lineWidth = 10;
+    private static int lineWidth = 4;
     private boolean show = true;
     /**
      * 坐标点
