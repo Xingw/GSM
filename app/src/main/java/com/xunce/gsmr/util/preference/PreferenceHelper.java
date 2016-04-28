@@ -15,6 +15,12 @@ import java.util.Map;
  * Created by ssthouse on 2015/7/28.
  */
 public class PreferenceHelper {
+    private static final String PREFERENCE_CORS_IP = "ip";
+    private static final String PREFERENCE_CORS_PORT = "port";
+    private static final String PREFERENCE_CORS_USERNAME = "username";
+    private static final String PREFERENCE_CORS_PASSWORD = "password";
+    private static final String PREFERENCE_CORS_NODE = "node";
+    private static final String PREFERENCE_CORS_RECONNECT = "reconnect";
     private static PreferenceHelper preferenceHelper;
 
     private SharedPreferences sharedPreferences;
@@ -131,6 +137,167 @@ public class PreferenceHelper {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(PREFERENCE_LOCATE_MODE_USE_WIFI, isWifiMode);
         editor.commit();
+    }
+
+    /**
+     * 设置CORS的IP
+     * @param context
+     * @param ip
+     */
+    public void setCORSip(Context context, String ip) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREFERENCE_CORS_IP, ip);
+        editor.commit();
+    }
+
+    /**
+     * 设置CORS的IP
+     * @param context
+     * @param port
+     */
+    public void setCORSport(Context context, String port) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREFERENCE_CORS_PORT, port);
+        editor.commit();
+    }
+
+    /**
+     * 设置CORS的username
+     * @param context
+     * @param username
+     */
+    public void setCORSusername(Context context, String username) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREFERENCE_CORS_USERNAME, username);
+        editor.commit();
+    }
+
+    /**
+     * 设置CORS的password
+     * @param context
+     * @param password
+     */
+    public void setCORSpassword(Context context, String password) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREFERENCE_CORS_PASSWORD, password);
+        editor.commit();
+    }
+
+    /**
+     * 设置CORS的node
+     * @param context
+     * @param node
+     */
+    public void setCORSnode(Context context, String node) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREFERENCE_CORS_NODE, node);
+        editor.commit();
+    }
+
+    /**
+     * 设置CORS的reconnect
+     * @param context
+     * @param reconnect
+     */
+    public void setCORSreconnect(Context context, boolean reconnect) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(PREFERENCE_CORS_RECONNECT, reconnect);
+        editor.commit();
+    }
+    /**
+     * 获取CORS的重连设置
+     *
+     * @param context
+     * @return
+     */
+    public boolean getCORSreconnect(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getBoolean(PREFERENCE_CORS_RECONNECT, false);
+    }
+
+    /**
+     * 获取CORS的ip
+     *
+     * @param context
+     * @return
+     */
+    public String getCORSip(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getString(PREFERENCE_CORS_IP,"");
+    }
+
+    /**
+     * 获取CORS的port
+     *
+     * @param context
+     * @return
+     */
+    public String getCORSport(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getString(PREFERENCE_CORS_PORT,"");
+    }
+
+    /**
+     * 获取CORS的username
+     *
+     * @param context
+     * @return
+     */
+    public String getCORSusername(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getString(PREFERENCE_CORS_USERNAME,"");
+    }
+
+    /**
+     * 获取CORS的password
+     *
+     * @param context
+     * @return
+     */
+    public String getCORSpassword(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getString(PREFERENCE_CORS_PASSWORD,"");
+    }
+
+    /**
+     * 获取CORS的node
+     *
+     * @param context
+     * @return
+     */
+    public String getCORSnode(Context context) {
+        if (sharedPreferences == null) {
+            sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getString(PREFERENCE_CORS_NODE,"");
     }
 
     /**

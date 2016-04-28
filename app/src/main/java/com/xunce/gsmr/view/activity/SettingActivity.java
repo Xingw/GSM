@@ -52,6 +52,7 @@ public class SettingActivity extends AppCompatActivity {
     static boolean reconnect = true;
     String currentNode = null;
     List<SourceNode> sourceNodeList;
+    ArrayAdapter NodeAdapter;
 
     public static void start(Activity activity) {
         activity.startActivity(new Intent(activity, SettingActivity.class));
@@ -154,10 +155,15 @@ public class SettingActivity extends AppCompatActivity {
         final EditText portET = (EditText) llPrjName.findViewById(R.id.et_cors_port);
         final EditText usernameET = (EditText) llPrjName.findViewById(R.id.et_cors_username);
         final EditText passwordET = (EditText) llPrjName.findViewById(R.id.et_cors_password);
+        ipET.setText(PreferenceHelper.getInstance(this).getCORSip(this));
+        portET.setText(PreferenceHelper.getInstance(this).getCORSport(this));
+        usernameET.setText(PreferenceHelper.getInstance(this).getCORSusername(this));
+        passwordET.setText(PreferenceHelper.getInstance(this).getCORSpassword(this));
         //Spinner初始化
-        Spinner sourceNodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
+        final Spinner sourceNodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
         final List<String> sourceNodeArrayList = new ArrayList<>();
-        final ArrayAdapter NodeAdapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,sourceNodeArrayList);
+        sourceNodeArrayList.add(PreferenceHelper.getInstance(this).getCORSnode(this));
+        NodeAdapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,sourceNodeArrayList);
         sourceNodeSpinner.setAdapter(NodeAdapter);
         sourceNodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -180,13 +186,20 @@ public class SettingActivity extends AppCompatActivity {
                     return;
                 }
                 sourceNodeList = NetHelper.GetSourceNode(ip,port);
+                if (sourceNodeList == null || sourceNodeList.size()==0){
+                    ToastHelper.show(SettingActivity.this,"查询失败");
+                    return;
+                }
                 sourceNodeArrayList.clear();
                 for (SourceNode sourceNode : sourceNodeList) {
                     sourceNodeArrayList.add(sourceNode.toString());
+                    NodeAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,sourceNodeArrayList);
+                    sourceNodeSpinner.setAdapter(NodeAdapter);
                 }
             }
         });
         RadioGroup reConnectRG = (RadioGroup) llPrjName.findViewById(R.id.rg_cors_choice);
+        reconnect = PreferenceHelper.getInstance(this).getCORSreconnect(this);
         if (reconnect) {
             reConnectRG.check(R.id.rb_cors_yes);
         } else {
@@ -216,6 +229,26 @@ public class SettingActivity extends AppCompatActivity {
                         String port = portET.getText().toString();
                         String username = usernameET.getText().toString();
                         String password = passwordET.getText().toString();
+                        if (ip.isEmpty()){
+                            ToastHelper.show(getBaseContext(),"请输入IP");
+                            return;
+                        }
+                        if (port.isEmpty()){
+                            ToastHelper.show(getBaseContext(),"请输入PORT");
+                            return;
+                        }
+                        if (username.isEmpty()){
+                            ToastHelper.show(getBaseContext(),"请输入USERNAME");
+                            return;
+                        }
+                        if (password.isEmpty()){
+                            ToastHelper.show(getBaseContext(),"请输入PASSWORD");
+                            return;
+                        }
+                        if (currentNode == null){
+                            ToastHelper.show(getBaseContext(),"请选择Node节点");
+                            return;
+                        }
                         Intent intent = new Intent(getApplicationContext(), CorsGprsService.class);
                         intent.putExtra("ip",ip);
                         intent.putExtra("port",port);
@@ -224,6 +257,14 @@ public class SettingActivity extends AppCompatActivity {
                         intent.putExtra("sourcenode",currentNode);
                         intent.putExtra("reconnect",reconnect);
                         getApplicationContext().startService(intent);
+                        //保存信息
+                        PreferenceHelper.getInstance(getBaseContext()).setCORSip(getBaseContext(),ip);
+                        PreferenceHelper.getInstance(getBaseContext()).setCORSport(getBaseContext(),port);
+                        PreferenceHelper.getInstance(getBaseContext()).setCORSusername(getBaseContext(),username);
+                        PreferenceHelper.getInstance(getBaseContext()).setCORSpassword(getBaseContext(),password);
+                        PreferenceHelper.getInstance(getBaseContext()).setCORSnode(getBaseContext(),currentNode);
+                        PreferenceHelper.getInstance(getBaseContext()).setCORSreconnect(getBaseContext(),reconnect);
+                        ToastHelper.show(SettingActivity.this,"正在启动服务");
                     }
                 })
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
