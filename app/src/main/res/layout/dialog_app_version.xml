@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:content="@string/str_app_usage" />
+        android:text="@string/str_app_usage" />
 
     <TextView
         android:textColor="@color/black"
@@ -21,5 +21,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:content="@string/str_app_version" />
+        android:text="@string/str_app_version" />
 </LinearLayout>
