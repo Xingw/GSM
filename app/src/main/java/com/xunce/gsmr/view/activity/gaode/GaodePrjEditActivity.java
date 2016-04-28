@@ -519,6 +519,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 break;
             case R.id.id_action_navi_map:
                 Intent intent = new Intent(this,GaodeNaviActivity.class);
+                intent.putExtra(Constant.EXTRA_KEY_LATITUDE,getaMap().getCameraPosition().target.latitude);
+                intent.putExtra(Constant.EXTRA_KEY_LONGITUDE,getaMap().getCameraPosition().target.longitude);
                 startActivity(intent);
                 break;
         }

@@ -11,6 +11,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
+import com.amap.api.maps.CameraUpdate;
+import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.model.BitmapDescriptorFactory;
 import com.amap.api.maps.model.LatLng;
@@ -32,6 +34,7 @@ import com.amap.api.navi.model.NaviLatLng;
 import com.amap.api.navi.view.RouteOverLay;
 import com.autonavi.tbt.TrafficFacilityInfo;
 import com.xunce.gsmr.R;
+import com.xunce.gsmr.app.Constant;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,6 +75,9 @@ public class GaodeNaviActivity extends Activity {
         mapView.onCreate(savedInstanceState);// 此方法必须重写
 
         amap = mapView.getMap();
+        LatLng latLng = new LatLng(getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE,Constant.LATITUDE_DEFAULT)
+                ,getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE,Constant.LONGITUDE_DEFAULT));
+        amap.moveCamera(CameraUpdateFactory.changeLatLng(latLng));
         AMapNaviListener listener = new AMapNaviListener() {
             @Override
             public void onInitNaviFailure() {
