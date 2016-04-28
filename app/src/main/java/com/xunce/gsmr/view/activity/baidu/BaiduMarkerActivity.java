@@ -199,6 +199,8 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         etLatitude = (EditText) findViewById(R.id.id_et_latitude);
         etLongitude = (EditText) findViewById(R.id.id_et_longitude);
 
+        etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
+        etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         //确认按钮---设置GCJ的坐标
         findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override

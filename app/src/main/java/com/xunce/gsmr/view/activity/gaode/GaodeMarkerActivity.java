@@ -129,6 +129,8 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
         etLatitude = (EditText) findViewById(R.id.id_et_latitude);
         etLongitude = (EditText) findViewById(R.id.id_et_longitude);
 
+        etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
+        etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         //放大缩小按钮
         findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
             @Override
