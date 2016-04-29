@@ -162,9 +162,15 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
                 MyLocationConfiguration.LocationMode.NORMAL, true, null));
 
+
+        //经纬度输入
+        etLatitude = (EditText) findViewById(R.id.id_et_latitude);
+        etLongitude = (EditText) findViewById(R.id.id_et_longitude);
         //如果是编辑---定位到编辑的点
         if (markerItem != null && markerItem.getLatitude() != 0 && markerItem.getLongitude() != 0) {
             MapHelper.animateToPoint(mBaiduMap,markerItem.getBaiduLatLng());
+            etLatitude.setText(""+markerItem.getLatitude());
+            etLongitude.setText(""+markerItem.getLongitude());
         }else {
             markerItem = new MarkerItem();
             SQLiteDatabase db = DBHelper.openDatabase(dbPath);
@@ -174,6 +180,8 @@ public class BaiduMarkerActivity extends AppCompatActivity {
             LatLng latLng = new LatLng(intent.getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, 0),
                     intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
             MapHelper.animateToPoint(mBaiduMap,latLng);
+            etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
+            etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         }
         mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(zoomlevel));
         //地图状态变化监听---用于监听选取的Marker位置
@@ -195,12 +203,6 @@ public class BaiduMarkerActivity extends AppCompatActivity {
             }
         });
 
-        //经纬度输入
-        etLatitude = (EditText) findViewById(R.id.id_et_latitude);
-        etLongitude = (EditText) findViewById(R.id.id_et_longitude);
-
-        etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
-        etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         //确认按钮---设置GCJ的坐标
         findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
             @Override

@@ -49,6 +49,8 @@ public class Constant {
     //.db文件的requestCode
     public static final int REQUEST_CODE_DB_FILE = 2004;
     public static final String EXTRA_KEY_ZOOM = "zoom";
+
+    //北京天安门坐标
     public static final double LATITUDE_DEFAULT = 39.907591;
     public static final double LONGITUDE_DEFAULT = 116.415124;
 

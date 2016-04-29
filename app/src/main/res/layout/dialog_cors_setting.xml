@@ -1,48 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-<LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="6dp"
-    android:orientation="horizontal">
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:text="IP："
-        android:gravity="center|right"
-        android:textSize="18sp"
-        />
-    <EditText
-        android:id="@+id/et_cors_ip"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:layout_marginRight="10dp"
-        />
-</LinearLayout>
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="PORT："
             android:gravity="center|right"
-            android:textSize="18sp"
-            />
+            android:text="IP："
+            android:textSize="18sp" />
+
+        <EditText
+            android:id="@+id/et_cors_ip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_weight="3"
+            android:inputType="number" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|right"
+            android:text="PORT："
+            android:textSize="18sp" />
+
         <EditText
             android:id="@+id/et_cors_port"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_marginRight="10dp"
-            />
+            android:layout_weight="3"
+            android:inputType="number" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,21 +55,21 @@
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="用户名："
             android:gravity="center|right"
-            android:textSize="18sp"
-            />
+            android:text="用户名："
+            android:textSize="18sp" />
+
         <EditText
             android:id="@+id/et_cors_username"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_marginRight="10dp"
-            />
+            android:layout_weight="3" />
     </LinearLayout>
 
     <LinearLayout
@@ -72,21 +77,22 @@
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="密码："
             android:gravity="center|right"
-            android:textSize="18sp"
-            />
+            android:text="密码："
+            android:textSize="18sp" />
+
         <EditText
             android:id="@+id/et_cors_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
             android:layout_marginRight="10dp"
-            />
+            android:layout_weight="3"
+            android:inputType="textPassword" />
     </LinearLayout>
 
     <LinearLayout
@@ -94,31 +100,32 @@
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="源节点："
             android:gravity="center|right"
-            android:textSize="18sp"
-            />
+            android:text="源节点："
+            android:textSize="18sp" />
+
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3">
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/sp_cors_sourcecode"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            />
+
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/sp_cors_sourcecode"
+                android:layout_width="80dp"
+                android:layout_height="wrap_content" />
+
             <Button
                 android:id="@+id/id_btn_get_cors_node"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/sp_cors_sourcecode"
                 android:background="@color/window_bar_background"
-                android:text="获取"
-                />
+                android:text="获取" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -127,32 +134,35 @@
         android:layout_height="wrap_content"
         android:layout_margin="6dp"
         android:orientation="horizontal">
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="自动重连："
             android:gravity="center|right"
-            android:textSize="18sp"
-            />
+            android:text="自动重连："
+            android:textSize="18sp" />
+
         <RadioGroup
             android:id="@+id/rg_cors_choice"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:orientation="horizontal">
+
             <RadioButton
                 android:id="@+id/rb_cors_yes"
                 android:layout_width="@dimen/map_mode_item_width"
                 android:layout_height="48dp"
                 android:text="是"
-                android:textColor="@color/material_blue_grey_800"/>
+                android:textColor="@color/material_blue_grey_800" />
+
             <RadioButton
                 android:id="@+id/rb_cors_no"
                 android:layout_width="@dimen/map_mode_item_width"
                 android:layout_height="48dp"
                 android:text="否"
-                android:textColor="@color/material_blue_grey_800"/>
+                android:textColor="@color/material_blue_grey_800" />
         </RadioGroup>
     </LinearLayout>
 </LinearLayout>

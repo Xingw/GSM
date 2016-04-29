@@ -97,10 +97,12 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
         markerItem = DBHelper.getMarkerItemInDB(dbPath, wrongItem.getMarkerId());
         requestCode = getIntent().getIntExtra(Constant.EXTRA_KEY_REQUEST_CODE,
                 GaodePrjEditActivity.REQUEST_CODE_MARKER_ACTIVITY);
-
+        initView();
         //如果是编辑---定位到编辑的点
         if (markerItem != null && markerItem.getLatitude() != 0 && markerItem.getLongitude() != 0) {
             getaMap().moveCamera(CameraUpdateFactory.changeLatLng(markerItem.getGaodeLatLng()));
+            etLatitude.setText(""+markerItem.getLatitude());
+            etLongitude.setText(""+markerItem.getLongitude());
         } else {
             markerItem = new MarkerItem();
             SQLiteDatabase db = DBHelper.openDatabase(dbPath);
@@ -112,9 +114,11 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
                     intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
             Logger.e("经度:%f,纬度%f",latLng.latitude,latLng.longitude);
             getaMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
+            etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
+            etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         }
         //初始化View
-        initView();
+
         getaMap().moveCamera(CameraUpdateFactory.zoomTo(getIntent().getFloatExtra(Constant.EXTRA_KEY_ZOOM, 15)));
     }
 
@@ -128,9 +132,6 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
         //找到UI控件
         etLatitude = (EditText) findViewById(R.id.id_et_latitude);
         etLongitude = (EditText) findViewById(R.id.id_et_longitude);
-
-        etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
-        etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         //放大缩小按钮
         findViewById(R.id.btn_zoom_in).setOnClickListener(new View.OnClickListener() {
             @Override

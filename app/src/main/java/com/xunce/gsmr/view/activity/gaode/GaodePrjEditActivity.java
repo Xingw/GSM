@@ -329,7 +329,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onClick(View v) {
                 showFindMarkerDialog(GaodePrjEditActivity.this);
-                loadMarker(prjItem);
+                //loadMarker(prjItem);
             }
         });
     }
@@ -433,6 +433,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         .getDbLocation(), getaMap().getCameraPosition().target,
                 getaMap().getCameraPosition().zoom,
                 REQUEST_CODE_MARKER_EDIT_ACTIVITY);
+        handler.sendEmptyMessageDelayed(0, 300);
     }
 
     /**

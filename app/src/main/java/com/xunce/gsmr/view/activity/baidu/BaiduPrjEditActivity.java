@@ -421,6 +421,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 ,prjItem.getDbLocation(),baiduMapFragment.getTarget(),
                 baiduMapFragment.getBaiduMap().getMapStatus().zoom,
                 BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY);
+        handler.sendEmptyMessageDelayed(0,300);
     }
 
     /**
