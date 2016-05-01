@@ -1,12 +1,16 @@
 package com.xunce.gsmr.view.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +25,7 @@ import android.widget.Spinner;
 import android.widget.Switch;
 
 import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
@@ -149,16 +154,108 @@ public class SettingActivity extends AppCompatActivity {
      * 显示CORS设置对话框
      */
     private void showCORSSetting() {
+        LocationManager locationManager = (LocationManager) getBaseContext().getSystemService(Context.LOCATION_SERVICE);
+        if (!locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
+        {
+            ToastHelper.show(this,"对不起，您的设备不支持CORS服务");
+            return;
+        }
         LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(this).
                 inflate(R.layout.dialog_cors_setting, null);
-        final EditText ipET = (EditText) llPrjName.findViewById(R.id.et_cors_ip);
+        final EditText ipET_1 = (EditText) llPrjName.findViewById(R.id.et_cors_ip_1);
+        final EditText ipET_2 = (EditText) llPrjName.findViewById(R.id.et_cors_ip_2);
+        final EditText ipET_3 = (EditText) llPrjName.findViewById(R.id.et_cors_ip_3);
+        final EditText ipET_4 = (EditText) llPrjName.findViewById(R.id.et_cors_ip_4);
         final EditText portET = (EditText) llPrjName.findViewById(R.id.et_cors_port);
         final EditText usernameET = (EditText) llPrjName.findViewById(R.id.et_cors_username);
         final EditText passwordET = (EditText) llPrjName.findViewById(R.id.et_cors_password);
-        ipET.setText(PreferenceHelper.getInstance(this).getCORSip(this));
+        String ip_saved = PreferenceHelper.getInstance(this).getCORSip(this);
+        String[] ip_split=ip_saved.split("\\.");
+        ipET_1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()==3)ipET_2.requestFocus();
+            }
+        });
+        ipET_2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()==3)ipET_3.requestFocus();
+                if (s.length()==0) {
+                    ipET_1.requestFocus();
+                    ipET_1.setSelection(ipET_1.getText().length());
+                }
+            }
+        });
+        ipET_3.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()==3)ipET_4.requestFocus();
+                if (s.length()==0) {
+                    ipET_2.requestFocus();
+                    ipET_2.setSelection(ipET_2.getText().length());
+                }
+            }
+        });
+        ipET_4.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length()==0) {
+                    ipET_3.requestFocus();
+                    ipET_3.setSelection(ipET_3.getText().length());
+                }
+            }
+        });
+        if(ip_split !=null && ip_split.length>3) {
+            ipET_1.setText(ip_split[0]);
+            ipET_2.setText(ip_split[1]);
+            ipET_3.setText(ip_split[2]);
+            ipET_4.setText(ip_split[3]);
+        }
         portET.setText(PreferenceHelper.getInstance(this).getCORSport(this));
         usernameET.setText(PreferenceHelper.getInstance(this).getCORSusername(this));
         passwordET.setText(PreferenceHelper.getInstance(this).getCORSpassword(this));
+
         //Spinner初始化
         final Spinner sourceNodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
         final List<String> sourceNodeArrayList = new ArrayList<>();
@@ -179,10 +276,18 @@ public class SettingActivity extends AppCompatActivity {
         getNodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String ip = ipET.getText().toString();
+                String ip_1 = ipET_1.getText().toString();
+                String ip_2 = ipET_2.getText().toString();
+                String ip_3 = ipET_3.getText().toString();
+                String ip_4 = ipET_4.getText().toString();
+                if (ip_1.isEmpty() || ip_2.isEmpty() || ip_3.isEmpty() || ip_4.isEmpty()){
+                    ToastHelper.show(getBaseContext(),"请输入IP");
+                    return;
+                }
+                String ip = (ip_1+"."+ip_2+"."+ip_3+"."+ip_4);
                 String port = portET.getText().toString();
-                if (ip.isEmpty() || port.isEmpty()){
-                    ToastHelper.show(SettingActivity.this,"请输入IP或PORT");
+                if (port.isEmpty()){
+                    ToastHelper.show(SettingActivity.this,"请输入PORT");
                     return;
                 }
                 sourceNodeList = NetHelper.GetSourceNode(ip,port);
@@ -225,7 +330,16 @@ public class SettingActivity extends AppCompatActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String ip = ipET.getText().toString();
+                        String ip_1 = ipET_1.getText().toString();
+                        String ip_2 = ipET_2.getText().toString();
+                        String ip_3 = ipET_3.getText().toString();
+                        String ip_4 = ipET_4.getText().toString();
+                        if (ip_1.isEmpty() || ip_2.isEmpty() || ip_3.isEmpty() || ip_4.isEmpty()){
+                            ToastHelper.show(getBaseContext(),"请输入IP");
+                            return;
+                        }
+                        String ip = (ip_1+"."+ip_2+"."+ip_3+"."+ip_4);
+                        Logger.d("IP地址是：%s",ip);
                         String port = portET.getText().toString();
                         String username = usernameET.getText().toString();
                         String password = passwordET.getText().toString();

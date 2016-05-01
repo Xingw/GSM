@@ -13,18 +13,62 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:layout_marginLeft="22dp"
             android:layout_weight="1"
             android:gravity="center|right"
             android:text="IP："
             android:textSize="18sp" />
 
         <EditText
-            android:id="@+id/et_cors_ip"
+            android:id="@+id/et_cors_ip_1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLength="3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="." />
+
+        <EditText
+            android:id="@+id/et_cors_ip_2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLength="3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="." />
+
+        <EditText
+            android:id="@+id/et_cors_ip_3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLength="3" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="." />
+
+        <EditText
+            android:id="@+id/et_cors_ip_4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:layout_weight="3"
-            android:inputType="number" />
+            android:layout_weight="1"
+            android:inputType="number"
+            android:maxLength="3" />
     </LinearLayout>
 
     <LinearLayout
