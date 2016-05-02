@@ -128,7 +128,7 @@
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_selector"
-                android:text="在线规划"
+                android:text="步行导航"
                 android:textSize="@dimen/text_size_button" />
 
             <Button
@@ -138,7 +138,7 @@
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_selector"
-                android:text="模拟导航"
+                android:text="驾车导航"
                 android:textSize="@dimen/text_size_button" />
 
             <Button
@@ -148,7 +148,7 @@
                 android:layout_margin="1dp"
                 android:layout_weight="1"
                 android:background="@drawable/btn_selector"
-                android:text="真实导航"
+                android:text="公交导航"
                 android:textSize="@dimen/text_size_button" />
         </LinearLayout>
 

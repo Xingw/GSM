@@ -465,6 +465,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 //开启离线地图管理Activity
                 BaiduOfflineActivity.start(this);
                 break;
+            case R.id.id_action_navi_map:
+                showNaviDialog();
+                break;
             //设置
             case R.id.id_action_setting:
                 SettingActivity.start(this);
@@ -478,6 +481,15 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 导航功能
+     */
+    private void showNaviDialog() {
+    }
+
+    /**
+     * 图层选择函数
+     */
     private void showChoiceLayerDialog() {
         if (layername == null) {
             layername = new String[railWayHolder.getLayerList().size()];
