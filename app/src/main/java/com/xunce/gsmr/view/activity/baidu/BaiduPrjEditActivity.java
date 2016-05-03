@@ -23,6 +23,9 @@ import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.utils.OpenClientUtil;
+import com.baidu.mapapi.utils.route.BaiduMapRoutePlan;
+import com.baidu.mapapi.utils.route.RouteParaOption;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.orhanobut.logger.Logger;
@@ -40,7 +43,6 @@ import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
-import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -68,6 +70,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_MARKER_ACTIVITY = 1001;
     public static final int REQUEST_CODE_PICTURE_ACTIVITY = 1002;
     public static final int REQUEST_CODE_MARKER_EDIT_ACTIVITY = 1003;
+    private static final int NAVI_FOOT = 100;
+    private static final int NAVI_DRIVE = 101;
+    private static final int NAVI_BUS = 102;
 
     /**
      * 地图总控制器
@@ -340,6 +345,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * 寻找公里标对话框
+     * @param context
+     */
     private void showFindMarkerDialog(final Context context) {
         LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
                 inflate(R.layout.dialog_prj_name, null);
@@ -485,6 +494,107 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      * 导航功能
      */
     private void showNaviDialog() {
+        LinearLayout llnavidialog = (LinearLayout) LayoutInflater.from(this).
+                inflate(R.layout.dialog_navi_choice, null);
+        final EditText etStart = (EditText) llnavidialog.findViewById(R.id.et_navi_start);
+        final EditText etEnd = (EditText) llnavidialog.findViewById(R.id.et_navi_end);
+        Button FootButton = (Button) llnavidialog.findViewById(R.id.btn_navi_foot);
+        Button DriveButton = (Button) llnavidialog.findViewById(R.id.btn_navi_drive);
+        Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
+        FootButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+                    ToastHelper.show(BaiduPrjEditActivity.this,"请输入起点或终点名称");
+                    return;
+                }
+                Navistart(NAVI_FOOT,etStart.getText().toString(),etEnd.getText().toString());
+            }
+        });
+        DriveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+                    ToastHelper.show(BaiduPrjEditActivity.this,"请输入起点或终点名称");
+                    return;
+                }
+                Navistart(NAVI_DRIVE,etStart.getText().toString(),etEnd.getText().toString());
+            }
+        });
+        BusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+                    ToastHelper.show(BaiduPrjEditActivity.this,"请输入起点或终点名称");
+                    return;
+                }
+                Navistart(NAVI_BUS,etStart.getText().toString(),etEnd.getText().toString());
+            }
+        });
+        new AlertDialog.Builder(this)
+                .setTitle("导航")
+                .setView(llnavidialog)
+                .setCancelable(true)
+                .show();
+    }
+
+    private void Navistart(int method, String start, String end) {
+        RouteParaOption para = new RouteParaOption()
+                .startName(start)
+                .endName(end);
+        switch (method){
+            case NAVI_FOOT:
+                try {
+                    BaiduMapRoutePlan.openBaiduMapWalkingRoute(para, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                break;
+            case NAVI_DRIVE:
+                try {
+                    BaiduMapRoutePlan.openBaiduMapDrivingRoute(para, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                break;
+            case NAVI_BUS:
+                try {
+                    para.busStrategyType(RouteParaOption.EBusStrategyType.bus_recommend_way);
+                    BaiduMapRoutePlan.openBaiduMapTransitRoute(para, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                break;
+        }
+    }
+
+    /**
+     * 提示未安装百度地图app或app版本过低
+     */
+    public void showDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setMessage("您尚未安装百度地图app或app版本过低，点击确认安装？");
+        builder.setTitle("提示");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                OpenClientUtil.getLatestBaiduMapApp(BaiduPrjEditActivity.this);
+            }
+        });
+
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
+
     }
 
     /**
