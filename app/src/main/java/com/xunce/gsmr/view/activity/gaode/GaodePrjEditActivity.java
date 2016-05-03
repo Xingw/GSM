@@ -28,10 +28,10 @@ import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
-import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.lib.xmlparser.XmlParser;
 import com.xunce.gsmr.lib.digitalmap.DigitalMapHolder;
 import com.xunce.gsmr.lib.kmlParser.KMLParser;
@@ -616,7 +616,12 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         View.OnClickListener confirmListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastHelper.show(context, "功能正在开发中……");
+                 KilometerMark kilometerMark= railWayHolder.getKilometerMarkHolder().findKM(etPrjName.getText().toString());
+                if (kilometerMark==null){
+                    ToastHelper.show(GaodePrjEditActivity.this,"未找到该公里标");
+                }else{
+                    animateToPoint(kilometerMark.getGaoDeLatlng());
+                }
             }
         };
         confirmButton.setOnClickListener(confirmListener);

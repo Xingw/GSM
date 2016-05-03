@@ -1,5 +1,8 @@
 package com.xunce.gsmr.kilometerMark;
 
+import com.amap.api.maps.model.LatLng;
+import com.xunce.gsmr.util.gps.PositionUtil;
+
 /**
  * 保存一个公里标
  * 只需要一个 经纬度 即可
@@ -79,5 +82,13 @@ public class KilometerMark {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public LatLng getGaoDeLatlng() {
+        return PositionUtil.gps84_To_Gcj02(latitude,longitude);
+    }
+
+    public com.baidu.mapapi.model.LatLng getBaiDuLatlng() {
+        return PositionUtil.Gps84_To_bd09(latitude, longitude);
     }
 }

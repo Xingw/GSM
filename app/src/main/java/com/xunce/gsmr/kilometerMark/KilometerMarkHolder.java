@@ -160,4 +160,19 @@ public class KilometerMarkHolder {
         }
         return sb.toString();
     }
+
+    /**
+     * 寻找对应名称的公里标
+     * @param kmName
+     * @return
+     */
+    public KilometerMark findKM(String kmName){
+        if (kilometerMarkList ==null || kilometerMarkList.size()==0)return null;
+        for (KilometerMark kilometerMark : kilometerMarkList) {
+            if (kilometerMark.getText().contains(kmName)){
+                return kilometerMark;
+            }
+        }
+        return null;
+    }
 }

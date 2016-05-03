@@ -32,6 +32,7 @@ import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
@@ -369,7 +370,12 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         View.OnClickListener confirmListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ToastHelper.show(context,"功能正在开发中……");
+                KilometerMark kilometerMark= railWayHolder.getKilometerMarkHolder().findKM(etPrjName.getText().toString());
+                if (kilometerMark==null){
+                    ToastHelper.show(BaiduPrjEditActivity.this,"未找到该公里标");
+                }else{
+                    baiduMapFragment.animateToPoint(kilometerMark.getBaiDuLatlng());
+                }
             }
         };
         confirmButton.setOnClickListener(confirmListener);
