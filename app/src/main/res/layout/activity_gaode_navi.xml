@@ -90,6 +90,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_marginRight="14dp"
+                        android:hint="纬度，经度"
                         android:inputType="number" />
                 </LinearLayout>
 
@@ -109,6 +110,7 @@
                         android:id="@+id/id_et_end"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:hint="纬度，经度"
                         android:layout_marginRight="14dp"
                         android:inputType="number" />
                 </LinearLayout>
