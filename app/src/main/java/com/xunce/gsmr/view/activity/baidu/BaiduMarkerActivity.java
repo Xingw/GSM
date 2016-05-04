@@ -26,6 +26,7 @@ import com.baidu.mapapi.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.MarkerItem;
+import com.xunce.gsmr.model.event.MarkerInfoSaveEvent;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.gps.LocateHelper;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -35,6 +36,8 @@ import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
 import com.xunce.gsmr.view.activity.gaode.MarkerInfoEditActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 用于选址的Activity---开启当前的Acitcvity需要传递一个MarkerItem
@@ -90,11 +93,6 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                     .longitude(location.getLongitude()).build();
             mBaiduMap.setMyLocationData(locData);
             currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-            //判断是否第一次进入
-            if (isFistIn) {
-                locate();
-                isFistIn = false;
-            }
         }
     };
 
@@ -120,8 +118,10 @@ public class BaiduMarkerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_baidu_mark);
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
+
 
         //获取数据
         MarkerItem wrongItem = (MarkerItem) getIntent()
@@ -306,5 +306,27 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         mMapView.onDestroy();
         mMapView = null;
         super.onDestroy();
+    }
+
+    /**
+     * 文本编辑的回调方法
+     *
+     * @param event
+     */
+    public void onEventMainThread(MarkerInfoSaveEvent event) {
+        if (event != null) {
+            //更新文本文件的数据
+            markerItem.setDeviceType(event.getMarkerItem().getDeviceType());
+            markerItem.setKilometerMark(event.getMarkerItem().getKilometerMark());
+            markerItem.setSideDirection(event.getMarkerItem().getSideDirection());
+            markerItem.setDistanceToRail(event.getMarkerItem().getDistanceToRail());
+            markerItem.setTowerType(event.getMarkerItem().getTowerType());
+            markerItem.setTowerHeight(event.getMarkerItem().getTowerHeight());
+            markerItem.setAntennaDirection1(event.getMarkerItem().getAntennaDirection1());
+            markerItem.setAntennaDirection2(event.getMarkerItem().getAntennaDirection2());
+            markerItem.setAntennaDirection3(event.getMarkerItem().getAntennaDirection3());
+            markerItem.setAntennaDirection4(event.getMarkerItem().getAntennaDirection4());
+            markerItem.save(dbPath);
+        }
     }
 }

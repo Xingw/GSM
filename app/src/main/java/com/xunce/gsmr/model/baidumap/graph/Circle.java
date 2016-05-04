@@ -25,7 +25,7 @@ public class Circle extends Graph {
     }
 
     @Override
-    public void draw(BaiduMap baiduMap) {
+    public void draw(BaiduMap baiduMap,boolean clear) {
         OverlayOptions ooCircle = new CircleOptions()
                 .fillColor(0x000000FF)
                 .center(latlngCenter)

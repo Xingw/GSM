@@ -92,8 +92,13 @@ public class Vector extends Graph{
     }
 
     @Override
-    public void draw(BaiduMap baiduMap) {
+    public void draw(BaiduMap baiduMap,boolean clear) {
         if (show) {
+            if (clear){
+                initPolylineOptions();
+                polyline = baiduMap.addOverlay(polylineOptions);
+                return;
+            }
             if (polyline == null) {
                 initPolylineOptions();
                 polyline = baiduMap.addOverlay(polylineOptions);
@@ -127,5 +132,10 @@ public class Vector extends Graph{
         this.show = show;
         if (!show)
             hide();
+    }
+
+    public void forcedraw(BaiduMap baiduMap) {
+        initPolylineOptions();
+        baiduMap.addOverlay(polylineOptions);
     }
 }

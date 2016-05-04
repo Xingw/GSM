@@ -42,8 +42,20 @@ public class Line extends Graph {
 
 
     @Override
-    public void draw(BaiduMap baiduMap) {
+    public void draw(BaiduMap baiduMap,boolean clear) {
         if (show) {
+            if (clear){
+                // 添加折线
+                List<LatLng> points = new ArrayList<>();
+                points.add(latLngBegin);
+                points.add(latLngEnd);
+                PolylineOptions ooPolyline = new PolylineOptions()
+                        .width(lineWidth)
+                        .color(lineColor)
+                        .points(points);
+                polyline = baiduMap.addOverlay(ooPolyline);
+                return;
+            }
             if (polyline == null) {
                 // 添加折线
                 List<LatLng> points = new ArrayList<>();
@@ -104,4 +116,14 @@ public class Line extends Graph {
             hide();
     }
 
+    public void forcedraw(BaiduMap baiduMap) {
+        List<LatLng> points = new ArrayList<>();
+        points.add(latLngBegin);
+        points.add(latLngEnd);
+        PolylineOptions ooPolyline = new PolylineOptions()
+                .width(lineWidth)
+                .color(lineColor)
+                .points(points);
+        baiduMap.addOverlay(ooPolyline);
+    }
 }

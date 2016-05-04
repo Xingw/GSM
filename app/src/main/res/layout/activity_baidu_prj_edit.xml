@@ -156,5 +156,7 @@
 
         </LinearLayout>
         </RelativeLayout>
+        <include
+            layout="@layout/view_progress_block"/>
     </FrameLayout>
 </LinearLayout>

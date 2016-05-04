@@ -43,8 +43,20 @@ public class Text extends Graph {
     }
 
     @Override
-    public void draw(BaiduMap baiduMap) {
+    public void draw(BaiduMap baiduMap,boolean clear) {
         if (show) {
+            if (clear){
+                // 添加文字
+                TextOptions ooText = new TextOptions()
+                        .bgColor(textBgColor)
+                        .fontSize(textSize)
+                        .fontColor(textColor)
+                        .text(content)
+                        .rotate(-rotate)
+                        .position(latLng);
+                text = baiduMap.addOverlay(ooText);
+                return;
+            }
             if (text == null) {
                 // 添加文字
                 TextOptions ooText = new TextOptions()
@@ -94,5 +106,16 @@ public class Text extends Graph {
         this.show = show;
         if (!show)
             hide();
+    }
+
+    public void forcedraw(BaiduMap baiduMap) {
+        TextOptions ooText = new TextOptions()
+                .bgColor(textBgColor)
+                .fontSize(textSize)
+                .fontColor(textColor)
+                .text(content)
+                .rotate(-rotate)
+                .position(latLng);
+        baiduMap.addOverlay(ooText);
     }
 }

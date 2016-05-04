@@ -9,7 +9,7 @@ import com.baidu.mapapi.map.BaiduMap;
 public abstract class Graph {
     protected String layerName;
     protected boolean show = true;
-    public abstract void draw(BaiduMap baiduMap);
+    public abstract void draw(BaiduMap baiduMap,boolean clear);
 
     public String getLayerName() {
         return layerName;

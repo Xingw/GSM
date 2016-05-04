@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import com.amap.api.maps.AMap;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.kilometerMark.KilometerMarkHolder;
@@ -160,19 +161,32 @@ public class BaiduRailWayHolder {
     /**
      * 画出自己
      */
-    public void draw(BaiduMap baiduMap) {
+    public void draw(final BaiduMap baiduMap, final boolean clear) {
 //        for(Circle circle : circles){
 //            circle.draw(baiduMap);
 //        }
-        for (Line line : lineList) {
-            line.draw(baiduMap);
-        }
-        for (Text text : textList) {
-            text.draw(baiduMap);
-        }
-        for (Vector vector : vectorList) {
-            vector.draw(baiduMap);
-        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (Line line : lineList) {
+                    line.draw(baiduMap,clear);
+                }
+                for (Text text : textList) {
+                    text.draw(baiduMap,clear);
+                }
+                for (Vector vector : vectorList) {
+                    vector.draw(baiduMap,clear);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                EventBus.getDefault().post(new ProgressbarEvent(false));
+            }
+        }.execute();
+
     }
 
     /**
@@ -190,14 +204,28 @@ public class BaiduRailWayHolder {
         }
     }
 
-    public void drawLine(BaiduMap baiduMap) {
-        for (Line line : lineList) {
-            line.draw(baiduMap);
-        }
-        for (Vector vector : vectorList) {
-            vector.draw(baiduMap);
-            //Timber.e("我画了一条vector");
-        }
+    public void drawLine(final BaiduMap baiduMap, final boolean clear) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                Logger.d("开始绘制直线");
+                for (Line line : lineList) {
+                    line.draw(baiduMap,clear);
+                }
+                for (Vector vector : vectorList) {
+                    vector.draw(baiduMap,clear);
+                    //Timber.e("我画了一条vector");
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                Logger.d("绘制完成");
+                super.onPostExecute(aVoid);
+                EventBus.getDefault().post(new ProgressbarEvent(false));
+            }
+        }.execute();
     }
 
     /**
@@ -205,10 +233,22 @@ public class BaiduRailWayHolder {
      *
      * @param baiduMap
      */
-    public void drawText(BaiduMap baiduMap) {
-        for (Text text : textList) {
-            text.draw(baiduMap);
-        }
+    public void drawText(final BaiduMap baiduMap, final boolean clear) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (Text text : textList) {
+                    text.draw(baiduMap,clear);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                EventBus.getDefault().post(new ProgressbarEvent(false));
+            }
+        }.execute();
     }
 
     private void getLineList(SQLiteDatabase database) {
@@ -303,24 +343,48 @@ public class BaiduRailWayHolder {
      * 将画好的图像隐藏
      */
     public void hide() {
-        for (Line line : lineList) {
-            line.hide();
-        }
-        for (Text text : textList) {
-            text.hide();
-        }
-        for (Vector vector : vectorList) {
-            vector.hide();
-        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (Line line : lineList) {
+                    line.hide();
+                }
+                for (Text text : textList) {
+                    text.hide();
+                }
+                for (Vector vector : vectorList) {
+                    vector.hide();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                EventBus.getDefault().post(new ProgressbarEvent(false));
+            }
+        }.execute();
     }
 
     /**
      * 隐藏文字
      */
     public void hideText() {
-        for (Text text : textList) {
-            text.hide();
-        }
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (Text text : textList) {
+                    text.hide();
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                EventBus.getDefault().post(new ProgressbarEvent(false));
+            }
+        }.execute();
     }
 
     private void initLayerList() {
@@ -363,6 +427,29 @@ public class BaiduRailWayHolder {
                 line1.setShow(false);
             }
         }
+    }
+
+    public void forcedraw(final BaiduMap baiduMap){
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (Line line : lineList) {
+                    line.forcedraw(baiduMap);
+                }
+                for (Text text : textList) {
+                    text.forcedraw(baiduMap);
+                }
+                for (Vector vector : vectorList) {
+                    vector.forcedraw(baiduMap);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+            }
+        }.execute();
     }
 
     public List<Line> getLineList() {

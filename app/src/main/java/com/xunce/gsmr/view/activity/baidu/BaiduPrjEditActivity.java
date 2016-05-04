@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.mapapi.map.BaiduMap;
@@ -44,6 +45,7 @@ import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
+import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -109,10 +111,17 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     //地图数据显示
     private FloatingActionButton swMapDatabtn;
     private boolean isChecked = false;
+    private boolean clear = false;
     public boolean isMapTextShowed = false;
     //公里标显示标志位
     private View llPosition;
     BaiduMap.OnMapStatusChangeListener listener;
+    //进度条
+    private View pbBlock;
+    //进度条说明文字
+    private TextView tvPbComment;
+    //是否正在绘制
+    private static boolean drawing = false;
     /**
      * 用于延时发送数据
      */
@@ -183,6 +192,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private void initView() {
         ViewHelper.initActionBar(this, getSupportActionBar(), prjItem.getPrjName());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //progressbar控件
+        pbBlock = findViewById(R.id.id_pb_block);
+        tvPbComment = (TextView) findViewById(R.id.id_tv_pb_comment);
+
         zoomlayout = (LinearLayout) findViewById(R.id.view_zoom_control);
         floatingActionsMenu_hide_left = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_left);
         floatingActionsMenu_hide_up = (FloatingActionsMenu) findViewById(R.id.multiple_actions_hide_up);
@@ -234,6 +247,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.fb_action_choose_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (drawing)return;
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
                 MarkerItem markerItem = new MarkerItem();
                 BaiduMarkerActivity.start(BaiduPrjEditActivity.this,
@@ -260,9 +274,11 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         swMapDatabtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (drawing)return;
                 if ((!isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
                     ToastHelper.show(BaiduPrjEditActivity.this, "请先加载数据文件");
                 } else if (!isChecked && railWayHolder != null) {
+                    EventBus.getDefault().post(new ProgressbarEvent(true));
                     isChecked = true;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_open);
                     if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
@@ -270,15 +286,20 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     }
                     Float zoom =baiduMapFragment.getBaiduMap().getMapStatus().zoom;
                     if (zoom > BaiduMapCons.zoomLevel) {
-                        railWayHolder.draw(baiduMapFragment.getBaiduMap());
+                        railWayHolder.draw(baiduMapFragment.getBaiduMap(),clear);
+                        clear = false;
                     } else {
-                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap());
+                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap(),clear);
+                        clear = false;
                     }
                 } else if (isChecked) {
+//                    EventBus.getDefault().post(new ProgressbarEvent(true));
                     Logger.d("更新了");
                     isChecked = false;
+                    clear = true;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_close);
-                    railWayHolder.hide();
+                    baiduMapFragment.getBaiduMap().clear();
+                    baiduMapFragment.loadMarker();
                 }
             }
         });
@@ -302,12 +323,13 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
              * @param status 地图状态改变结束后的地图状态
              */
             public void onMapStatusChangeFinish(MapStatus status){
+                if (drawing)return;
                 //如果 xml文件已经加载 且 switch为开
                 if (railWayHolder != null && isChecked) {
                     Float zoom =status.zoom;
                     //如果放大到16以上
                     if (zoom > BaiduMapCons.zoomLevel && !isMapTextShowed) {
-                        railWayHolder.drawText(baiduMapFragment.getBaiduMap());
+                        railWayHolder.drawText(baiduMapFragment.getBaiduMap(),clear);
                         isMapTextShowed = true;
                     } else if (zoom < BaiduMapCons.zoomLevel && isMapTextShowed) {
                         railWayHolder.hideText();
@@ -321,6 +343,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.id_btn_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (drawing)return;
                 baiduMapFragment.locate();
             }
         });
@@ -329,6 +352,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.fb_action_measure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (drawing)return;
                 //开启测量Activity
                 BaiduMeasureActivity.start(BaiduPrjEditActivity.this,
                         baiduMapFragment.getBaiduMap().getMapStatus().target,
@@ -340,6 +364,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.fb_action_marker).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (drawing)return;
                 showFindMarkerDialog(BaiduPrjEditActivity.this);
                 //baiduMapFragment.loadMarker(prjItem);
             }
@@ -753,6 +778,23 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             ToastHelper.show(this, "xml中预设标记点数据添加成功");
         } else {
             ToastHelper.show(this, "xml中预设标记点数据添加失败, 请检查excel文件格式是否正确");
+        }
+    }
+
+    /**
+     * progressbar是否显示的回调控制方法
+     *
+     * @param progressbarEvent
+     */
+    public void onEventMainThread(ProgressbarEvent progressbarEvent) {
+        Logger.d("接收到Progressbar事件");
+        if (progressbarEvent.isShow()) {
+            tvPbComment.setText("正在加载，请稍后。");
+            pbBlock.setVisibility(View.VISIBLE);
+            drawing = true;
+        } else {
+            drawing = false;
+            pbBlock.setVisibility(View.INVISIBLE);
         }
     }
 }
