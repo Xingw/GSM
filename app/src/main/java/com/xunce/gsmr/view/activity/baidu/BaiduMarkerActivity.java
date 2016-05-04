@@ -26,6 +26,8 @@ import com.baidu.mapapi.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.MarkerItem;
+import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
+import com.xunce.gsmr.model.event.BaiduDrawMapDataEvent;
 import com.xunce.gsmr.model.event.MarkerInfoSaveEvent;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.gps.LocateHelper;
@@ -75,6 +77,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
     //数据库地址
     private String dbPath;
     private float zoomlevel;
+    private BaiduRailWayHolder railWayHolder = null;
 
     //定位监听器---每秒触发
     public BDLocationListener myListener = new BDLocationListener() {
@@ -95,6 +98,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
             currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
         }
     };
+
 
     /**
      * 启动当前Activity的静态方法
@@ -327,6 +331,21 @@ public class BaiduMarkerActivity extends AppCompatActivity {
             markerItem.setAntennaDirection3(event.getMarkerItem().getAntennaDirection3());
             markerItem.setAntennaDirection4(event.getMarkerItem().getAntennaDirection4());
             markerItem.save(dbPath);
+        }
+    }
+
+    /**
+     * 画出PrjEditActivity上已有的地图数据
+     *
+     * @param baiduDrawMapDataEvent
+     */
+    public void onEventMainThread(BaiduDrawMapDataEvent baiduDrawMapDataEvent) {
+        //复制一份holder到当前activity
+        if (baiduDrawMapDataEvent.getBaiduRailWayHolder() != null) {
+            railWayHolder = baiduDrawMapDataEvent.getBaiduRailWayHolder();
+        }
+        if (railWayHolder != null) {
+            railWayHolder.forcedraw(mBaiduMap);
         }
     }
 }

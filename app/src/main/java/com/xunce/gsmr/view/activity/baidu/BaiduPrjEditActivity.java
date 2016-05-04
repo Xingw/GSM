@@ -354,6 +354,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (drawing)return;
                 //开启测量Activity
+                handler.sendEmptyMessageDelayed(0, 300);
                 BaiduMeasureActivity.start(BaiduPrjEditActivity.this,
                         baiduMapFragment.getBaiduMap().getMapStatus().target,
                         baiduMapFragment.getBaiduMap().getMapStatus().zoom);

@@ -33,6 +33,8 @@ import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.DistanceUtil;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
+import com.xunce.gsmr.model.event.BaiduDrawMapDataEvent;
 import com.xunce.gsmr.util.L;
 import com.xunce.gsmr.util.gps.LocateHelper;
 import com.xunce.gsmr.util.gps.MapHelper;
@@ -41,6 +43,8 @@ import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 测距Activity---开启需要一个Latlng
@@ -74,6 +78,7 @@ public class BaiduMeasureActivity extends AppCompatActivity {
     private OverlayOptions polylineOptions = new PolylineOptions();
 
     private boolean isFistIn = true;
+    private BaiduRailWayHolder railWayHolder = null;
 
     public static void start(Activity activity, LatLng latLng,float zoom) {
         Intent intent = new Intent(activity, BaiduMeasureActivity.class);
@@ -90,6 +95,7 @@ public class BaiduMeasureActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EventBus.getDefault().register(this);
         setContentView(R.layout.activity_baidu_measure);
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
 
@@ -106,11 +112,6 @@ public class BaiduMeasureActivity extends AppCompatActivity {
         mLocationClient.registerLocationListener(new BDLocationListener() {
             @Override
             public void onReceiveLocation(BDLocation bdLocation) {
-                if (isFistIn) {
-                    MapHelper.animateToPoint(mBaiduMap, new LatLng(
-                            bdLocation.getLatitude(), bdLocation.getLongitude()));
-                    isFistIn = false;
-                }
             }
         });
         MapHelper.animateZoom(mBaiduMap, intent.getFloatExtra(Constant.EXTRA_KEY_ZOOM,15));
@@ -309,5 +310,20 @@ public class BaiduMeasureActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
+    }
+
+    /**
+     * 画出PrjEditActivity上已有的地图数据
+     *
+     * @param baiduDrawMapDataEvent
+     */
+    public void onEventMainThread(BaiduDrawMapDataEvent baiduDrawMapDataEvent) {
+        //复制一份holder到当前activity
+//        if (baiduDrawMapDataEvent.getBaiduRailWayHolder() != null) {
+//            railWayHolder = baiduDrawMapDataEvent.getBaiduRailWayHolder();
+//        }
+//        if (railWayHolder != null) {
+//            railWayHolder.forcedraw(mBaiduMap);
+//        }
     }
 }
