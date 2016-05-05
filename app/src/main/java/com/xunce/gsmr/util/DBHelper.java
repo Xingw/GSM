@@ -16,6 +16,7 @@ import com.xunce.gsmr.model.BitmapItem;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.PrjItemRealmObject;
+import com.xunce.gsmr.model.SearchItem;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -650,4 +651,5 @@ public class DBHelper {
         db.update(Constant.TABLE_MARKER_ITEM,values, "markerId = " + "'" + markerItem.getMarkerId() + "'",
                 null);
     }
+
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent"
+                  android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/btn_navi_back"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_keyboard_arrow_left_white_36dp"
+            android:layout_height="match_parent"/>
+        <EditText
+            android:id="@+id/et_navi_input"
+            android:layout_width="0dp"
+            android:layout_weight="8"
+            android:layout_margin="6dp"
+            android:layout_height="wrap_content"/>
+        <Button
+            android:id="@+id/btn_navi_sure"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:background="@color/blue_500"
+            android:textColor="@color/white"
+            android:text="确定"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btn_navi_find_from_map"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:text="地图选点"/>
+        <Button
+            android:id="@+id/btn_navi_find_from_marker"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:text="公里标选点"/>
+
+    </LinearLayout>
+    <ListView
+        android:id="@+id/lv_navi_history"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        android:background="@color/white"></ListView>
+</LinearLayout>
