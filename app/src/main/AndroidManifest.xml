@@ -127,8 +127,6 @@
         <!--编辑marker文本信息-->
         <activity android:name=".view.activity.gaode.MarkerInfoEditActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".view.activity.gaode.GaodeNaviActivity"/>
-        <activity android:name=".view.activity.gaode.SimpleNaviActivity"/>
         <!--android:enabled="@bool/use_activity"-->
         <!-- 第三方的module中的Activity  作用是选择文件-->
         <activity

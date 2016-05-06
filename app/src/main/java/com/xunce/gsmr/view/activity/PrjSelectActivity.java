@@ -158,8 +158,8 @@ public class PrjSelectActivity extends AppCompatActivity {
                 if (isInSelectMode) {
                     PrjItem prjItem = adapter.getPrjItemList().get(position);
                     //如果已经选中了的又被点击---剔除
-                    if (adapter.getSelectList().contains(prjItem)) {
-                        adapter.getSelectList().remove(prjItem);
+                    if (adapter.isinselectList(prjItem)) {
+                        adapter.removefromSelectList(prjItem);
                     } else {
                         adapter.getSelectList().add(prjItem);
                     }

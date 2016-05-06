@@ -161,14 +161,26 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
         notifyDataSetChanged();
     }
 
-    private boolean isinselectList(PrjItem prjItem) {
+    public boolean isinselectList(PrjItem prjItem) {
         if (selectList == null || selectList.size() == 0) {
             return false;
         }
-        if (selectList.contains(prjItem)) {
-            return true;
+        for (PrjItem item : selectList) {
+            if(item.getPrjName().equals(prjItem.getPrjName()))
+                return true;
         }
         return false;
+    }
+
+    public void removefromSelectList(PrjItem prjItem){
+        if (selectList == null || selectList.size() == 0) {
+            return ;
+        }
+        for (PrjItem item : selectList) {
+            if(item.getPrjName().equals(prjItem.getPrjName()))
+                selectList.remove(item);
+                return;
+        }
     }
 
     class ViewHolder {

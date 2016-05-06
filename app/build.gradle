@@ -92,11 +92,9 @@ dependencies {
     compile files('libs/baidumapapi_radar_v3_7_3.jar')
     compile files('libs/baidumapapi_search_v3_7_3.jar')
     compile files('libs/baidumapapi_util_v3_7_3.jar')
-    compile files('libs/BaiduNaviSDK_3.1.1.jar')
     compile files('libs/httpmime-4.1.2.jar')
     compile files('libs/locSDK_6.23.jar')
     compile files('libs/ZHDCorsNet.jar')
     compile files('libs/zhd_code.jar')
     compile files('libs/AMap_Navi_v1.8.0_20160421.jar')
-    compile files('libs/Msc.jar')
 }
