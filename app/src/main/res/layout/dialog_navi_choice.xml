@@ -24,7 +24,9 @@
             android:layout_height="match_parent"
             android:layout_marginRight="20dp"
             android:layout_weight="3"
-            android:hint="请输入起点名称" />
+            android:hint="请输入起点名称"
+            android:text="我的位置"
+        />
     </LinearLayout>
 
     <LinearLayout

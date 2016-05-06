@@ -39,6 +39,8 @@ public class Constant {
     public static final String EXTRA_KEY_LATITUDE = "latitude";
     public static final String EXTRA_KEY_LONGITUDE = "longitude";
     public static final String EXTRA_KEY_DBPATH = "dbPath";
+    public static final boolean EXTRA_KEY_GAODE = true;
+    public static final boolean EXTRA_KEY_BAIDU = false;
 
     //result_code
     public static final int RESULT_CODE_OK = 2000;
@@ -54,6 +56,9 @@ public class Constant {
     public static final double LATITUDE_DEFAULT = 39.907591;
     public static final double LONGITUDE_DEFAULT = 116.415124;
     public static final String RESULT_CODE_NAVI_VALUE = "value";
+    public static final String EXTRA_KEY_KILOMARKER_HOLDER = "kilomarker_holder";
+    public static final String EXTRA_KEY_NAVI_STYLE = "navi_style";
+
 
 
     //FIR更新用的token
@@ -65,6 +70,7 @@ public class Constant {
     public static final int MODE_MAP_SATELLITE = 2007;
 
     public static final int RESULT_CODE_NAVI = 2008;
+    public static final String EXTRA_KEY_MAP_STYLE ="map_style";
     public static boolean firstOpen = true;
     public static String EXTRA_KEY_INPUT = "input";
 }

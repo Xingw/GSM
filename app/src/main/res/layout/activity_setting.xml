@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:fitsSystemWindows="true"
+              android:orientation="vertical">
 
     <!--是否使用wifi定位还是gps定位-->
     <LinearLayout
@@ -22,13 +22,13 @@
             android:padding="8dp"
             android:text="使用wifi定位方式"
             android:textColor="@drawable/selector_text_black_2_white"
-            android:textSize="@dimen/activity_setting_item_text_size" />
+            android:textSize="@dimen/activity_setting_item_text_size"/>
 
         <Switch
             android:id="@+id/id_sw_locate_mode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center_vertical" />
+            android:layout_gravity="center_vertical"/>
     </LinearLayout>
 
     <!--地图选择-->
@@ -48,13 +48,13 @@
             android:padding="8dp"
             android:text="地图类型"
             android:textColor="@drawable/selector_text_black_2_white"
-            android:textSize="@dimen/activity_setting_item_text_size" />
+            android:textSize="@dimen/activity_setting_item_text_size"/>
 
         <Spinner
             android:id="@+id/id_sp_map_type"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:entries="@array/array_map_type" />
+            android:entries="@array/array_map_type"/>
     </LinearLayout>
 
     <!--标记点图标设置-->
@@ -75,21 +75,9 @@
             android:padding="8dp"
             android:text="标记点图标设置"
             android:textColor="@drawable/selector_text_black_2_white"
-            android:textSize="@dimen/activity_setting_item_text_size" />
+            android:textSize="@dimen/activity_setting_item_text_size"/>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/id_tv_app_version"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_margin="8dp"
-        android:background="@drawable/selector_btn_white_2_blue"
-        android:clickable="true"
-        android:gravity="center_vertical"
-        android:padding="8dp"
-        android:text="软件版本"
-        android:textColor="@drawable/selector_text_black_2_white"
-        android:textSize="@dimen/activity_setting_item_text_size" />
 
     <TextView
         android:id="@+id/id_tv_cors_setting"
@@ -102,5 +90,17 @@
         android:padding="8dp"
         android:text="CORS设置"
         android:textColor="@drawable/selector_text_black_2_white"
-        android:textSize="@dimen/activity_setting_item_text_size" />
+        android:textSize="@dimen/activity_setting_item_text_size"/>
+    <TextView
+        android:id="@+id/id_tv_app_version"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_margin="8dp"
+        android:background="@drawable/selector_btn_white_2_blue"
+        android:clickable="true"
+        android:gravity="center_vertical"
+        android:padding="8dp"
+        android:text="关于"
+        android:textColor="@drawable/selector_text_black_2_white"
+        android:textSize="@dimen/activity_setting_item_text_size"/>
 </LinearLayout>

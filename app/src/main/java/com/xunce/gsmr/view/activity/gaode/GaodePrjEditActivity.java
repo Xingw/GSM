@@ -392,28 +392,24 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onClick(View v) {
                 switch (ModeValue) {
-                    case Constant.MODE_MAP_2D: {//2D地图切换至3D地图
-                        ModeValue = Constant.MODE_MAP_3D;
-                        mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(45);
-                        getaMap().moveCamera(cameraUpdate);
+                    case Constant.MODE_MAP_2D: {//2D地图切换至卫星地图
+                        ModeValue = Constant.MODE_MAP_SATELLITE;
+                        mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
                         getaMap().setMapType(AMap.MAP_TYPE_NORMAL);
                         break;
                     }
-                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
-                        ModeValue = Constant.MODE_MAP_SATELLITE;
-                        mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
-                        getaMap().setMapType(AMap.MAP_TYPE_SATELLITE);
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
-                        getaMap().moveCamera(cameraUpdate);
-                        break;
-                    }
+//                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
+//                        ModeValue = Constant.MODE_MAP_SATELLITE;
+//                        mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
+//                        getaMap().setMapType(AMap.MAP_TYPE_SATELLITE);
+//                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
+//                        getaMap().moveCamera(cameraUpdate);
+//                        break;
+//                    }
                     case Constant.MODE_MAP_SATELLITE: {//卫星地图切换至2D地图
                         ModeValue = Constant.MODE_MAP_2D;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_2d);
                         getaMap().setMapType(AMap.MAP_TYPE_NORMAL);
-                        CameraUpdate cameraUpdate = CameraUpdateFactory.changeTilt(0);
-                        getaMap().moveCamera(cameraUpdate);
                         break;
                     }
                 }

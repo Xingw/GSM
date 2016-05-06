@@ -175,4 +175,12 @@ public class KilometerMarkHolder {
         }
         return null;
     }
+
+    public ArrayList<KilometerMark> getKilometerMarkList() {
+        return kilometerMarkList;
+    }
+
+    public void setKilometerMarkList(ArrayList<KilometerMark> kilometerMarkList) {
+        this.kilometerMarkList = kilometerMarkList;
+    }
 }

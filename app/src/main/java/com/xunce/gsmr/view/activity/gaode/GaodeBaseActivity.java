@@ -75,7 +75,7 @@ public class GaodeBaseActivity extends AppCompatActivity {
     public void loadMarker(PrjItem prjItem) {
             //MarkerHolder模块
             if (markerHolder == null) {
-                markerHolder = new MarkerHolder(this, prjItem, getaMap());
+                //markerHolder = new MarkerHolder(this, prjItem, getaMap());
             } else {
                 markerHolder.initMarker();
             }
