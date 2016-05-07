@@ -42,6 +42,7 @@ import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
+import com.xunce.gsmr.model.event.KMLLoadFinishedEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
@@ -127,7 +128,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private FloatingActionsMenu floatingActionsMenu_hide_up;
     private FloatingActionButton floatingActionButton_expand;
     private boolean expand = false;
-
+    private KMLParser kmlParser;
     private LinearLayout zoomlayout;
     private static String[] layername;
     private static boolean[] layerboolean;
@@ -143,6 +144,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             }
         }
     };
+
 
     /**
      * 启动Activity
@@ -249,7 +251,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onClick(View v) {
                 if ((!isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
-                    ToastHelper.show(GaodePrjEditActivity.this, "请先加载数据文件");
+                    ToastHelper.show(GaodePrjEditActivity.this, "该项目内没有铁路数据");
                 } else if (!isChecked && railWayHolder != null) {
                     isChecked = true;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_open);
@@ -340,8 +342,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private void initdata() {
         try {
             railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
-            KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
-            kmlParser.draw(getaMap());
+            kmlParser = new KMLParser(prjItem.getDbLocation());
         }catch (Exception e){
             ToastHelper.show(this,"数据读取失败,请重新打开项目，或确认数据加载无误");
         }
@@ -690,6 +691,14 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         railWayHolder = new GaodeRailWayHolder(this, prjItem.getDbLocation());
     }
 
+    /**
+     * kml数据加载完成事件
+     * @param kmlLoadFinishedEvent
+     */
+    public void onEventMainThread(KMLLoadFinishedEvent kmlLoadFinishedEvent) {
+        kmlParser.draw(getaMap());
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
@@ -761,8 +770,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                         ToastHelper.show(this, "您选取的KML文件格式有误!");
                         return;
                     }
-                    KMLParser kmlParser = new KMLParser(path);
-                    kmlParser.draw(getaMap());
+                    kmlParser = new KMLParser(path);
                 }
                 break;
             case REQUEST_CODE_ROUTE_ACTIVITY:

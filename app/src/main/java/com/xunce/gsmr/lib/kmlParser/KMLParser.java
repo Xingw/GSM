@@ -2,11 +2,13 @@ package com.xunce.gsmr.lib.kmlParser;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.amap.api.maps.AMap;
 import com.baidu.mapapi.map.BaiduMap;
 import com.xunce.gsmr.app.Constant;
+import com.xunce.gsmr.model.event.KMLLoadFinishedEvent;
 import com.xunce.gsmr.model.gaodemap.graph.Point;
 import com.xunce.gsmr.model.gaodemap.graph.Text;
 import com.xunce.gsmr.util.DBHelper;
@@ -22,6 +24,7 @@ import java.util.List;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 /**
@@ -52,10 +55,23 @@ public class KMLParser extends DefaultHandler {
         }
     }
 
-    public KMLParser(String dbPath)
+    public KMLParser(final String dbPath)
     {
-        polyList = DBHelper.getKMLPolyInDB(dbPath);
-        textList = DBHelper.getKMLTextInDB(dbPath);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                polyList = DBHelper.getKMLPolyInDB(dbPath);
+                textList = DBHelper.getKMLTextInDB(dbPath);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                EventBus.getDefault().post(new KMLLoadFinishedEvent());
+            }
+        }.execute();
+
     }
 
     public void draw(AMap amap){

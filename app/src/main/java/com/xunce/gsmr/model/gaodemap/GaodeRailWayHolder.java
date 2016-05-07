@@ -86,11 +86,11 @@ public class GaodeRailWayHolder {
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
+                ToastHelper.show(context, "地图数据加载成功!");
                 //将公里标进行排序
                 kilometerMarkHolder.sort();
                 //运行完将progressbar隐藏
                 EventBus.getDefault().post(new ProgressbarEvent(false));
-                ToastHelper.show(context, "地图数据加载成功!");
             }
         }.execute();
     }

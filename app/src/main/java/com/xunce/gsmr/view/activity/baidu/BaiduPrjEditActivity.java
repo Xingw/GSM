@@ -42,6 +42,7 @@ import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 import com.xunce.gsmr.model.event.BaiduDrawMapDataEvent;
 import com.xunce.gsmr.model.event.BaiduFragmentInitFinishEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
+import com.xunce.gsmr.model.event.KMLLoadFinishedEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
@@ -139,6 +140,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      */
     private static String[] layername;
     private static boolean[] layerboolean;
+    private KMLParser kmlParser;
 
 
     /**
@@ -182,8 +184,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      */
     private void initdata(){
         railWayHolder = new BaiduRailWayHolder(this, prjItem.getDbLocation());
-        KMLParser kmlParser = new KMLParser(prjItem.getDbLocation());
-        kmlParser.draw(baiduMapFragment.getBaiduMap());
+        kmlParser = new KMLParser(prjItem.getDbLocation());
     }
 
     /**
@@ -788,7 +789,6 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      * @param progressbarEvent
      */
     public void onEventMainThread(ProgressbarEvent progressbarEvent) {
-        Logger.d("接收到Progressbar事件");
         if (progressbarEvent.isShow()) {
             tvPbComment.setText("正在加载，请稍后。");
             pbBlock.setVisibility(View.VISIBLE);
@@ -797,5 +797,13 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             drawing = false;
             pbBlock.setVisibility(View.INVISIBLE);
         }
+    }
+
+    /**
+     * kml数据加载完成事件
+     * @param kmlLoadFinishedEvent
+     */
+    public void onEventMainThread(KMLLoadFinishedEvent kmlLoadFinishedEvent) {
+        kmlParser.draw(baiduMapFragment.getBaiduMap());
     }
 }
