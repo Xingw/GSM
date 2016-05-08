@@ -34,9 +34,7 @@ import de.greenrobot.event.EventBus;
 import timber.log.Timber;
 
 /**
- * 开启本Activity需要一个MarkerItem
- * 高德选取Marker的Activity
- * Created by ssthouse on 2015/9/15.
+ * 开启本Activity需要一个MarkerItem 高德选取Marker的Activity Created by ssthouse on 2015/9/15.
  */
 public class GaodeMarkerActivity extends GaodeBaseActivity {
     /**
@@ -90,19 +88,24 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
         TransparentStyle.setTransparentStyle(this, R.color.color_primary);
         super.init(savedInstanceState);
 
+        requestCode = getIntent().getIntExtra(Constant.EXTRA_KEY_REQUEST_CODE,
+                GaodePrjEditActivity.REQUEST_CODE_MARKER_ACTIVITY);
+        if (requestCode == Constant.REQUEST_CODE_NAVI_MAP) {
+            initView();
+            return;
+        }
         //获取数据
         MarkerItem wrongItem = (MarkerItem) getIntent()
                 .getSerializableExtra(Constant.EXTRA_KEY_MARKER_ITEM);
         dbPath = (String) getIntent().getSerializableExtra(Constant.EXTRA_KEY_DBPATH);
         markerItem = DBHelper.getMarkerItemInDB(dbPath, wrongItem.getMarkerId());
-        requestCode = getIntent().getIntExtra(Constant.EXTRA_KEY_REQUEST_CODE,
-                GaodePrjEditActivity.REQUEST_CODE_MARKER_ACTIVITY);
+
         initView();
         //如果是编辑---定位到编辑的点
         if (markerItem != null && markerItem.getLatitude() != 0 && markerItem.getLongitude() != 0) {
             getaMap().moveCamera(CameraUpdateFactory.changeLatLng(markerItem.getGaodeLatLng()));
-            etLatitude.setText(""+markerItem.getLatitude());
-            etLongitude.setText(""+markerItem.getLongitude());
+            etLatitude.setText("" + markerItem.getLatitude());
+            etLongitude.setText("" + markerItem.getLongitude());
         } else {
             markerItem = new MarkerItem();
             SQLiteDatabase db = DBHelper.openDatabase(dbPath);
@@ -112,10 +115,10 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
             Intent intent = getIntent();
             LatLng latLng = new LatLng(intent.getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, 0),
                     intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
-            Logger.e("经度:%f,纬度%f",latLng.latitude,latLng.longitude);
+            Logger.e("经度:%f,纬度%f", latLng.latitude, latLng.longitude);
             getaMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
-            etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
-            etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
+            etLatitude.setText("" + getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
+            etLongitude.setText("" + getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
         }
         //初始化View
 
@@ -145,26 +148,41 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
                 getaMap().moveCamera(CameraUpdateFactory.zoomOut());
             }
         });
-        //确认按钮
-        findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (MarkerHelper.isDataValid(etLatitude, etLongitude)) {
-                    //保存数据---并改变原来的照片的文件夹的名称
-                    double latitude = MarkerHelper.getLatitude(etLatitude);
-                    double longitude = MarkerHelper.getLongitude(etLongitude);
-                    //double wgsLatlng[] = PositionUtil.gcj_To_Gps84(latitude, longitude);
-                    markerItem.changeData(new double[]{latitude, longitude}, dbPath);
-                    //返回
-                    EventBus.getDefault().post(new MarkerEditEvent(MarkerEditEvent.BackState.CHANGED));
-                    //退出
+        if (requestCode == Constant.REQUEST_CODE_NAVI_MAP) {
+            ViewHelper.initActionBar(this, getSupportActionBar(), "地图选点");
+            findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent();
+                    intent.putExtra(Constant.EXTRA_KEY_LATITUDE, Double.valueOf(etLatitude.getText()
+                            .toString()));
+                    intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, Double.valueOf(etLongitude.getText()
+                            .toString()));
+                    setResult(Constant.RESULT_CODE_NAVI, intent);
                     finish();
-                } else {
-                    ToastHelper.showSnack(GaodeMarkerActivity.this, etLatitude, "请选择有效数据");
                 }
-            }
-        });
-
+            });
+        } else {
+            //确认按钮
+            findViewById(R.id.id_btn_submit).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (MarkerHelper.isDataValid(etLatitude, etLongitude)) {
+                        //保存数据---并改变原来的照片的文件夹的名称
+                        double latitude = MarkerHelper.getLatitude(etLatitude);
+                        double longitude = MarkerHelper.getLongitude(etLongitude);
+                        //double wgsLatlng[] = PositionUtil.gcj_To_Gps84(latitude, longitude);
+                        markerItem.changeData(new double[]{latitude, longitude}, dbPath);
+                        //返回
+                        EventBus.getDefault().post(new MarkerEditEvent(MarkerEditEvent.BackState.CHANGED));
+                        //退出
+                        finish();
+                    } else {
+                        ToastHelper.showSnack(GaodeMarkerActivity.this, etLatitude, "请选择有效数据");
+                    }
+                }
+            });
+        }
         //定位按钮
         findViewById(R.id.id_ib_locate).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -285,6 +303,9 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (requestCode == Constant.REQUEST_CODE_NAVI_MAP) {
+         return true;
+        }
         getMenuInflater().inflate(R.menu.menu_activity_mark_edit, menu);
         return true;
     }

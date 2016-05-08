@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
@@ -21,6 +22,8 @@ import com.xunce.gsmr.model.SearchItem;
 import com.xunce.gsmr.model.event.KilomarkerHolderPostEvent;
 import com.xunce.gsmr.model.event.NaviInputEvent;
 import com.xunce.gsmr.util.DBHelper;
+import com.xunce.gsmr.util.view.ToastHelper;
+import com.xunce.gsmr.view.activity.gaode.GaodeMarkerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +73,6 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
                 } else {
                     currentSearchItem = historysearchItems.get(position - 1);
                 }
-                saveSearchHistory();
                 //判断是起点还是重点的输入
                 if (getIntent().getBooleanExtra(Constant.EXTRA_KEY_NAVI_STYLE, NaviInputEvent
                         .START)) {
@@ -85,12 +87,18 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
         });
         input = (EditText) findViewById(R.id.et_navi_input);
         input.setText(getIntent().getStringExtra(Constant.EXTRA_KEY_INPUT));
+        findViewById(R.id.btn_navi_back).setOnClickListener(this);
+        findViewById(R.id.btn_navi_sure).setOnClickListener(this);
+        findViewById(R.id.btn_navi_find_from_map).setOnClickListener(this);
+        findViewById(R.id.btn_navi_find_from_marker).setOnClickListener(this);
+        findViewById(R.id.id_btn_delete).setOnClickListener(this);
     }
 
     /**
      * 保存本次搜索记录
      */
     private void saveSearchHistory() {
+        if (currentSearchItem.getText() == "我的位置" )return;
         realm.beginTransaction();
         realm.copyToRealm(currentSearchItem);
         realm.commitTransaction();
@@ -112,31 +120,25 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
         switch (v.getId()) {
             case R.id.btn_navi_sure:
                 //如果不相同，说明INPUT的内容被改变了，按照改变后的值传值
-                if (!input.getText().toString().equals(currentSearchItem.getText())) {
+                if (currentSearchItem == null || !input.getText().toString().equals(currentSearchItem.getText())) {
                     currentSearchItem = new SearchItem(input.getText().toString(), input.getText()
                             .toString());
                 }
-                //判断是起点还是重点的输入
-                if (getIntent().getBooleanExtra(Constant.EXTRA_KEY_NAVI_STYLE, NaviInputEvent
-                        .START)) {
-                    EventBus.getDefault().post(new NaviInputEvent(currentSearchItem, NaviInputEvent
-                            .START));
-                } else {
-                    EventBus.getDefault().post(new NaviInputEvent(currentSearchItem, NaviInputEvent
-                            .END));
-                }
-                saveSearchHistory();
-                finish();
+                sendcurrentSearchItem();
                 break;
             case R.id.btn_navi_back:
                 finish();
                 break;
             case R.id.btn_navi_find_from_map:
                 if (getIntent().getBooleanExtra(Constant.EXTRA_KEY_MAP_STYLE,true)){
-
+                    GaodeMarkerActivity.start(this,null,null,new LatLng(0,0),12,Constant
+                            .REQUEST_CODE_NAVI_MAP);
                 }else {
 
                 }
+                break;
+            case R.id.btn_navi_delete:
+                deleteHistory();
                 break;
             case R.id.btn_navi_find_from_marker:
                 showChoiceMarkerDialog();
@@ -148,6 +150,10 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
      * 公里标选点对话框
      */
     private void showChoiceMarkerDialog() {
+        if (kilometerMarkHolder == null) {
+            ToastHelper.show(this,"没有可以选择的公里标");
+            return;
+        }
         String[] list = new String[kilometerMarkHolder.getKilometerMarkList().size()];
         for (int i = 0; i < kilometerMarkHolder.getKilometerMarkList().size(); i++) {
             list[i] = kilometerMarkHolder.getKilometerMarkList().get(i).getText();
@@ -157,9 +163,11 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         KilometerMark kilometerMark = kilometerMarkHolder.getKilometerMarkList().get(which);
-                        SearchItem searchItem = new SearchItem(kilometerMark.getText(),
+                        SearchItem searchItem = new SearchItem(kilometerMark.getText() + " -- "+
+                                kilometerMark.getLatitude() + "," + kilometerMark.getLongitude(),
                                 kilometerMark.getLatitude() + "," + kilometerMark.getLongitude());
                         setInputText(searchItem);
+                        sendcurrentSearchItem();
                     }
                 })
                 .create()
@@ -180,13 +188,27 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
         for (SearchItem searchItem : searchItems) {
             if (searchItem.getText().equals(searchItem.getValue())) {
                 list.add(searchItem.getText());
-            } else {
-                list.add(searchItem.getText() + "--" + searchItem.getValue());
             }
         }
         return list;
     }
 
+    /**
+     * 将currentSearchItem的值返回
+     */
+    private void sendcurrentSearchItem(){
+        //判断是起点还是重点的输入
+        if (getIntent().getBooleanExtra(Constant.EXTRA_KEY_NAVI_STYLE, NaviInputEvent
+                .START)) {
+            EventBus.getDefault().post(new NaviInputEvent(currentSearchItem, NaviInputEvent
+                    .START));
+        } else {
+            EventBus.getDefault().post(new NaviInputEvent(currentSearchItem, NaviInputEvent
+                    .END));
+        }
+        saveSearchHistory();
+        finish();
+    }
     /**
      * 获取kilomarkerHolder
      *
@@ -205,5 +227,20 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
     private void setInputText(SearchItem searchItem) {
         input.setText(searchItem.getText());
         currentSearchItem = searchItem;
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) { //resultCode为回传的标记，我在B中回传的是RESULT_OK
+            case Constant.RESULT_CODE_NAVI:
+                Bundle b=data.getExtras(); //data为B中回传的Intent
+                double latitude=b.getDouble(Constant.EXTRA_KEY_LATITUDE);//str即为回传的值
+                double longitude = b.getDouble(Constant.EXTRA_KEY_LONGITUDE);
+                currentSearchItem = new SearchItem("地图选点 -- "+latitude + "," + longitude,latitude + "," + longitude);
+                saveSearchHistory();
+                sendcurrentSearchItem();
+                break;
+            default:
+                break;
+        }
     }
 }

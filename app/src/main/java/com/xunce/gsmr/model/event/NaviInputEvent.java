@@ -25,7 +25,7 @@ public class NaviInputEvent{
         this.searchItem = searchItem;
     }
 
-    public boolean isStyle() {
+    public boolean getStyle() {
         return style;
     }
 

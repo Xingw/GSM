@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amap.api.maps.AMap;
-import com.amap.api.maps.CameraUpdate;
 import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
@@ -38,14 +37,17 @@ import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.lib.markerParser.XmlMarkerParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.SearchItem;
 import com.xunce.gsmr.model.event.CADReadFinishEvent;
 import com.xunce.gsmr.model.event.CompressFileEvent;
 import com.xunce.gsmr.model.event.GaoDeDrawMapDataEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
 import com.xunce.gsmr.model.event.KMLLoadFinishedEvent;
+import com.xunce.gsmr.model.event.KilomarkerHolderPostEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
+import com.xunce.gsmr.model.event.NaviInputEvent;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.model.gaodemap.GaodeMapCons;
 import com.xunce.gsmr.model.gaodemap.GaodeRailWayHolder;
@@ -53,6 +55,7 @@ import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
+import com.xunce.gsmr.view.activity.Naviinputpoint;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
@@ -83,6 +86,9 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     public static final int REQUEST_CODE_LOAD_XML_FILE = 1005;
     public static final int REQUEST_CODE_LOAD_KML_FILE = 1006;
 
+    private static final int NAVI_FOOT = 100;
+    private static final int NAVI_DRIVE = 101;
+    private static final int NAVI_BUS = 102;
     /**
      * 用于点击两次退出
      */
@@ -132,6 +138,10 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     private LinearLayout zoomlayout;
     private static String[] layername;
     private static boolean[] layerboolean;
+    private TextView etStart;
+    private TextView etEnd;
+    private SearchItem startsearch = new SearchItem("我的位置","我的位置");
+    private SearchItem endsearch;
     /**
      * 用于延时发送数据
      */
@@ -139,8 +149,13 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == 0) {
-                EventBus.getDefault().post(new GaoDeDrawMapDataEvent(railWayHolder));
+            switch (msg.what) {
+                case 0:
+                    EventBus.getDefault().post(new GaoDeDrawMapDataEvent(railWayHolder));
+                    break;
+                case 1:
+                    EventBus.getDefault().post(new KilomarkerHolderPostEvent(railWayHolder.getKilometerMarkHolder()));
+                    break;
             }
         }
     };
@@ -516,7 +531,8 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 PrjSelectActivity.start(this, true);
                 break;
             case R.id.id_action_navi_map:
-//                Intent intent = new Intent(this,GaodeNaviActivity.class);
+                showNaviDialog();
+//                Intent intent = new Intent(this,Naviinputpoint.class);
 //                intent.putExtra(Constant.EXTRA_KEY_LATITUDE,getaMap().getCameraPosition().target.latitude);
 //                intent.putExtra(Constant.EXTRA_KEY_LONGITUDE,getaMap().getCameraPosition().target.longitude);
 //                startActivity(intent);
@@ -525,6 +541,102 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * 导航功能
+     */
+    private void showNaviDialog() {
+        LinearLayout llnavidialog = (LinearLayout) LayoutInflater.from(this).
+                inflate(R.layout.dialog_navi_choice, null);
+        etStart = (TextView) llnavidialog.findViewById(R.id.et_navi_start);
+        etEnd = (TextView) llnavidialog.findViewById(R.id.et_navi_end);
+        etStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Naviinputpoint.start(GaodePrjEditActivity.this,etStart.getText().toString(),
+                        NaviInputEvent.START, Constant.EXTRA_KEY_GAODE);
+                handler.sendEmptyMessageDelayed(1,300);
+            }
+        });
+        etEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Naviinputpoint.start(GaodePrjEditActivity.this,etEnd.getText().toString(),
+                        NaviInputEvent.END, Constant.EXTRA_KEY_GAODE);
+                handler.sendEmptyMessageDelayed(1,300);
+            }
+        });
+        Button FootButton = (Button) llnavidialog.findViewById(R.id.btn_navi_foot);
+        Button DriveButton = (Button) llnavidialog.findViewById(R.id.btn_navi_drive);
+        Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
+        FootButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
+                    return;
+                }
+                Navistart(NAVI_FOOT,etStart.getText().toString(),etEnd.getText().toString());
+            }
+        });
+        DriveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
+                    return;
+                }
+                Navistart(NAVI_DRIVE,etStart.getText().toString(),etEnd.getText().toString());
+            }
+        });
+        BusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
+                    return;
+                }
+                Navistart(NAVI_BUS,etStart.getText().toString(),etEnd.getText().toString());
+            }
+        });
+        new AlertDialog.Builder(this)
+                .setTitle("导航")
+                .setView(llnavidialog)
+                .setCancelable(true)
+                .show();
+    }
+
+    private void Navistart(int method, String start, String end) {
+//        RouteParaOption para = new RouteParaOption()
+//                .startName(start)
+//                .endName(end);
+//        switch (method){
+//            case NAVI_FOOT:
+//                try {
+//                    BaiduMapRoutePlan.openBaiduMapWalkingRoute(para, this);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    showDialog();
+//                }
+//                break;
+//            case NAVI_DRIVE:
+//                try {
+//                    BaiduMapRoutePlan.openBaiduMapDrivingRoute(para, this);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    showDialog();
+//                }
+//                break;
+//            case NAVI_BUS:
+//                try {
+//                    para.busStrategyType(RouteParaOption.EBusStrategyType.bus_recommend_way);
+//                    BaiduMapRoutePlan.openBaiduMapTransitRoute(para, this);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    showDialog();
+//                }
+//                break;
+//        }
+    }
     private void showChoiceLayerDialog() {
         if (layername == null) {
             layername = new String[railWayHolder.getLayerList().size()];
@@ -697,6 +809,20 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      */
     public void onEventMainThread(KMLLoadFinishedEvent kmlLoadFinishedEvent) {
         kmlParser.draw(getaMap());
+    }
+    /**
+     * kml数据加载完成事件
+     * @param naviInputEvent
+     */
+    public void onEventMainThread(NaviInputEvent naviInputEvent) {
+        if (etEnd == null || etStart == null)return;
+        if (naviInputEvent.getStyle() == naviInputEvent.START){
+            etStart.setText(naviInputEvent.getSearchItem().getText());
+            startsearch = naviInputEvent.getSearchItem();
+        }else {
+            etEnd.setText(naviInputEvent.getSearchItem().getText());
+            endsearch = naviInputEvent.getSearchItem();
+        }
     }
 
     @Override

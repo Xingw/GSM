@@ -48,10 +48,12 @@ public class Constant {
     public static final int REQUEST_CODE_ALBUM = 2002;
     public static final int REQUEST_CODE_CAMERA = 2003;
 
+
     //.db文件的requestCode
     public static final int REQUEST_CODE_DB_FILE = 2004;
+    public static final int REQUEST_CODE_NAVI_MAP = 2005;
     public static final String EXTRA_KEY_ZOOM = "zoom";
-
+    public static final int RESULT_CODE_NAVI = 2006;
     //北京天安门坐标
     public static final double LATITUDE_DEFAULT = 39.907591;
     public static final double LONGITUDE_DEFAULT = 116.415124;
@@ -65,11 +67,11 @@ public class Constant {
     public static String firToken = "aa38ac9ade93397254698e8783adce7f";
 
     //地图模式
-    public static final int MODE_MAP_2D = 2005;
-    public static final int MODE_MAP_3D = 2006;
-    public static final int MODE_MAP_SATELLITE = 2007;
+    public static final int MODE_MAP_2D = 3001;
+    public static final int MODE_MAP_3D = 3002;
+    public static final int MODE_MAP_SATELLITE = 3003;
 
-    public static final int RESULT_CODE_NAVI = 2008;
+
     public static final String EXTRA_KEY_MAP_STYLE ="map_style";
     public static boolean firstOpen = true;
     public static String EXTRA_KEY_INPUT = "input";

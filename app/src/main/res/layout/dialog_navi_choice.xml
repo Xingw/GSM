@@ -18,14 +18,15 @@
             android:text="起点："
             android:textSize="@dimen/text_size_normal" />
 
-        <EditText
+        <TextView
             android:id="@+id/et_navi_start"
             android:layout_width="0dp"
+            android:gravity="center"
             android:layout_height="match_parent"
             android:layout_marginRight="20dp"
             android:layout_weight="3"
-            android:hint="请输入起点名称"
             android:text="我的位置"
+            android:hint="请输入起点的名称"
         />
     </LinearLayout>
 
@@ -43,12 +44,13 @@
             android:text="终点："
             android:textSize="@dimen/text_size_normal" />
 
-        <EditText
+        <TextView
             android:id="@+id/et_navi_end"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginRight="20dp"
             android:layout_weight="3"
+            android:gravity="center"
             android:hint="请输入目的地名称" />
     </LinearLayout>
 
