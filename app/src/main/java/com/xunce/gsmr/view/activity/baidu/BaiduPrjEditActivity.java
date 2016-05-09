@@ -20,10 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amap.api.navi.model.NaviLatLng;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.MapStatus;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.model.LatLng;
 import com.baidu.mapapi.utils.OpenClientUtil;
 import com.baidu.mapapi.utils.route.BaiduMapRoutePlan;
 import com.baidu.mapapi.utils.route.RouteParaOption;
@@ -37,15 +39,18 @@ import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.lib.kmlParser.KMLParser;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.SearchItem;
 import com.xunce.gsmr.model.baidumap.BaiduMapCons;
 import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 import com.xunce.gsmr.model.event.BaiduDrawMapDataEvent;
 import com.xunce.gsmr.model.event.BaiduFragmentInitFinishEvent;
 import com.xunce.gsmr.model.event.ExcelXmlDataEvent;
 import com.xunce.gsmr.model.event.KMLLoadFinishedEvent;
+import com.xunce.gsmr.model.event.KilomarkerHolderPostEvent;
 import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.model.event.MarkerEditEvent;
 import com.xunce.gsmr.model.event.MarkerIconChangeEvent;
+import com.xunce.gsmr.model.event.NaviInputEvent;
 import com.xunce.gsmr.model.event.ProgressbarEvent;
 import com.xunce.gsmr.util.FileHelper;
 import com.xunce.gsmr.util.L;
@@ -53,6 +58,7 @@ import com.xunce.gsmr.util.gps.MapHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
+import com.xunce.gsmr.view.activity.Naviinputpoint;
 import com.xunce.gsmr.view.activity.PicGridActivity;
 import com.xunce.gsmr.view.activity.PrjSelectActivity;
 import com.xunce.gsmr.view.activity.SettingActivity;
@@ -123,6 +129,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private TextView tvPbComment;
     //是否正在绘制
     private static boolean drawing = false;
+    private TextView etStart;
+    private TextView etEnd;
+    private SearchItem startsearch = new SearchItem("我的位置","我的位置");
+    private SearchItem endsearch;
     /**
      * 用于延时发送数据
      */
@@ -130,8 +140,13 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == 0) {
-                EventBus.getDefault().post(new BaiduDrawMapDataEvent(railWayHolder));
+            switch (msg.what) {
+                case 0:
+                    EventBus.getDefault().post(new BaiduDrawMapDataEvent(railWayHolder));
+                    break;
+                case 1:
+                    EventBus.getDefault().post(new KilomarkerHolderPostEvent(railWayHolder.getKilometerMarkHolder()));
+                    break;
             }
         }
     };
@@ -529,8 +544,24 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private void showNaviDialog() {
         LinearLayout llnavidialog = (LinearLayout) LayoutInflater.from(this).
                 inflate(R.layout.dialog_navi_choice, null);
-        final EditText etStart = (EditText) llnavidialog.findViewById(R.id.et_navi_start);
-        final EditText etEnd = (EditText) llnavidialog.findViewById(R.id.et_navi_end);
+        etStart = (TextView) llnavidialog.findViewById(R.id.et_navi_start);
+        etEnd = (TextView) llnavidialog.findViewById(R.id.et_navi_end);
+        etStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Naviinputpoint.start(BaiduPrjEditActivity.this,etStart.getText().toString(),
+                        NaviInputEvent.START, Constant.EXTRA_KEY_GAODE);
+                handler.sendEmptyMessageDelayed(1,300);
+            }
+        });
+        etEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Naviinputpoint.start(BaiduPrjEditActivity.this,etEnd.getText().toString(),
+                        NaviInputEvent.END, Constant.EXTRA_KEY_GAODE);
+                handler.sendEmptyMessageDelayed(1,300);
+            }
+        });
         Button FootButton = (Button) llnavidialog.findViewById(R.id.btn_navi_foot);
         Button DriveButton = (Button) llnavidialog.findViewById(R.id.btn_navi_drive);
         Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
@@ -572,10 +603,20 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     }
 
     private void Navistart(int method, String start, String end) {
-        RouteParaOption para = new RouteParaOption()
-                .startName(start)
-                .endName(end);
-        switch (method){
+        RouteParaOption para = new RouteParaOption();
+        if (start.contains("选点")){
+            NaviLatLng latLng = parseEditText(startsearch.getValue());
+            para.startPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
+        }else {
+            para.startName(start);
+        }
+        if (start.contains("选点")){
+            NaviLatLng latLng = parseEditText(endsearch.getValue());
+            para.endPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
+        }else {
+            para.endName(end);
+        }
+        switch (method) {
             case NAVI_FOOT:
                 try {
                     BaiduMapRoutePlan.openBaiduMapWalkingRoute(para, this);
@@ -601,9 +642,20 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     showDialog();
                 }
                 break;
+//        }
         }
     }
-
+    private NaviLatLng parseEditText(String text) {
+        try {
+            double latD = Double.parseDouble(text.split(",")[0]);
+            double lonD = Double.parseDouble(text.split(",")[1]);
+            return new NaviLatLng(latD, lonD);
+        } catch (Exception e) {
+            Toast.makeText(this, "e:" + e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "格式:[lat],[lon]", Toast.LENGTH_SHORT).show();
+        }
+        return null;
+    }
     /**
      * 提示未安装百度地图app或app版本过低
      */
@@ -627,7 +679,6 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         });
 
         builder.create().show();
-
     }
 
     /**
@@ -805,5 +856,20 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      */
     public void onEventMainThread(KMLLoadFinishedEvent kmlLoadFinishedEvent) {
         kmlParser.draw(baiduMapFragment.getBaiduMap());
+    }
+
+    /**
+     * Navi起点终点输入返回数据
+     * @param naviInputEvent
+     */
+    public void onEventMainThread(NaviInputEvent naviInputEvent) {
+        if (etEnd == null || etStart == null)return;
+        if (naviInputEvent.getStyle() == naviInputEvent.START){
+            etStart.setText(naviInputEvent.getSearchItem().getText());
+            startsearch = naviInputEvent.getSearchItem();
+        }else {
+            etEnd.setText(naviInputEvent.getSearchItem().getText());
+            endsearch = naviInputEvent.getSearchItem();
+        }
     }
 }

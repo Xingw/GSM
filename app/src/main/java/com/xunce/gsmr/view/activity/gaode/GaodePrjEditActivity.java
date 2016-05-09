@@ -25,6 +25,11 @@ import com.amap.api.maps.CameraUpdateFactory;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.CameraPosition;
 import com.amap.api.maps.model.Marker;
+import com.amap.api.navi.model.NaviLatLng;
+import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.utils.OpenClientUtil;
+import com.baidu.mapapi.utils.route.BaiduMapRoutePlan;
+import com.baidu.mapapi.utils.route.RouteParaOption;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.xunce.gsmr.Net.Update;
@@ -606,36 +611,82 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
     }
 
     private void Navistart(int method, String start, String end) {
-//        RouteParaOption para = new RouteParaOption()
-//                .startName(start)
-//                .endName(end);
-//        switch (method){
-//            case NAVI_FOOT:
-//                try {
-//                    BaiduMapRoutePlan.openBaiduMapWalkingRoute(para, this);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    showDialog();
-//                }
-//                break;
-//            case NAVI_DRIVE:
-//                try {
-//                    BaiduMapRoutePlan.openBaiduMapDrivingRoute(para, this);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    showDialog();
-//                }
-//                break;
-//            case NAVI_BUS:
-//                try {
-//                    para.busStrategyType(RouteParaOption.EBusStrategyType.bus_recommend_way);
-//                    BaiduMapRoutePlan.openBaiduMapTransitRoute(para, this);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    showDialog();
-//                }
-//                break;
+        RouteParaOption para = new RouteParaOption();
+        if (start.contains("选点")){
+            NaviLatLng latLng = parseEditText(startsearch.getValue());
+            para.startPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
+        }else {
+            para.startName(start);
+        }
+        if (start.contains("选点")){
+            NaviLatLng latLng = parseEditText(endsearch.getValue());
+            para.endPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
+        }else {
+            para.endName(end);
+        }
+        switch (method) {
+            case NAVI_FOOT:
+                try {
+                    BaiduMapRoutePlan.openBaiduMapWalkingRoute(para, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                break;
+            case NAVI_DRIVE:
+                try {
+                    BaiduMapRoutePlan.openBaiduMapDrivingRoute(para, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                break;
+            case NAVI_BUS:
+                try {
+                    para.busStrategyType(RouteParaOption.EBusStrategyType.bus_recommend_way);
+                    BaiduMapRoutePlan.openBaiduMapTransitRoute(para, this);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showDialog();
+                }
+                break;
 //        }
+        }
+    }
+    private NaviLatLng parseEditText(String text) {
+        try {
+            double latD = Double.parseDouble(text.split(",")[0]);
+            double lonD = Double.parseDouble(text.split(",")[1]);
+            return new NaviLatLng(latD, lonD);
+        } catch (Exception e) {
+            Toast.makeText(this, "e:" + e, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "格式:[lat],[lon]", Toast.LENGTH_SHORT).show();
+        }
+        return null;
+    }
+        /**
+         * 提示未安装百度地图app或app版本过低
+         */
+    public void showDialog() {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setMessage("您尚未安装百度地图app或app版本过低，点击确认安装？");
+        builder.setTitle("提示");
+        builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                OpenClientUtil.getLatestBaiduMapApp(GaodePrjEditActivity.this);
+            }
+        });
+
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builder.create().show();
     }
     private void showChoiceLayerDialog() {
         if (layername == null) {
@@ -811,7 +862,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         kmlParser.draw(getaMap());
     }
     /**
-     * kml数据加载完成事件
+     * Navi起点终点输入返回数据
      * @param naviInputEvent
      */
     public void onEventMainThread(NaviInputEvent naviInputEvent) {

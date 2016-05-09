@@ -91,7 +91,7 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
         findViewById(R.id.btn_navi_sure).setOnClickListener(this);
         findViewById(R.id.btn_navi_find_from_map).setOnClickListener(this);
         findViewById(R.id.btn_navi_find_from_marker).setOnClickListener(this);
-        findViewById(R.id.id_btn_delete).setOnClickListener(this);
+        findViewById(R.id.btn_navi_delete).setOnClickListener(this);
     }
 
     /**
@@ -133,8 +133,6 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
                 if (getIntent().getBooleanExtra(Constant.EXTRA_KEY_MAP_STYLE,true)){
                     GaodeMarkerActivity.start(this,null,null,new LatLng(0,0),12,Constant
                             .REQUEST_CODE_NAVI_MAP);
-                }else {
-
                 }
                 break;
             case R.id.btn_navi_delete:

@@ -39,14 +39,14 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/window_bar_background"
+            android:background="@color/white"
             android:text="地图选点"/>
         <Button
             android:id="@+id/btn_navi_find_from_marker"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/window_bar_background"
+            android:background="@color/white"
             android:text="公里标选点"/>
 
     </LinearLayout>
