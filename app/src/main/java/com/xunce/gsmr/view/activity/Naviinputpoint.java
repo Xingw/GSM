@@ -179,11 +179,11 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
      * @return
      */
     public List<String> getSearchItemList() {
-        List<SearchItem> searchItems = realm.where(SearchItem.class).findAll();
+        historysearchItems = realm.where(SearchItem.class).findAll();
         List<String> list = new ArrayList<>();
         list.add("我的位置");
-        if (searchItems == null || searchItems.size() == 0) return list;
-        for (SearchItem searchItem : searchItems) {
+        if (historysearchItems == null || historysearchItems.size() == 0) return list;
+        for (SearchItem searchItem : historysearchItems) {
             if (searchItem.getText().equals(searchItem.getValue())) {
                 list.add(searchItem.getText());
             }

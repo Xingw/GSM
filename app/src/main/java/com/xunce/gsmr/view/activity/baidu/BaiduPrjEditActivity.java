@@ -682,7 +682,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     }
 
     /**
-     * 图层选择函数
+     * 图层选择对话框
      */
     private void showChoiceLayerDialog() {
         if (layername == null) {

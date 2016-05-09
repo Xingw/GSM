@@ -18,6 +18,7 @@ import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.util.DBHelper;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
+import com.xunce.gsmr.util.view.ToastHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,7 @@ import java.util.List;
 import timber.log.Timber;
 
 /**
- * 持有一个baiduMap的引用
- * 承载PrjEditActivity中的所有Marker
- * Created by ssthouse on 2015/8/21.
+ * 持有一个baiduMap的引用 承载PrjEditActivity中的所有Marker Created by ssthouse on 2015/8/21.
  */
 public class MarkerHolder {
     //标记点相关的
@@ -80,16 +79,17 @@ public class MarkerHolder {
         currentMarker = null;
         currentMarkerItem = null;
         //初始化markerList
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(prjItem.getDbLocation(),null,
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(prjItem.getDbLocation(), null,
                 SQLiteDatabase.OPEN_READWRITE);
         markerOnDbList = DBHelper.getMarkerList(db);
         db.close();
+        ToastHelper.show(context, "数据库读取失败，请尝试重新打开程序");
         for (int i = 0; i < markerOnDbList.size(); i++) {
             LatLng latLng = markerOnDbList.get(i).getBaiduLatLng();
             BitmapDescriptor bitmapDescriptor;
             String deviceType = markerOnDbList.get(i).getDeviceType();
             String colorStr = PreferenceHelper.getInstance(context).getMarkerColorName(deviceType);
-            switch (colorStr){
+            switch (colorStr) {
                 case MarkerIconCons.ColorName.BLUE:
                     bitmapDescriptor = BitmapDescriptorFactory
                             .fromResource(R.drawable.icon_marker_blue);
@@ -99,7 +99,7 @@ public class MarkerHolder {
                             .fromResource(R.drawable.icon_marker_green);
                     break;
                 case MarkerIconCons.ColorName.ORANGE:
-                    bitmapDescriptor =BitmapDescriptorFactory
+                    bitmapDescriptor = BitmapDescriptorFactory
                             .fromResource(R.drawable.icon_marker_orange);
                     break;
                 case MarkerIconCons.ColorName.PURPLE:

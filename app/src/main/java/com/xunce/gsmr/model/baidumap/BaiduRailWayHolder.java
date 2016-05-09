@@ -405,28 +405,35 @@ public class BaiduRailWayHolder {
         }
     }
 
-    public void initshow(List<String> showList) {
-        for (Text text1 : textList) {
-            if (showList.contains(text1.getLayerName())) {
-                text1.setShow(true);
-            } else {
-                text1.setShow(false);
+    public void initshow(final List<String> showList) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                for (Text text1 : textList) {
+                    if (showList.contains(text1.getLayerName())) {
+                        text1.setShow(true);
+                    } else {
+                        text1.setShow(false);
+                    }
+                }
+                for (Vector vector1 : vectorList) {
+                    if (showList.contains(vector1.getLayerName())) {
+                        vector1.setShow(true);
+                    } else {
+                        vector1.setShow(false);
+                    }
+                }
+                for (Line line1 : lineList) {
+                    if (showList.contains(line1.getLayerName())) {
+                        line1.setShow(true);
+                    } else {
+                        line1.setShow(false);
+                    }
+                }
+                return null;
             }
-        }
-        for (Vector vector1 : vectorList) {
-            if (showList.contains(vector1.getLayerName())) {
-                vector1.setShow(true);
-            } else {
-                vector1.setShow(false);
-            }
-        }
-        for (Line line1 : lineList) {
-            if (showList.contains(line1.getLayerName())) {
-                line1.setShow(true);
-            } else {
-                line1.setShow(false);
-            }
-        }
+
+        }.execute();
     }
 
     public void forcedraw(final BaiduMap baiduMap){
