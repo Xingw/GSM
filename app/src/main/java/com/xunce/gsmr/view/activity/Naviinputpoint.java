@@ -168,6 +168,12 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
                         sendcurrentSearchItem();
                     }
                 })
+                .setPositiveButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
                 .create()
                 .show();
     }
