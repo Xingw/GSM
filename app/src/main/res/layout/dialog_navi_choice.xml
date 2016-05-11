@@ -60,16 +60,16 @@
         android:layout_margin="12dp"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btn_navi_foot"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_weight="1"
-            android:background="@color/window_bar_background"
-            android:text="步行导航"
-            android:textSize="@dimen/text_size_normal" />
+        <!--<Button-->
+            <!--android:id="@+id/btn_navi_foot"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@color/window_bar_background"-->
+            <!--android:text="步行导航"-->
+            <!--android:textSize="@dimen/text_size_normal" />-->
 
         <Button
             android:id="@+id/btn_navi_drive"
@@ -79,18 +79,18 @@
             android:layout_marginRight="4dp"
             android:layout_weight="1"
             android:background="@color/window_bar_background"
-            android:text="驾车导航"
+            android:text="开始导航"
             android:textSize="@dimen/text_size_normal" />
 
-        <Button
-            android:id="@+id/btn_navi_bus"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"
-            android:layout_weight="1"
-            android:background="@color/window_bar_background"
-            android:text="公交导航"
-            android:textSize="@dimen/text_size_normal" />
+        <!--<Button-->
+            <!--android:id="@+id/btn_navi_bus"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_marginLeft="4dp"-->
+            <!--android:layout_marginRight="4dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@color/window_bar_background"-->
+            <!--android:text="公交导航"-->
+            <!--android:textSize="@dimen/text_size_normal" />-->
     </LinearLayout>
 </LinearLayout>

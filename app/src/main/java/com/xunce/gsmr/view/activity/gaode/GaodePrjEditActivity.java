@@ -570,19 +570,19 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 handler.sendEmptyMessageDelayed(1,300);
             }
         });
-        Button FootButton = (Button) llnavidialog.findViewById(R.id.btn_navi_foot);
+        //Button FootButton = (Button) llnavidialog.findViewById(R.id.btn_navi_foot);
         Button DriveButton = (Button) llnavidialog.findViewById(R.id.btn_navi_drive);
-        Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
-        FootButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
-                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
-                    return;
-                }
-                Navistart(NAVI_FOOT,etStart.getText().toString(),etEnd.getText().toString());
-            }
-        });
+        //Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
+//        FootButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+//                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
+//                    return;
+//                }
+//                Navistart(NAVI_FOOT,etStart.getText().toString(),etEnd.getText().toString());
+//            }
+//        });
         DriveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -593,16 +593,16 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 Navistart(NAVI_DRIVE,etStart.getText().toString(),etEnd.getText().toString());
             }
         });
-        BusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
-                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
-                    return;
-                }
-                Navistart(NAVI_BUS,etStart.getText().toString(),etEnd.getText().toString());
-            }
-        });
+//        BusButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
+//                    ToastHelper.show(GaodePrjEditActivity.this,"请输入起点或终点名称");
+//                    return;
+//                }
+//                Navistart(NAVI_BUS,etStart.getText().toString(),etEnd.getText().toString());
+//            }
+//        });
         new AlertDialog.Builder(this)
                 .setTitle("导航")
                 .setView(llnavidialog)
@@ -618,7 +618,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
         }else {
             para.startName(start);
         }
-        if (start.contains("选点")){
+        if (end.contains("选点")){
             NaviLatLng latLng = parseEditText(endsearch.getValue());
             para.endPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
         }else {

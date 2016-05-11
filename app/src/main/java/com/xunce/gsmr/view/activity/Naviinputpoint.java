@@ -40,6 +40,7 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
     private KilometerMarkHolder kilometerMarkHolder;
     private SearchItem currentSearchItem;
     private List<SearchItem> historysearchItems;
+    private ArrayAdapter<String> adapter;
 
     public static void start(Activity activity, String input, boolean inputstyle, boolean mapstyle) {
         Intent intent = new Intent(activity, Naviinputpoint.class);
@@ -61,7 +62,7 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
 
     private void initview() {
         final List<String> historys = getSearchItemList();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,
                 historys);
         ListView listView = (ListView) findViewById(R.id.lv_navi_history);
         listView.setAdapter(adapter);
@@ -108,11 +109,15 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
      * 删除所有历史记录
      */
     private void deleteHistory() {
+        List<SearchItem> removelist = realm.where(SearchItem.class).findAll();
         realm.beginTransaction();
-        for (SearchItem searchItem : realm.where(SearchItem.class).findAll()) {
-            searchItem.removeFromRealm();
+        for (int i = 0; i < removelist.size(); i++) {
+            removelist.get(i).removeFromRealm();
         }
         realm.commitTransaction();
+        adapter.clear();
+        adapter.add("我的位置");
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -161,8 +166,7 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         KilometerMark kilometerMark = kilometerMarkHolder.getKilometerMarkList().get(which);
-                        SearchItem searchItem = new SearchItem(kilometerMark.getText() + " -- "+
-                                kilometerMark.getLatitude() + "," + kilometerMark.getLongitude(),
+                        SearchItem searchItem = new SearchItem("公里标选点" + " -- "+ kilometerMark.getText(),
                                 kilometerMark.getLatitude() + "," + kilometerMark.getLongitude());
                         setInputText(searchItem);
                         sendcurrentSearchItem();
@@ -190,9 +194,7 @@ public class Naviinputpoint extends AppCompatActivity implements View.OnClickLis
         list.add("我的位置");
         if (historysearchItems == null || historysearchItems.size() == 0) return list;
         for (SearchItem searchItem : historysearchItems) {
-            if (searchItem.getText().equals(searchItem.getValue())) {
                 list.add(searchItem.getText());
-            }
         }
         return list;
     }
