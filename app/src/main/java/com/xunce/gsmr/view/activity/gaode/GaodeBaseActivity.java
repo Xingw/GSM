@@ -1,5 +1,8 @@
 package com.xunce.gsmr.view.activity.gaode;
 
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -16,8 +19,10 @@ import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
-import com.xunce.gsmr.model.PrjItemRealmObject;
 import com.xunce.gsmr.model.gaodemap.MarkerHolder;
+import com.xunce.gsmr.util.gps.GPSUtil;
+import com.xunce.gsmr.util.gps.LocateHelper;
+import com.xunce.gsmr.util.gps.PositionUtil;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 
@@ -52,6 +57,8 @@ public class GaodeBaseActivity extends AppCompatActivity {
      * 地图上的标记点管理器
      */
     private MarkerHolder markerHolder;
+    private LocationManager locationManager;
+    private boolean Firstin = false;
 
 
     /**
@@ -91,6 +98,16 @@ public class GaodeBaseActivity extends AppCompatActivity {
         aMap.animateCamera(cameraUpdate);
     }
 
+    /**
+     * 改变方向
+     *
+     * @param bearing
+     */
+    public void changeBearing(float bearing) {
+        CameraUpdate cameraUpdate = CameraUpdateFactory.changeBearing(bearing);
+        aMap.animateCamera(cameraUpdate);
+    }
+
     public void animateToPoint(LatLng latLng,float zoom) {
         CameraUpdate cameraUpdate = CameraUpdateFactory.changeLatLng(latLng);
         aMap.animateCamera(cameraUpdate);
@@ -107,6 +124,7 @@ public class GaodeBaseActivity extends AppCompatActivity {
         LatLng latLng = new LatLng(currentAMapLocation.getLatitude(),
                 currentAMapLocation.getLongitude());
         animateToPoint(latLng);
+        //changeBearing(currentAMapLocation.getBearing());
         //显示小蓝点
         mListener.onLocationChanged(currentAMapLocation);
     }
@@ -122,6 +140,10 @@ public class GaodeBaseActivity extends AppCompatActivity {
             if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
                 currentAMapLocation = aMapLocation;
                 //Timber.e("我收到了一条定位...\t" + "定位结果为:\t" + aMapLocation.getErrorCode());
+                if (Firstin){
+                    animateToMyLocation();
+                    Firstin=false;
+                }
             }
         }
     };
@@ -132,18 +154,31 @@ public class GaodeBaseActivity extends AppCompatActivity {
     public void initLocate() {
         locationClient = new AMapLocationClient(this);
         locationOption = new AMapLocationClientOption();
-        // 设置定位模式
-        if(PreferenceHelper.getInstance(this).getIsWifiLocateMode(this)) {
-            locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        }else{
-            locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
-        }
+        locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         locationOption.setInterval(1000);
         // 设置定位监听
         locationClient.setLocationListener(locationListener);
         locationClient.setLocationOption(locationOption);
-        //开启定位
-        locationClient.startLocation();
+        // 设置定位模式
+        if(PreferenceHelper.getInstance(this).getIsWifiLocateMode(this)) {
+            //开启定位
+            locationClient.startLocation();
+        }else{
+            locationManager = GPSUtil.getCORSLocationManager(this);
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (location != null) {
+                LatLng latLng = PositionUtil.gps84_To_Gcj02(location.getLatitude(),location
+                        .getLongitude());
+                location.setLongitude(latLng.longitude);
+                location.setLatitude(latLng.latitude);
+                currentAMapLocation = new AMapLocation(location);
+                animateToPoint(new LatLng(currentAMapLocation.getLatitude(),currentAMapLocation
+                        .getLongitude()));
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, (float) 0.01,
+                    GPSlocationListener);
+        }
+
         //设置定位UI
         aMap.setLocationSource(new LocationSource() {
             @Override
@@ -167,13 +202,52 @@ public class GaodeBaseActivity extends AppCompatActivity {
      */
     public void changeLocateMode(){
         if( PreferenceHelper.getInstance(this).getIsWifiLocateMode(this)){
+            if (locationManager!=null){
+                locationManager.removeUpdates(GPSlocationListener);
+                locationManager = null;
+            }
             locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            locationClient.startLocation();
         }else{
-            locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Device_Sensors);
+            if (locationClient !=null){
+                locationClient.stopLocation();
+            }
+            locationManager = GPSUtil.getCORSLocationManager(this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, (float) 0.01,
+                    GPSlocationListener);
+            //locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode
+            //        .Device_Sensors);
         }
-        locationClient.startLocation();
+
     }
 
+    private LocationListener GPSlocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location!=null){
+                LatLng latLng = PositionUtil.gps84_To_Gcj02(location.getLatitude(),location
+                        .getLongitude());
+                location.setLongitude(latLng.longitude);
+                location.setLatitude(latLng.latitude);
+                currentAMapLocation = new AMapLocation(location);
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
     //生命周期---------------------------------------------------------
     @Override
     protected void onResume() {

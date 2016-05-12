@@ -83,7 +83,6 @@ public class MarkerHolder {
                 SQLiteDatabase.OPEN_READWRITE);
         markerOnDbList = DBHelper.getMarkerList(db);
         db.close();
-        ToastHelper.show(context, "数据库读取失败，请尝试重新打开程序");
         for (int i = 0; i < markerOnDbList.size(); i++) {
             LatLng latLng = markerOnDbList.get(i).getBaiduLatLng();
             BitmapDescriptor bitmapDescriptor;

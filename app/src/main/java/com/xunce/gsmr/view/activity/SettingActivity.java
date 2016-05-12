@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -31,16 +30,13 @@ import com.xunce.gsmr.model.event.LocateModeChangeEvent;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 import com.xunce.gsmr.util.view.ViewHelper;
+import com.xunce.gsmr.view.activity.gaode.GaodePrjEditActivity;
 import com.xunce.gsmr.view.style.TransparentStyle;
 import com.zhd.zhdcorsnet.CorsGprsService;
 import com.zhd.zhdcorsnet.NetHelper;
 import com.zhd.zhdcorsnet.SourceNode;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 
 import de.greenrobot.event.EventBus;
 import timber.log.Timber;
@@ -256,23 +252,12 @@ public class SettingActivity extends AppCompatActivity {
         usernameET.setText(PreferenceHelper.getInstance(this).getCORSusername(this));
         passwordET.setText(PreferenceHelper.getInstance(this).getCORSpassword(this));
 
-        //Spinner初始化
-        final Spinner sourceNodeSpinner = (Spinner) llPrjName.findViewById(R.id.sp_cors_sourcecode);
-        final List<String> sourceNodeArrayList = new ArrayList<>();
-        sourceNodeArrayList.add(PreferenceHelper.getInstance(this).getCORSnode(this));
-        NodeAdapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,sourceNodeArrayList);
-        sourceNodeSpinner.setAdapter(NodeAdapter);
-        sourceNodeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentNode = sourceNodeArrayList.get(position);
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-        Button getNodeBtn = (Button) llPrjName.findViewById(R.id.id_btn_get_cors_node);
+        String node = PreferenceHelper.getInstance(this).getCORSnode(this);
+        final Button getNodeBtn = (Button) llPrjName.findViewById(R.id.id_btn_get_cors_node);
+        if (!node.isEmpty()){
+            getNodeBtn.setText(node);
+            currentNode = node;
+        }
         getNodeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -293,14 +278,10 @@ public class SettingActivity extends AppCompatActivity {
                 sourceNodeList = NetHelper.GetSourceNode(ip,port);
                 if (sourceNodeList == null || sourceNodeList.size()==0){
                     ToastHelper.show(SettingActivity.this,"查询失败");
+                    showNodeInputDialog(getNodeBtn);
                     return;
                 }
-                sourceNodeArrayList.clear();
-                for (SourceNode sourceNode : sourceNodeList) {
-                    sourceNodeArrayList.add(sourceNode.toString());
-                    NodeAdapter = new ArrayAdapter(getBaseContext(),R.layout.support_simple_spinner_dropdown_item,sourceNodeArrayList);
-                    sourceNodeSpinner.setAdapter(NodeAdapter);
-                }
+                showNodeSelectDialog(sourceNodeList,getNodeBtn);
             }
         });
         RadioGroup reConnectRG = (RadioGroup) llPrjName.findViewById(R.id.rg_cors_choice);
@@ -359,10 +340,11 @@ public class SettingActivity extends AppCompatActivity {
                             ToastHelper.show(getBaseContext(),"请输入PASSWORD");
                             return;
                         }
-                        if (currentNode == null){
+                        if (currentNode == null || currentNode.isEmpty()){
                             ToastHelper.show(getBaseContext(),"请选择Node节点");
                             return;
                         }
+                        currentNode = currentNode.toUpperCase();
                         Intent intent = new Intent(getApplicationContext(), CorsGprsService.class);
                         intent.putExtra("ip",ip);
                         intent.putExtra("port",port);
@@ -371,6 +353,8 @@ public class SettingActivity extends AppCompatActivity {
                         intent.putExtra("sourcenode",currentNode);
                         intent.putExtra("reconnect",reconnect);
                         getApplicationContext().startService(intent);
+                        Logger.d("ip:%s\nport:%s\nusername:%s\npassword:%s\nsourcenode:%s\n",ip,
+                                port,username,password,currentNode);
                         //保存信息
                         PreferenceHelper.getInstance(getBaseContext()).setCORSip(getBaseContext(),ip);
                         PreferenceHelper.getInstance(getBaseContext()).setCORSport(getBaseContext(),port);
@@ -388,6 +372,59 @@ public class SettingActivity extends AppCompatActivity {
                 })
                 .create();
         dialog.show();
+    }
+
+    private void showNodeInputDialog(final Button getNodeBtn) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(this).
+                inflate(R.layout.dialog_prj_name, null);
+        final EditText etPrjName = (EditText) llPrjName.findViewById(R.id.id_et);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setTitle("输入源节点")
+                .setMessage("未找到可以使用的源节点，请尝试手动输入")
+                .setView(llPrjName)
+                .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNodeBtn.setText(etPrjName.getText().toString());
+               currentNode = etPrjName.getText().toString();
+                dialog.dismiss();
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
+    }
+
+    private void showNodeSelectDialog(List<SourceNode> sourceNodeList, final Button getNodeBtn) {
+        final String[] Node = new String[sourceNodeList.size()];
+        for (int i = 0; i < sourceNodeList.size(); i++) {
+            Node[i] = sourceNodeList.get(i).Authentication;
+        }
+        new AlertDialog.Builder(this)
+                .setItems(Node, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getNodeBtn.setText(Node[which]);
+                        currentNode = Node[which];
+                    }
+                })
+                .setPositiveButton("关闭", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .create()
+                .show();
     }
 
     /**
