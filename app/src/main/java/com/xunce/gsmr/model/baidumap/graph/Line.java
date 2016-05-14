@@ -6,6 +6,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
 import com.xunce.gsmr.model.baidumap.openGLLatLng;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class Line extends Graph {
                         .points(points);
                 polyline = baiduMap.addOverlay(ooPolyline);
             } else {
-                polyline.setVisible(true);
+                //polyline.setVisible(true);
             }
         }
     }
@@ -125,5 +126,18 @@ public class Line extends Graph {
                 .color(lineColor)
                 .points(points);
         baiduMap.addOverlay(ooPolyline);
+    }
+
+    /**
+     * 判断是否在视野范围内
+     * @param baiduMap
+     * @return
+     */
+    public boolean isinBound(BaiduMap baiduMap){
+        LatLngBounds bound = baiduMap.getMapStatus().bound;
+        if (bound.contains(latLngBegin)||bound.contains(latLngEnd)){
+            return true;
+        }
+        return false;
     }
 }

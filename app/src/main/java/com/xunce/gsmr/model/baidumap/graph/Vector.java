@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * Created by Xingw on 2016/4/14.
  */
-public class Vector extends Graph{
+public class    Vector extends Graph{
     private static final int POLYLINE_WIDTH = 6;
 
 

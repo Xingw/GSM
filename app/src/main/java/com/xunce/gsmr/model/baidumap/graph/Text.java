@@ -5,6 +5,7 @@ import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.TextOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
 
 /**
  * 地图上的文字
@@ -68,7 +69,7 @@ public class Text extends Graph {
                         .position(latLng);
                 text = baiduMap.addOverlay(ooText);
             } else {
-                text.setVisible(true);
+                //text.setVisible(true);
             }
         }
     }
@@ -117,5 +118,13 @@ public class Text extends Graph {
                 .rotate(-rotate)
                 .position(latLng);
         baiduMap.addOverlay(ooText);
+    }
+
+    public boolean isinBound(BaiduMap baiduMap){
+        LatLngBounds bound = baiduMap.getMapStatus().bound;
+        if (bound.contains(latLng)){
+            return true;
+        }
+        return false;
     }
 }

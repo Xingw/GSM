@@ -169,13 +169,23 @@ public class BaiduRailWayHolder {
             @Override
             protected Void doInBackground(Void... params) {
                 for (Line line : lineList) {
+                    if (line.isinBound(baiduMap)){
+                        line.draw(baiduMap,clear);
+                    }
+                }
+                for (Text text : textList) {
+                    if (text.isinBound(baiduMap)) {
+                        text.draw(baiduMap, clear);
+                    }
+                }
+                for (Vector vector : vectorList) {
+                    vector.draw(baiduMap,clear);
+                }
+                for (Line line : lineList) {
                     line.draw(baiduMap,clear);
                 }
                 for (Text text : textList) {
                     text.draw(baiduMap,clear);
-                }
-                for (Vector vector : vectorList) {
-                    vector.draw(baiduMap,clear);
                 }
                 return null;
             }

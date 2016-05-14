@@ -290,7 +290,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         swMapDatabtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawing)return;
+                if (drawing) {
+                    ToastHelper.show(BaiduPrjEditActivity.this,"地图数据正在绘制中，请稍后");
+                    return;
+                }
                 if ((!isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
                     ToastHelper.show(BaiduPrjEditActivity.this, "请先加载数据文件");
                 } else if (!isChecked && railWayHolder != null) {
@@ -841,12 +844,12 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      */
     public void onEventMainThread(ProgressbarEvent progressbarEvent) {
         if (progressbarEvent.isShow()) {
-            tvPbComment.setText("正在加载，请稍后。");
-            pbBlock.setVisibility(View.VISIBLE);
+//            tvPbComment.setText("正在加载，请稍后。");
+//            pbBlock.setVisibility(View.VISIBLE);
             drawing = true;
         } else {
             drawing = false;
-            pbBlock.setVisibility(View.INVISIBLE);
+//            pbBlock.setVisibility(View.INVISIBLE);
         }
     }
 

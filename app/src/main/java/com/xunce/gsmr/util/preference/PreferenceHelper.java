@@ -232,7 +232,7 @@ public class PreferenceHelper {
         if (sharedPreferences == null) {
             sharedPreferences = context.getSharedPreferences(PREFERENCE, Context.MODE_PRIVATE);
         }
-        return sharedPreferences.getBoolean(PREFERENCE_CORS_RECONNECT, false);
+        return sharedPreferences.getBoolean(PREFERENCE_CORS_RECONNECT, true);
     }
 
     /**
