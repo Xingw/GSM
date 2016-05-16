@@ -7,6 +7,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.Polyline;
 import com.baidu.mapapi.map.PolylineOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.mapapi.model.LatLngBounds;
 import com.xunce.gsmr.model.baidumap.graph.Point;
 import com.xunce.gsmr.model.baidumap.openGLLatLng;
 import com.xunce.gsmr.util.gps.PositionUtil;
@@ -103,7 +104,7 @@ public class    Vector extends Graph{
                 initPolylineOptions();
                 polyline = baiduMap.addOverlay(polylineOptions);
             } else {
-                polyline.setVisible(true);
+//                polyline.setVisible(true);
             }
         }
     }
@@ -137,5 +138,16 @@ public class    Vector extends Graph{
     public void forcedraw(BaiduMap baiduMap) {
         initPolylineOptions();
         baiduMap.addOverlay(polylineOptions);
+    }
+
+    public boolean isinBound(BaiduMap baiduMap) {
+        LatLngBounds bound = baiduMap.getMapStatus().bound;
+
+        for (Point point : pointList) {
+            if (bound.contains(point.getLatLng())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

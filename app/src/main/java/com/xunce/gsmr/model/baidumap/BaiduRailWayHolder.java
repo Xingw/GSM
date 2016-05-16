@@ -169,8 +169,8 @@ public class BaiduRailWayHolder {
             @Override
             protected Void doInBackground(Void... params) {
                 for (Line line : lineList) {
-                    if (line.isinBound(baiduMap)){
-                        line.draw(baiduMap,clear);
+                    if (line.isinBound(baiduMap)) {
+                        line.draw(baiduMap, clear);
                     }
                 }
                 for (Text text : textList) {
@@ -179,13 +179,17 @@ public class BaiduRailWayHolder {
                     }
                 }
                 for (Vector vector : vectorList) {
-                    vector.draw(baiduMap,clear);
+                    if (vector.isinBound(baiduMap))
+                        vector.draw(baiduMap, clear);
                 }
                 for (Line line : lineList) {
-                    line.draw(baiduMap,clear);
+                    line.draw(baiduMap, clear);
                 }
                 for (Text text : textList) {
-                    text.draw(baiduMap,clear);
+                    text.draw(baiduMap, clear);
+                }
+                for (Vector vector : vectorList) {
+                    vector.draw(baiduMap, clear);
                 }
                 return null;
             }
@@ -220,10 +224,10 @@ public class BaiduRailWayHolder {
             protected Void doInBackground(Void... params) {
                 Logger.d("开始绘制直线");
                 for (Line line : lineList) {
-                    line.draw(baiduMap,clear);
+                    line.draw(baiduMap, clear);
                 }
                 for (Vector vector : vectorList) {
-                    vector.draw(baiduMap,clear);
+                    vector.draw(baiduMap, clear);
                     //Timber.e("我画了一条vector");
                 }
                 return null;
@@ -248,7 +252,7 @@ public class BaiduRailWayHolder {
             @Override
             protected Void doInBackground(Void... params) {
                 for (Text text : textList) {
-                    text.draw(baiduMap,clear);
+                    text.draw(baiduMap, clear);
                 }
                 return null;
             }
@@ -446,7 +450,7 @@ public class BaiduRailWayHolder {
         }.execute();
     }
 
-    public void forcedraw(final BaiduMap baiduMap){
+    public void forcedraw(final BaiduMap baiduMap) {
         new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
