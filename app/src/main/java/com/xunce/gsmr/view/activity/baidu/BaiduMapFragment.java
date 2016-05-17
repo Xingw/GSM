@@ -5,6 +5,9 @@ import android.app.Fragment;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,7 +39,9 @@ import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 import com.xunce.gsmr.model.baidumap.MarkerHolder;
 import com.xunce.gsmr.model.baidumap.openGLLatLng;
 import com.xunce.gsmr.model.event.BaiduFragmentInitFinishEvent;
+import com.xunce.gsmr.util.gps.GPSUtil;
 import com.xunce.gsmr.util.gps.MapHelper;
+import com.xunce.gsmr.util.gps.PositionUtil;
 import com.xunce.gsmr.util.preference.PreferenceHelper;
 import com.xunce.gsmr.util.view.ToastHelper;
 
@@ -111,6 +116,7 @@ public class BaiduMapFragment extends Fragment implements BaiduMap.OnMapDrawFram
      */
     private List<openGLLatLng> latLngPolygon = new ArrayList<>();
     private boolean cleanlatLng = false;
+    private LocationManager locationManager;
 
     /**
      * 获取Instance
@@ -238,45 +244,100 @@ public class BaiduMapFragment extends Fragment implements BaiduMap.OnMapDrawFram
      * 初始化LocationClient
      */
     public void initLocationClient() {
-        //创建client
-        locationClient = new LocationClient(context);
-        final LocationClientOption locateOptions = new LocationClientOption();
         //设置Options
         if (PreferenceHelper.getInstance(context).getIsWifiLocateMode(context)) {
-            locateOptions.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
-        } else {
-            locateOptions.setLocationMode(LocationClientOption.LocationMode.Device_Sensors);
-        }
-        locateOptions.setCoorType("bd09ll");    //返回的定位结果是百度经纬度,默认值gcj02
-        locateOptions.setScanSpan(1000);        //设置发起定位请求的间隔时间为5000ms
-        locateOptions.setIsNeedAddress(true);   //返回的定位结果包含地址信息
-        locateOptions.setNeedDeviceDirect(true);//返回的定位结果包含手机机头的方向
-        locationClient.setLocOption(locateOptions);
-        //注册监听事件
-        locationClient.registerLocationListener(new BDLocationListener() {
-            @Override
-            public void onReceiveLocation(BDLocation bdLocation) {
-                if (bdLocation != null) {
-                    //如果是第一次获取到数据----将地图定位到改点
-                    currentBDLocation = bdLocation;
-                    //更新我的位置
-                    MyLocationData locData = new MyLocationData.Builder()
-                            .accuracy(currentBDLocation.getRadius())
-                            .latitude(currentBDLocation.getLatitude())
-                            .longitude(currentBDLocation.getLongitude()).build();
-                    baiduMap.setMyLocationData(locData);
-                    //如果是第一次进入---地图定位到我的位置
-                    if (isFistIn) {
-                        locate();
-                        isFistIn = false;
+            if (locationManager!=null){
+                locationManager.removeUpdates(GPSlocationListener);
+                locationManager = null;
+            }
+            //创建client
+            locationClient = new LocationClient(context);
+            final LocationClientOption locateOptions = new LocationClientOption();
+            locateOptions.setCoorType("bd09ll");    //返回的定位结果是百度经纬度,默认值gcj02
+            locateOptions.setScanSpan(1000);        //设置发起定位请求的间隔时间为5000ms
+            locateOptions.setIsNeedAddress(true);   //返回的定位结果包含地址信息
+            locateOptions.setNeedDeviceDirect(true);//返回的定位结果包含手机机头的方向
+            locationClient.setLocOption(locateOptions);
+            //注册监听事件
+            locationClient.registerLocationListener(new BDLocationListener() {
+                @Override
+                public void onReceiveLocation(BDLocation bdLocation) {
+                    if (bdLocation != null) {
+                        //如果是第一次获取到数据----将地图定位到改点
+                        currentBDLocation = bdLocation;
+                        //更新我的位置
+                        MyLocationData locData = new MyLocationData.Builder()
+                                .accuracy(currentBDLocation.getRadius())
+                                .latitude(currentBDLocation.getLatitude())
+                                .longitude(currentBDLocation.getLongitude()).build();
+                        baiduMap.setMyLocationData(locData);
+                        //如果是第一次进入---地图定位到我的位置
+                        if (isFistIn) {
+                            locate();
+                            isFistIn = false;
+                        }
                     }
                 }
+            });
+            locateOptions.setLocationMode(LocationClientOption.LocationMode.Hight_Accuracy);
+            //启动定位
+            locationClient.start();
+        } else {
+            if (locationClient !=null){
+                locationClient.stop();
             }
-        });
-        //启动定位
-        locationClient.start();
+            locationManager = GPSUtil.getCORSLocationManager(getActivity());
+            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            if (location != null) {
+                LatLng latLng = PositionUtil.Gps84_To_bd09(location.getLatitude(),location
+                        .getLongitude());
+                location.setLongitude(latLng.longitude);
+                location.setLatitude(latLng.latitude);
+                currentBDLocation = new BDLocation();
+                currentBDLocation.setLatitude(location.getLatitude());
+                currentBDLocation.setLongitude(location.getLongitude());
+                currentBDLocation.setAltitude(location.getAltitude());
+                currentBDLocation.setDirection(location.getBearing());
+                animateToPoint(new LatLng(currentBDLocation.getLatitude(),currentBDLocation
+                        .getLongitude()));
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, (float) 0.01,
+                    GPSlocationListener);
+        }
     }
 
+    private LocationListener GPSlocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location!=null){
+                LatLng latLng = PositionUtil.Gps84_To_bd09(location.getLatitude(),location
+                        .getLongitude());
+                location.setLongitude(latLng.longitude);
+                location.setLatitude(latLng.latitude);
+                currentBDLocation = new BDLocation();
+                currentBDLocation.setLatitude(location.getLatitude());
+                currentBDLocation.setLongitude(location.getLongitude());
+                currentBDLocation.setAltitude(location.getAltitude());
+                currentBDLocation.setDirection(location.getBearing());
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
     /**
      * 定位到当前接收到的定位点
      */
