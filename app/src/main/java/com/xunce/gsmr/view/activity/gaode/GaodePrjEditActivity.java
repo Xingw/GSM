@@ -688,6 +688,10 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
 
         builder.create().show();
     }
+
+    /**
+     * 图层选择对话框
+     */
     private void showChoiceLayerDialog() {
         if (layername == null) {
             layername = new String[railWayHolder.getLayerList().size()];

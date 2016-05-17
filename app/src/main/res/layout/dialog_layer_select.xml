@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/lv_dialog_layer_select"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="@color/lucency"
+        android:dividerHeight="0dp"
+        tools:listitem="@layout/view_lv_item_layer_select"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btn_dialog_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/dialog_layer_select_button"
+            android:text="全选"
+            android:textColor="@color/btn_green"/>
+
+        <Button
+            android:id="@+id/btn_dialog_select_opposite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/dialog_layer_select_button"
+            android:text="反选"
+            android:textColor="@color/btn_green"/>
+
+        <Button
+            android:id="@+id/btn_dialog_select_none"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/dialog_layer_select_button"
+            android:text="全不选"
+            android:textColor="@color/btn_green"/>
+    </LinearLayout>
+
+</LinearLayout>
