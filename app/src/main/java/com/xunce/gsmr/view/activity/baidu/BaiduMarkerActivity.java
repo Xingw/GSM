@@ -265,6 +265,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                 MarkerInfoEditActivity.start(this, markerItem);
                 break;
             case android.R.id.home:
+                if (requestCode ==Constant.REQUEST_CODE_NAVI_MAP)return true;
                 if (requestCode == BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY) {
                     finish();
                     return true;
@@ -278,6 +279,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (requestCode ==Constant.REQUEST_CODE_NAVI_MAP)return;
         if (requestCode == BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY) {
             finish();
             return;
