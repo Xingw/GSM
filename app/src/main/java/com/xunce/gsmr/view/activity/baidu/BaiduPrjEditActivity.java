@@ -440,23 +440,23 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             public void onClick(View v) {
                 switch (ModeValue){
                     case Constant.MODE_MAP_2D: {//2D地图切换至3D地图
-                        ModeValue = Constant.MODE_MAP_3D;
-                        mapModeBtn.setIcon(R.drawable.map_action_mode_3d);
-                        baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_NORMAL);
-                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(-45).build();
-                        MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
-                        baiduMapFragment.getBaiduMap().animateMapStatus(msu);
-                        break;
-                    }
-                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
                         ModeValue = Constant.MODE_MAP_SATELLITE;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
                         baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_SATELLITE);
-                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(0).build();
-                        MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
-                        baiduMapFragment.getBaiduMap().animateMapStatus(msu);
+//                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(-45).build();
+//                        MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
+//                        baiduMapFragment.getBaiduMap().animateMapStatus(msu);
                         break;
                     }
+//                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
+//                        ModeValue = Constant.MODE_MAP_SATELLITE;
+//                        mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
+//                        baiduMapFragment.getBaiduMap().setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+//                        MapStatus mapStatus = new MapStatus.Builder(baiduMapFragment.getBaiduMap().getMapStatus()).overlook(0).build();
+//                        MapStatusUpdate msu = MapStatusUpdateFactory.newMapStatus(mapStatus);
+//                        baiduMapFragment.getBaiduMap().animateMapStatus(msu);
+//                        break;
+//                    }
                     case Constant.MODE_MAP_SATELLITE: {//卫星地图切换至2D地图
                         ModeValue = Constant.MODE_MAP_2D;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_2d);
