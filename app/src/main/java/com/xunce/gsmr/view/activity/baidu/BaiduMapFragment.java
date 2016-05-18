@@ -287,6 +287,7 @@ public class BaiduMapFragment extends Fragment implements BaiduMap.OnMapDrawFram
                 locationClient.stop();
             }
             locationManager = GPSUtil.getCORSLocationManager(getActivity());
+            if (locationManager == null) return;
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
             if (location != null) {

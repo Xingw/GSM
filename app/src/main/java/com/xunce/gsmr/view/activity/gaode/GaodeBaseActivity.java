@@ -165,18 +165,20 @@ public class GaodeBaseActivity extends AppCompatActivity {
             locationClient.startLocation();
         }else{
             locationManager = GPSUtil.getCORSLocationManager(this);
-            Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if (location != null) {
-                LatLng latLng = PositionUtil.gps84_To_Gcj02(location.getLatitude(),location
-                        .getLongitude());
-                location.setLongitude(latLng.longitude);
-                location.setLatitude(latLng.latitude);
-                currentAMapLocation = new AMapLocation(location);
-                animateToPoint(new LatLng(currentAMapLocation.getLatitude(),currentAMapLocation
-                        .getLongitude()));
+            if (locationManager != null) {
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location != null) {
+                    LatLng latLng = PositionUtil.gps84_To_Gcj02(location.getLatitude(), location
+                            .getLongitude());
+                    location.setLongitude(latLng.longitude);
+                    location.setLatitude(latLng.latitude);
+                    currentAMapLocation = new AMapLocation(location);
+                    animateToPoint(new LatLng(currentAMapLocation.getLatitude(), currentAMapLocation
+                            .getLongitude()));
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, (float) 0.01,
+                        GPSlocationListener);
             }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, (float) 0.01,
-                    GPSlocationListener);
         }
 
         //设置定位UI
@@ -213,6 +215,7 @@ public class GaodeBaseActivity extends AppCompatActivity {
                 locationClient.stopLocation();
             }
             locationManager = GPSUtil.getCORSLocationManager(this);
+            if (locationManager == null) return;
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,2000, (float) 0.01,
                     GPSlocationListener);
             //locationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode
