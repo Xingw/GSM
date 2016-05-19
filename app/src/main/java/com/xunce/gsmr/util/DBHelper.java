@@ -394,7 +394,7 @@ public class DBHelper {
     public static boolean createDbData(String dbPath, String prjName){
         File file = new File(dbPath);
         file.getParentFile().mkdirs();
-        if (file.exists())return false;
+        if (file.exists())file.delete();
         SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(dbPath, null);
         db.execSQL("create table "+Constant.TABLE_PROJECT_INFO+"("+DBConstant.prjInfo_coloum_mapInfo +
                 " INTEGER, "+DBConstant.prjInfo_coloum_prjName+" TEXT, "+DBConstant.prjInfo_coloum_creationTime+" TEXT)");

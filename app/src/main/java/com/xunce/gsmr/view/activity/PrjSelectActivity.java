@@ -338,6 +338,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deletePrj(prjItemRealmObject);
+                adapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
         };
@@ -445,7 +446,7 @@ public class PrjSelectActivity extends AppCompatActivity {
                     } else {
                         //将新的prjItem保存进数据库
                         if (!DBHelper.createDbData(Constant.DbTempPath + prjName + ".db", prjName)) {
-                            ToastHelper.showSnack(context, container, "该工程已存在，请重新命名或选择导入工程");
+                            ToastHelper.showSnack(context, container, "创建失败");
                         } else {
                             PrjItemRealmObject prjItemRealmObject = new PrjItemRealmObject(prjName, Constant.DbTempPath + prjName +
                                     ".db", DBHelper.getTimeNow());
