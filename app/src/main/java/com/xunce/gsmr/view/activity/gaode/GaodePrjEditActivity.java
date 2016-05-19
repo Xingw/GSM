@@ -416,7 +416,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                     case Constant.MODE_MAP_2D: {//2D地图切换至卫星地图
                         ModeValue = Constant.MODE_MAP_SATELLITE;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
-                        getaMap().setMapType(AMap.MAP_TYPE_NORMAL);
+                        getaMap().setMapType(AMap.MAP_TYPE_SATELLITE);
                         break;
                     }
 //                    case Constant.MODE_MAP_3D: {//3D地图切换至卫星地图
