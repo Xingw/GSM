@@ -19,7 +19,7 @@ public class GPSUtil {
                 .LOCATION_SERVICE);
         if (!locationManager.getAllProviders().contains(LocationManager.GPS_PROVIDER))
         {
-            ToastHelper.show(context,"对不起，您的设备不支持CORS服务");
+            ToastHelper.show(context,"对不起，您的设备无法使用GPS服务，请切换至wifi定位");
             return null;
         }
        return locationManager;

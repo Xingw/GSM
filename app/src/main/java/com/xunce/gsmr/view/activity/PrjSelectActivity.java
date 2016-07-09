@@ -7,6 +7,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
@@ -47,6 +51,7 @@ import com.xunce.gsmr.view.style.TransparentStyle;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.security.Provider;
 import java.util.List;
 
 import io.realm.Realm;
@@ -54,7 +59,8 @@ import io.realm.Realm;
 /**
  * 主界面选择工程的Activity Created by ssthouse on 2015/7/17.
  */
-public class PrjSelectActivity extends AppCompatActivity {
+public class PrjSelectActivity extends AppCompatActivity implements LocationListener{
+    protected LocationManager locationManager;
     private static final int REQUEST_CODE_LOAD_DB = 1000;
     private static String EXTRA_KEY_IS_CALLED = "is_called_by_prj_edit";
     private ListView lv;
@@ -97,9 +103,9 @@ public class PrjSelectActivity extends AppCompatActivity {
                 //判断地图类型--启动Activity
                 if (PreferenceHelper.getInstance(PrjSelectActivity.this).getMapType()
                         == PreferenceHelper.MapType.BAIDU_MAP) {
-                    BaiduPrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem(prjItemRealmObject));
+                    BaiduPrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem(prjItemRealmObject),getLocation());
                 } else {
-                    GaodePrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem(prjItemRealmObject));
+                    GaodePrjEditActivity.start(PrjSelectActivity.this, DBHelper.toPrjItem(prjItemRealmObject),getLocation());
                 }
                 finish();
             }
@@ -107,8 +113,91 @@ public class PrjSelectActivity extends AppCompatActivity {
 
         //初始化View
         initView();
+
+        //初始化定位
+        initLocationManager();
     }
 
+    /**
+     * 获取当前位置
+     * @return
+     */
+    private Location getLocation(){
+        try {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+                Logger.w("使用Network定位");
+                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if (location == null){
+                    //如果没有网络定位数据，检查GPS定位数据是否存在
+                    location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                }
+                if (location != null) {
+                    Logger.d("返回了location");
+                    return location;
+                }
+            }else {
+                Logger.w("使用GPS定位");
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                if (location == null){
+                    //如果没有GPS定位数据，检查网络定位数据是否存在
+                    location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                }
+                if(location != null){
+                    Logger.d("返回了location");
+                    return location;
+                }
+            }
+        }catch (Exception e){
+            Logger.d("捕捉到异常%s",e.toString());
+        }
+       return null;
+    }
+
+    /**
+     * 初始化定位系统
+     */
+    private void initLocationManager(){
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if(locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)){
+            Logger.w("使用Network定位");
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, locationListener);
+        }else {
+            Logger.w("使用GPS定位");
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, locationListener);
+        }
+    }
+
+    LocationListener locationListener = new LocationListener() {
+
+        // Provider的状态在可用、暂时不可用和无服务三个状态直接切换时触发此函数
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        // Provider被enable时触发此函数，比如GPS被打开
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        // Provider被disable时触发此函数，比如GPS被关闭
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+
+        //当坐标改变时触发此函数，如果Provider传进相同的坐标，它就不会被触发
+        @Override
+        public void onLocationChanged(Location location) {
+            if (location != null) {
+                Logger.e("Location changed : Lat: "
+                        + location.getLatitude() + " Lng: "
+                        + location.getLongitude());
+            }
+        }
+    };
     /**
      * 检查数据库是否存在 不存在的话就删除这个内容
      */
@@ -175,10 +264,10 @@ public class PrjSelectActivity extends AppCompatActivity {
                     if (PreferenceHelper.getInstance(PrjSelectActivity.this).getMapType()
                             == PreferenceHelper.MapType.BAIDU_MAP) {
                         BaiduPrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
-                                .get(position));
+                                .get(position),getLocation());
                     } else {
                         GaodePrjEditActivity.start(PrjSelectActivity.this, adapter.getPrjItemList()
-                                .get(position));
+                                .get(position),getLocation());
                     }
                 }
             }
@@ -201,7 +290,6 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isInSelectMode) {
-                    btnAdd.setVisibility(View.GONE);
                     btnAdd.setImageResource(R.drawable.fab_add);
                     adapter.CheckBox_Moveout();
                     isInSelectMode = false;
@@ -236,7 +324,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialogBuilder.dismiss();
-                showMakesureDeleteDialog(context,prjItem.toRealmObject(realm));
+                showMakesureDeleteDialog(context, prjItem.toRealmObject(realm), prjItem);
                 //刷新视图
                 adapter.notifyDataSetChanged();
             }
@@ -319,7 +407,7 @@ public class PrjSelectActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void showMakesureDeleteDialog(Context context, final PrjItemRealmObject prjItemRealmObject) {
+    public void showMakesureDeleteDialog(Context context, final PrjItemRealmObject prjItemRealmObject, final PrjItem prjItem) {
         LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
                 inflate(R.layout.dialog_delete_makesure, null);
         Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
@@ -338,6 +426,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 deletePrj(prjItemRealmObject);
+                adapter.removefromAllList(prjItem);
                 adapter.notifyDataSetChanged();
                 dialog.dismiss();
             }
@@ -499,7 +588,7 @@ public class PrjSelectActivity extends AppCompatActivity {
             case R.id.id_action_export_data:
                 isInSelectMode = true;
                 adapter.CheckBox_Movein();
-                btnAdd.setVisibility(View.VISIBLE);
+//                btnAdd.setVisibility(View.VISIBLE);
                 btnAdd.setImageResource(R.drawable.ic_action_accept);
                 break;
             case R.id.id_action_setting:
@@ -563,9 +652,14 @@ public class PrjSelectActivity extends AppCompatActivity {
                 ())) {
             PreferenceHelper.getInstance(this).deleteLastEditPrjName(this);
         }
+        String dbLoction = prjItemRealmObject.getDbLocation();
         //删除DB数据库
-        File file = new File(prjItemRealmObject.getDbLocation());
+        File file = new File(dbLoction);
         file.delete();
+
+        String dbjournal = dbLoction.substring(0, dbLoction.indexOf(".db"));
+        File filejournal = new File(dbjournal + ".db-journal");
+        if (filejournal.exists()) filejournal.delete();
 
         realm.beginTransaction();
         prjItemRealmObject.removeFromRealm();
@@ -616,5 +710,25 @@ public class PrjSelectActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         checkDbLocation();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Logger.d("现在的位置是：lon:%f,lat:%f",location.getLongitude(),location.getLatitude());
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }

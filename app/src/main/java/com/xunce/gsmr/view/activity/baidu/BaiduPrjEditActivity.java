@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -147,6 +148,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 case 1:
                     EventBus.getDefault().post(new KilomarkerHolderPostEvent(railWayHolder.getKilometerMarkHolder()));
                     break;
+                case 2:
+                    baiduMapFragment.animateToPoint(new LatLng(getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE,Constant.LATITUDE_DEFAULT),getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE,Constant.LONGITUDE_DEFAULT)));
+                    break;
             }
         }
     };
@@ -164,8 +168,13 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
      *
      * @param activity
      */
-    public static void start(Activity activity, PrjItem prjItem) {
+    public static void start(Activity activity, PrjItem prjItem, Location location) {
         Intent intent = new Intent(activity, BaiduPrjEditActivity.class);
+        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM, prjItem);
+        if (location != null) {
+            intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, location.getLongitude());
+            intent.putExtra(Constant.EXTRA_KEY_LATITUDE, location.getLatitude());
+        }
         intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM, prjItem);
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
@@ -389,6 +398,9 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 //baiduMapFragment.loadMarker(prjItem);
             }
         });
+        double lon = getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE,Constant.LONGITUDE_DEFAULT);
+        Logger.d("lon:%f",lon);
+        handler.sendEmptyMessageDelayed(2,1000);
     }
 
     /**

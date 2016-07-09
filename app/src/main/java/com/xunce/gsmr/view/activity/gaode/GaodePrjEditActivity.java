@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -172,9 +173,13 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
      * @param activity 开启的上下文Activity
      * @param prjItem  当前处理的PrjItem
      */
-    public static void start(Activity activity, PrjItem prjItem) {
+    public static void start(Activity activity, PrjItem prjItem, Location location) {
         Intent intent = new Intent(activity, GaodePrjEditActivity.class);
         intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM, prjItem);
+        if (location != null) {
+            intent.putExtra(Constant.EXTRA_KEY_LONGITUDE, location.getLongitude());
+            intent.putExtra(Constant.EXTRA_KEY_LATITUDE, location.getLatitude());
+        }
 //        intent.putExtra(Constant.EXTRA_KEY_PRJ_ITEM_DBPATH, prjItem.getDbLocation());
         activity.startActivity(intent);
         activity.overridePendingTransition(R.anim.activity_fade_in, R.anim.activity_fade_out);
@@ -354,6 +359,7 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
                 //loadMarker(prjItem);
             }
         });
+        animateToPoint(new com.amap.api.maps.model.LatLng(getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE,Constant.LATITUDE_DEFAULT),getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE,Constant.LONGITUDE_DEFAULT)));
     }
 
     /**
