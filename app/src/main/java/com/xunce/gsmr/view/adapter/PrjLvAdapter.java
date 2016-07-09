@@ -15,6 +15,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.orhanobut.logger.Logger;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.PrjItemRealmObject;
@@ -50,7 +51,6 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
         this.context = context;
         this.prjItemList = prjItemList;
         this.prjItemListdata = prjItemList;
-
         inflater = LayoutInflater.from(context);
         MoveIn = AnimationUtils.loadAnimation(context, R.anim.translate_right);
         MoveOut = AnimationUtils.loadAnimation(context, R.anim.translate_left);
@@ -172,6 +172,10 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
         return false;
     }
 
+    /**
+     * 从选中列表中删除
+     * @param prjItem
+     */
     public void removefromSelectList(PrjItem prjItem){
         if (selectList == null || selectList.size() == 0) {
             return ;
@@ -181,6 +185,28 @@ public class PrjLvAdapter extends BaseAdapter implements Filterable {
                 selectList.remove(item);
                 return;
         }
+    }
+
+    /**
+     * 从所有列表中删除选中数据
+     * @param prjItem
+     */
+    public void removefromAllList(PrjItem prjItem){
+        if (!(prjItemListdata == null || prjItemListdata.size() == 0)) {
+            for (PrjItem item : prjItemListdata) {
+                if(item.getPrjName().equals(prjItem.getPrjName()))
+                    prjItemListdata.remove(item);
+                break;
+            }
+        }
+        if (!(prjItemList == null || prjItemList.size() == 0)) {
+            for (PrjItem item : prjItemList) {
+                if(item.getPrjName().equals(prjItem.getPrjName()))
+                    prjItemList.remove(item);
+                break;
+            }
+        }
+
     }
 
     class ViewHolder {
