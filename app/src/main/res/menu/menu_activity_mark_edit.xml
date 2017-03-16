@@ -2,7 +2,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+
+    <item android:id="@+id/id_action_delete"
+        android:icon="@drawable/ic_delete_white_36dp"
+        android:orderInCategory="10"
+        app:showAsAction="always"
+        android:title="编辑文本"/>
     <!--编辑文本-->
+
     <item android:id="@+id/id_action_edit_info"
         android:icon="@drawable/ic_border_color_black_48dp"
         android:orderInCategory="10"

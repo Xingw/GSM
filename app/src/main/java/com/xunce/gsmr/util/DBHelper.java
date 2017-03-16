@@ -150,6 +150,8 @@ public class DBHelper {
                 data.setStyleUrl(KmlData.POLY_STYLE);
                 data.setLatitude(Double.toString(latitude));
                 data.setLongitude(Double.toString(longitude));
+                GpsPoint gpsPoint = new GpsPoint(longitude, latitude);
+                data.getPointList().add(gpsPoint);
             } else {
                 double latitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.latitude));
                 double longitude = cursor.getDouble(cursor.getColumnIndex(DBConstant.longitude));

@@ -1,14 +1,19 @@
 package com.xunce.gsmr.view.activity.gaode;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.CameraUpdateFactory;
@@ -238,6 +243,7 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
                     } else if (cameraPosition.zoom < GaodeMapCons.zoomLevel && isMapTextShowed) {
                         Timber.e("缩小到16以下了");
                         railWayHolder.forcehideText();
+
                         isMapTextShowed = false;
                     }
                 }
@@ -313,6 +319,11 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case R.id.id_action_delete:
+                if (requestCode == GaodePrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY) {
+                    showMakesureDeleteDialog(this, markerItem);
+                }
+                break;
             //编辑文本信息
             case R.id.id_action_edit_info:
                 MarkerInfoEditActivity.start(this, markerItem);
@@ -331,6 +342,34 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void showMakesureDeleteDialog(Context context, final MarkerItem markerItem) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
+                inflate(R.layout.dialog_delete_makesure, null);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setView(llPrjName)
+                .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                markerItem.delete(dbPath);
+                EventBus.getDefault().post(new MarkerEditEvent(MarkerEditEvent.BackState.CHANGED));
+                dialog.dismiss();
+                finish();
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
+    }
     @Override
     public void onBackPressed() {
         if (requestCode ==Constant.REQUEST_CODE_NAVI_MAP)return;

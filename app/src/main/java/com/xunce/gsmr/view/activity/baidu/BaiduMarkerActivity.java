@@ -1,16 +1,20 @@
 package com.xunce.gsmr.view.activity.baidu;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -26,6 +30,8 @@ import com.baidu.mapapi.model.LatLng;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.model.MarkerItem;
+import com.xunce.gsmr.model.PrjItem;
+import com.xunce.gsmr.model.PrjItemRealmObject;
 import com.xunce.gsmr.model.baidumap.BaiduRailWayHolder;
 import com.xunce.gsmr.model.event.BaiduDrawMapDataEvent;
 import com.xunce.gsmr.model.event.MarkerInfoSaveEvent;
@@ -258,8 +264,11 @@ public class BaiduMarkerActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 //            case R.id.id_action_load_digital_file:
 //                break;
-//            case R.id.id_action_load_marker:
-//                break;
+            case R.id.id_action_delete:
+                if (requestCode == BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY) {
+                    showMakesureDeleteDialog(this, markerItem);
+                }
+                break;
             //编辑文本信息
             case R.id.id_action_edit_info:
                 MarkerInfoEditActivity.start(this, markerItem);
@@ -275,6 +284,35 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                 finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showMakesureDeleteDialog(Context context, final MarkerItem markerItem) {
+        LinearLayout llPrjName = (LinearLayout) LayoutInflater.from(context).
+                inflate(R.layout.dialog_delete_makesure, null);
+        Button confirmButton = (Button) llPrjName.findViewById(R.id.tv_input_confirm);
+        Button cancelButton = (Button) llPrjName.findViewById(R.id.tv_input_cancel);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = dialogBuilder
+                .setView(llPrjName)
+                .create();
+        View.OnClickListener cancelListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        };
+        View.OnClickListener confirmListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                markerItem.delete(dbPath);
+                setResult(Constant.RESULT_CODE_OK);
+                dialog.dismiss();
+                finish();
+            }
+        };
+        confirmButton.setOnClickListener(confirmListener);
+        cancelButton.setOnClickListener(cancelListener);
+        dialog.show();
     }
 
     @Override

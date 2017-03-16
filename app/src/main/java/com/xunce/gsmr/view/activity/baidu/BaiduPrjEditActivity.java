@@ -38,6 +38,7 @@ import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
 import com.xunce.gsmr.lib.kmlParser.KMLParser;
+import com.xunce.gsmr.lib.kmlParser.KmlData;
 import com.xunce.gsmr.model.MarkerItem;
 import com.xunce.gsmr.model.PrjItem;
 import com.xunce.gsmr.model.SearchItem;
@@ -111,7 +112,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private BaiduRailWayHolder railWayHolder;
     //地图模式选择
     private FloatingActionButton mapModeBtn;
-    private static int ModeValue=Constant.MODE_MAP_2D;
+    private static int ModeValue = Constant.MODE_MAP_2D;
     /**
      * 缩放控件
      */
@@ -132,7 +133,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     private static boolean drawing = false;
     private TextView etStart;
     private TextView etEnd;
-    private SearchItem startsearch = new SearchItem("我的位置","我的位置");
+    private SearchItem startsearch = new SearchItem("我的位置", "我的位置");
     private SearchItem endsearch;
     /**
      * 用于延时发送数据
@@ -149,7 +150,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     EventBus.getDefault().post(new KilomarkerHolderPostEvent(railWayHolder.getKilometerMarkHolder()));
                     break;
                 case 2:
-                    baiduMapFragment.animateToPoint(new LatLng(getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE,Constant.LATITUDE_DEFAULT),getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE,Constant.LONGITUDE_DEFAULT)));
+                    baiduMapFragment.animateToPoint(new LatLng(getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT), getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, Constant.LONGITUDE_DEFAULT)));
                     break;
             }
         }
@@ -197,7 +198,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         initView();
 
         //检查版本更新
-        if(Constant.firstOpen) {
+        if (Constant.firstOpen) {
             Update.checkversion(this);
             Constant.firstOpen = false;
         }
@@ -206,7 +207,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     /**
      * 初始化数据
      */
-    private void initdata(){
+    private void initdata() {
         railWayHolder = new BaiduRailWayHolder(this, prjItem.getDbLocation());
         kmlParser = new KMLParser(prjItem.getDbLocation());
     }
@@ -229,14 +230,14 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         floatingActionButton_expand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!expand) {
-                    expand=true;
+                if (!expand) {
+                    expand = true;
                     zoomlayout.setVisibility(View.GONE);
                     floatingActionsMenu_hide_left.expand();
                     floatingActionsMenu_hide_up.expand();
                     floatingActionButton_expand.setIcon(R.drawable.ic_close);
-                }else {
-                    expand=false;
+                } else {
+                    expand = false;
                     zoomlayout.setVisibility(View.VISIBLE);
                     floatingActionsMenu_hide_left.collapse();
                     floatingActionsMenu_hide_up.collapse();
@@ -272,11 +273,11 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.fb_action_choose_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawing)return;
+                if (drawing) return;
                 //首先创建一个markerItem放到数据库中(在新开启Activity中--如果没有点击确定---就删除)
                 MarkerItem markerItem = new MarkerItem();
                 BaiduMarkerActivity.start(BaiduPrjEditActivity.this,
-                        markerItem, prjItem.getDbLocation(),baiduMapFragment.getTarget(),baiduMapFragment.getBaiduMap().getMapStatus().zoom, REQUEST_CODE_MARKER_ACTIVITY);
+                        markerItem, prjItem.getDbLocation(), baiduMapFragment.getTarget(), baiduMapFragment.getBaiduMap().getMapStatus().zoom, REQUEST_CODE_MARKER_ACTIVITY);
                 handler.sendEmptyMessageDelayed(0, 300);
             }
         });
@@ -300,7 +301,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (drawing) {
-                    ToastHelper.show(BaiduPrjEditActivity.this,"地图数据正在绘制中，请稍后");
+                    ToastHelper.show(BaiduPrjEditActivity.this, "地图数据正在绘制中，请稍后");
                     return;
                 }
                 if ((!isChecked && railWayHolder == null) || (railWayHolder.isempty())) {
@@ -309,15 +310,15 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     EventBus.getDefault().post(new ProgressbarEvent(true));
                     isChecked = true;
                     swMapDatabtn.setIcon(R.drawable.map_action_draw_open);
-                    if(railWayHolder.getTextList() != null && railWayHolder.getTextList().size() !=0) {
-                        MapHelper.animateToPoint(baiduMapFragment.getBaiduMap(),railWayHolder.getTextList().get(0).getLatLng());
+                    if (railWayHolder.getTextList() != null && railWayHolder.getTextList().size() != 0) {
+                        MapHelper.animateToPoint(baiduMapFragment.getBaiduMap(), railWayHolder.getTextList().get(0).getLatLng());
                     }
-                    Float zoom =baiduMapFragment.getBaiduMap().getMapStatus().zoom;
+                    Float zoom = baiduMapFragment.getBaiduMap().getMapStatus().zoom;
                     if (zoom > BaiduMapCons.zoomLevel) {
-                        railWayHolder.draw(baiduMapFragment.getBaiduMap(),clear);
+                        railWayHolder.draw(baiduMapFragment.getBaiduMap(), clear);
                         clear = false;
                     } else {
-                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap(),clear);
+                        railWayHolder.drawLine(baiduMapFragment.getBaiduMap(), clear);
                         clear = false;
                     }
                 } else if (isChecked) {
@@ -338,26 +339,28 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
              * 手势操作地图，设置地图状态等操作导致地图状态开始改变。
              * @param status 地图状态改变开始时的地图状态
              */
-            public void onMapStatusChangeStart(MapStatus status){
+            public void onMapStatusChangeStart(MapStatus status) {
             }
+
             /**
              * 地图状态变化中
              * @param status 当前地图状态
              */
-            public void onMapStatusChange(MapStatus status){
+            public void onMapStatusChange(MapStatus status) {
             }
+
             /**
              * 地图状态改变结束
              * @param status 地图状态改变结束后的地图状态
              */
-            public void onMapStatusChangeFinish(MapStatus status){
-                if (drawing)return;
+            public void onMapStatusChangeFinish(MapStatus status) {
+                if (drawing) return;
                 //如果 xml文件已经加载 且 switch为开
                 if (railWayHolder != null && isChecked) {
-                    Float zoom =status.zoom;
+                    Float zoom = status.zoom;
                     //如果放大到16以上
                     if (zoom > BaiduMapCons.zoomLevel && !isMapTextShowed) {
-                        railWayHolder.drawText(baiduMapFragment.getBaiduMap(),clear);
+                        railWayHolder.drawText(baiduMapFragment.getBaiduMap(), clear);
                         isMapTextShowed = true;
                     } else if (zoom < BaiduMapCons.zoomLevel && isMapTextShowed) {
                         railWayHolder.hideText();
@@ -371,7 +374,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.id_btn_location).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawing)return;
+                if (drawing) return;
                 baiduMapFragment.locate();
             }
         });
@@ -380,7 +383,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.fb_action_measure).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawing)return;
+                if (drawing) return;
                 //开启测量Activity
                 handler.sendEmptyMessageDelayed(0, 300);
                 BaiduMeasureActivity.start(BaiduPrjEditActivity.this,
@@ -393,18 +396,19 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         findViewById(R.id.fb_action_marker).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (drawing)return;
+                if (drawing) return;
                 showFindMarkerDialog(BaiduPrjEditActivity.this);
                 //baiduMapFragment.loadMarker(prjItem);
             }
         });
-        double lon = getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE,Constant.LONGITUDE_DEFAULT);
-        Logger.d("lon:%f",lon);
-        handler.sendEmptyMessageDelayed(2,1000);
+        double lon = getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, Constant.LONGITUDE_DEFAULT);
+        Logger.d("lon:%f", lon);
+        handler.sendEmptyMessageDelayed(2, 1000);
     }
 
     /**
      * 寻找公里标对话框
+     *
      * @param context
      */
     private void showFindMarkerDialog(final Context context) {
@@ -427,11 +431,14 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         View.OnClickListener confirmListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                KilometerMark kilometerMark= railWayHolder.getKilometerMarkHolder().findKM(etPrjName.getText().toString());
-                if (kilometerMark==null){
-                    ToastHelper.show(BaiduPrjEditActivity.this,"未找到该公里标");
-                }else{
+                KilometerMark kilometerMark = railWayHolder.getKilometerMarkHolder().findKM(etPrjName.getText().toString());
+                KmlData data = kmlParser.findKmlData(etPrjName.getText().toString());
+                if (kilometerMark != null) {
                     baiduMapFragment.animateToPoint(kilometerMark.getBaiDuLatlng());
+                } else if (data != null) {
+                    baiduMapFragment.animateToPoint(data.getBaiduLatLng());
+                } else {
+                    ToastHelper.show(BaiduPrjEditActivity.this, "未找到该公里标");
                 }
             }
         };
@@ -450,7 +457,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         mapModeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (ModeValue){
+                switch (ModeValue) {
                     case Constant.MODE_MAP_2D: {//2D地图切换至3D地图
                         ModeValue = Constant.MODE_MAP_SATELLITE;
                         mapModeBtn.setIcon(R.drawable.map_action_mode_satellite);
@@ -490,10 +497,10 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         baiduMapFragment.hideInfoWindow();
         //生成MarkerItem--跳转到MarkerEditActivity
         BaiduMarkerActivity.start(this, baiduMapFragment.getMarkerHolder().getCurrentMarkerItem()
-                ,prjItem.getDbLocation(),baiduMapFragment.getTarget(),
+                , prjItem.getDbLocation(), baiduMapFragment.getTarget(),
                 baiduMapFragment.getBaiduMap().getMapStatus().zoom,
                 BaiduPrjEditActivity.REQUEST_CODE_MARKER_EDIT_ACTIVITY);
-        handler.sendEmptyMessageDelayed(0,300);
+        handler.sendEmptyMessageDelayed(0, 300);
     }
 
     /**
@@ -521,14 +528,14 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 //            case R.id.id_action_change_project:
 //                finish();
 //                PrjSelectActivity.start(this, true);
-                //加载铁路地图
+            //加载铁路地图
 //            case R.id.id_action_load_digital_file:
 //                //首先判断数据库是否绑定
 //                baiduMapFragment.loadRail();
 //                break;
             //数据导出
             case R.id.id_action_export_data:
-                FileHelper.sendDbFile(this,prjItem.getDbLocation());
+                FileHelper.sendDbFile(this, prjItem.getDbLocation());
                 break;
             case R.id.id_action_layer_choice:
                 showChoiceLayerDialog();
@@ -564,22 +571,22 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         etStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Naviinputpoint.start(BaiduPrjEditActivity.this,etStart.getText().toString(),
+                Naviinputpoint.start(BaiduPrjEditActivity.this, etStart.getText().toString(),
                         NaviInputEvent.START, Constant.EXTRA_KEY_GAODE);
-                handler.sendEmptyMessageDelayed(1,300);
+                handler.sendEmptyMessageDelayed(1, 300);
             }
         });
         etEnd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Naviinputpoint.start(BaiduPrjEditActivity.this,etEnd.getText().toString(),
+                Naviinputpoint.start(BaiduPrjEditActivity.this, etEnd.getText().toString(),
                         NaviInputEvent.END, Constant.EXTRA_KEY_GAODE);
-                handler.sendEmptyMessageDelayed(1,300);
+                handler.sendEmptyMessageDelayed(1, 300);
             }
         });
         //Button FootButton = (Button) llnavidialog.findViewById(R.id.btn_navi_foot);
         Button DriveButton = (Button) llnavidialog.findViewById(R.id.btn_navi_drive);
-       // Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
+        // Button BusButton = (Button) llnavidialog.findViewById(R.id.btn_navi_bus);
 //        FootButton.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -593,11 +600,11 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         DriveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()){
-                    ToastHelper.show(BaiduPrjEditActivity.this,"请输入起点或终点名称");
+                if (etStart.getText().toString().isEmpty() || etEnd.getText().toString().isEmpty()) {
+                    ToastHelper.show(BaiduPrjEditActivity.this, "请输入起点或终点名称");
                     return;
                 }
-                Navistart(NAVI_DRIVE,etStart.getText().toString(),etEnd.getText().toString());
+                Navistart(NAVI_DRIVE, etStart.getText().toString(), etEnd.getText().toString());
             }
         });
 //        BusButton.setOnClickListener(new View.OnClickListener() {
@@ -619,16 +626,16 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
     private void Navistart(int method, String start, String end) {
         RouteParaOption para = new RouteParaOption();
-        if (start.contains("选点")){
+        if (start.contains("选点")) {
             NaviLatLng latLng = parseEditText(startsearch.getValue());
-            para.startPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
-        }else {
+            para.startPoint(new LatLng(latLng.getLatitude(), latLng.getLongitude()));
+        } else {
             para.startName(start);
         }
-        if (start.contains("选点")){
+        if (start.contains("选点")) {
             NaviLatLng latLng = parseEditText(endsearch.getValue());
-            para.endPoint(new LatLng(latLng.getLatitude(),latLng.getLongitude()));
-        }else {
+            para.endPoint(new LatLng(latLng.getLatitude(), latLng.getLongitude()));
+        } else {
             para.endName(end);
         }
         switch (method) {
@@ -660,6 +667,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 //        }
         }
     }
+
     private NaviLatLng parseEditText(String text) {
         try {
             double latD = Double.parseDouble(text.split(",")[0]);
@@ -671,6 +679,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         }
         return null;
     }
+
     /**
      * 提示未安装百度地图app或app版本过低
      */
@@ -715,7 +724,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                 .setMultiChoiceItems(layername, layerboolean, new DialogInterface.OnMultiChoiceClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                        layerboolean[which] =isChecked;
+                        layerboolean[which] = isChecked;
                     }
                 })
                 .setCancelable(false)
@@ -724,7 +733,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         List<String> showList = new ArrayList<String>();
                         for (int i = 0; i < layerboolean.length; i++) {
-                            if (layerboolean[i]){
+                            if (layerboolean[i]) {
                                 showList.add(layername[i]);
                             }
                         }
@@ -799,6 +808,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
     }
 
     //事件监听******************************************************************
+
     /**
      * setting界面的定位mode改变事件
      *
@@ -812,6 +822,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
         initdata();
         baiduMapFragment.getBaiduMap().setOnMapStatusChangeListener(listener);
     }
+
     /**
      * prjEditActivity的回调方法
      */
@@ -867,6 +878,7 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
     /**
      * kml数据加载完成事件
+     *
      * @param kmlLoadFinishedEvent
      */
     public void onEventMainThread(KMLLoadFinishedEvent kmlLoadFinishedEvent) {
@@ -875,14 +887,15 @@ public class BaiduPrjEditActivity extends AppCompatActivity {
 
     /**
      * Navi起点终点输入返回数据
+     *
      * @param naviInputEvent
      */
     public void onEventMainThread(NaviInputEvent naviInputEvent) {
-        if (etEnd == null || etStart == null)return;
-        if (naviInputEvent.getStyle() == naviInputEvent.START){
+        if (etEnd == null || etStart == null) return;
+        if (naviInputEvent.getStyle() == naviInputEvent.START) {
             etStart.setText(naviInputEvent.getSearchItem().getText());
             startsearch = naviInputEvent.getSearchItem();
-        }else {
+        } else {
             etEnd.setText(naviInputEvent.getSearchItem().getText());
             endsearch = naviInputEvent.getSearchItem();
         }

@@ -96,6 +96,14 @@ public class KMLParser extends DefaultHandler {
             }
     }
 
+    public KmlData findKmlData(String name){
+        if (textList !=null && textList.size() !=0)
+            for(KmlData data : textList){
+                if (data.getName().contains(name))return data;
+            }
+        return null;
+    }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) {
         qname = qName;

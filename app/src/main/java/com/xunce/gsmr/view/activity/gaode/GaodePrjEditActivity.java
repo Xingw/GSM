@@ -37,6 +37,7 @@ import com.xunce.gsmr.Net.Update;
 import com.xunce.gsmr.R;
 import com.xunce.gsmr.app.Constant;
 import com.xunce.gsmr.kilometerMark.KilometerMark;
+import com.xunce.gsmr.lib.kmlParser.KmlData;
 import com.xunce.gsmr.lib.xmlparser.XmlParser;
 import com.xunce.gsmr.lib.digitalmap.DigitalMapHolder;
 import com.xunce.gsmr.lib.kmlParser.KMLParser;
@@ -787,10 +788,13 @@ public class GaodePrjEditActivity extends GaodeBaseActivity {
             @Override
             public void onClick(View v) {
                  KilometerMark kilometerMark= railWayHolder.getKilometerMarkHolder().findKM(etPrjName.getText().toString());
-                if (kilometerMark==null){
-                    ToastHelper.show(GaodePrjEditActivity.this,"未找到该公里标");
-                }else{
+                KmlData data = kmlParser.findKmlData(etPrjName.getText().toString());
+                if (kilometerMark!=null){
                     animateToPoint(kilometerMark.getGaoDeLatlng());
+                }else if (data!=null){
+                    animateToPoint(data.getGaodeLatLng());
+                }else {
+                   ToastHelper.show(GaodePrjEditActivity.this,"未找到该公里标");
                 }
             }
         };

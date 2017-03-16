@@ -7,6 +7,7 @@ import com.amap.api.maps.model.PolylineOptions;
 import com.amap.api.maps.model.TextOptions;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.model.LatLng;
+import com.xunce.gsmr.util.gps.PositionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class KmlData {
             TextOptions textOptions = new TextOptions();
             textOptions.fontSize(12)
                     .position(pointList.get(0).getLatLng())
-                    .fontColor(Color.GREEN)
+                    .fontColor(Color.BLACK)
                     .text(name);
             amap.addText(textOptions);
         }
@@ -74,7 +75,7 @@ public class KmlData {
             com.baidu.mapapi.map.TextOptions textOptions = new com.baidu.mapapi.map.TextOptions();
             textOptions.fontSize(12)
                     .position(pointList.get(0).getBaiduLatLng())
-                    .fontColor(Color.GREEN)
+                    .fontColor(Color.BLACK)
                     .text(name);
             baidumap.addOverlay(textOptions);
         }
@@ -127,5 +128,13 @@ public class KmlData {
 
     public void setPointList(List<GpsPoint> pointList) {
         this.pointList = pointList;
+    }
+
+    public com.baidu.mapapi.model.LatLng getBaiduLatLng(){
+        return PositionUtil.Gps84_To_bd09(Double.parseDouble(getLatitude()),Double.parseDouble(getLongitude()));
+    }
+
+    public com.amap.api.maps.model.LatLng getGaodeLatLng(){
+        return PositionUtil.gps84_To_Gcj02(Double.parseDouble(getLatitude()),Double.parseDouble(getLongitude()));
     }
 }
