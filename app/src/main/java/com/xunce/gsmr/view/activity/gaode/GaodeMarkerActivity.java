@@ -123,7 +123,7 @@ public class GaodeMarkerActivity extends GaodeBaseActivity {
             Logger.e("经度:%f,纬度%f", latLng.latitude, latLng.longitude);
             getaMap().moveCamera(CameraUpdateFactory.changeLatLng(latLng));
             etLatitude.setText("" + getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
-            etLongitude.setText("" + getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
+            etLongitude.setText("" + getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, Constant.LONGITUDE_DEFAULT));
         }
         //初始化View
 

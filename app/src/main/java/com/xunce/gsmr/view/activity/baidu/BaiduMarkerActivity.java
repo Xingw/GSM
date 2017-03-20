@@ -191,7 +191,7 @@ public class BaiduMarkerActivity extends AppCompatActivity {
                     intent.getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, 0));
             MapHelper.animateToPoint(mBaiduMap,latLng);
             etLatitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LATITUDE_DEFAULT));
-            etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LATITUDE, Constant.LONGITUDE_DEFAULT));
+            etLongitude.setText(""+getIntent().getDoubleExtra(Constant.EXTRA_KEY_LONGITUDE, Constant.LONGITUDE_DEFAULT));
         }
         mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(zoomlevel));
         //地图状态变化监听---用于监听选取的Marker位置
